@@ -1,3 +1,10 @@
+# 0.7.3 — multiplier stress and signed FIR
+
+- Add exhaustive bounded arithmetic-unit vectors for all four multiply variants with independent Python golden products.
+- Add compiled signed 32-tap FIR using MUL/MULH and 64-bit accumulation, scaling and explicit clipping.
+- Add full-core boundary/random/dependency/x0/memory tests and interrupts requested while both multiply lanes are busy.
+- Publish verification evidence with separate unit, full-core and physical scope.
+
 # 0.7.2 — larger C integration workload
 
 - Add sorting/matrix/CRC/recursion/search/signed division/bit manipulation and one-shot timer IRQ workload.

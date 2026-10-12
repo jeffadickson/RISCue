@@ -319,3 +319,86 @@ async def compiled_c_workload(d):
     with (folder/('trace-'+mode+'.csv')).open('w') as f:
         writer=csv.writer(f);writer.writerow(['cycle','pc','raw_instruction','mnemonic','rd','result']);writer.writerows(rows)
     d._log.info('C workload PASS: mode=%s cycles=%d retirements=%d IRQ=%s phases=%s',mode,cycle,len(rows),interrupts,result['phase_cycles'])
+
+@cocotb.test(skip=os.environ.get('PIPELINE_C_WORKLOAD')!='1' or not os.path.exists(os.path.join(os.environ.get('PROJECT_ROOT','.'),'build/c-fir/metadata.json')))
+async def compiled_c_fir(d):
+    import hashlib,json,re,sys,time
+    from collections import Counter
+    from pathlib import Path
+    root=Path(os.environ['PROJECT_ROOT']);folder=root/'build/c-fir';sys.path.insert(0,str(root/'tools'))
+    from multiplier_reference import fir_reference
+    meta=json.loads((folder/'metadata.json').read_text());binary=(folder/'smoke.bin').read_bytes();assert hashlib.sha256(binary).hexdigest()==meta['binary_sha256']
+    names={int(m[1],16):m[2] for line in (folder/'smoke.dis').read_text().splitlines() if (m:=re.match(r'^\s*([0-9a-f]+):\s+[0-9a-f]+\s+(\S+)',line))}
+    await start(d);await boot(d,data=binary);hist=Counter();rows=[];started=time.monotonic()
+    for cycle in range(1,50001):
+        await FallingEdge(d.clk);assert not int(d.fatal.value);assert not int(d.trap.value)
+        if int(d.retire_valid.value):
+            pc=int(d.retire_pc.value);hist[names[pc]]+=1;rows.append((pc,int(d.retire_rd.value),int(d.retire_result.value)))
+            if pc==meta['finish_pc']:break
+    else:raise AssertionError('FIR timeout')
+    positions=[p for p in range(1,39) if p not in (1,2,4,8,16,32)]
+    words=[sum(((int(d.soc.ram.mem[0x1f00//4+n].value)>>(p-1))&1)<<j for j,p in enumerate(positions)) for n in range(14)]
+    reference=fir_reference();assert words==reference['mailbox'],(words,reference['mailbox'])
+    assert hist['mul']==128 and hist['mulh']==128,hist
+    mode='tmr' if TMR else 'ecc';result={'mode':mode,'status':'pass','cycles':cycle,'retirements':len(rows),'cpi':cycle/len(rows),'wall_seconds':time.monotonic()-started,'binary_sha256':meta['binary_sha256'],'instruction_histogram':dict(hist),'reference':reference,'mailbox':words,'fatal_count':int(d.fatal_count.value),'uncorrectable_count':int(d.uncorrectable_count.value)}
+    (folder/('result-'+mode+'.json')).write_text(json.dumps(result,indent=2)+'\n');d._log.info('FIR PASS %s: cycles=%d retirements=%d MUL=%d MULH=%d',mode,cycle,len(rows),hist['mul'],hist['mulh'])
+
+@cocotb.test()
+async def multiplier_full_core_vectors(d):
+    import json,sys,time
+    from pathlib import Path
+    root=Path(os.environ['PROJECT_ROOT']);sys.path.insert(0,str(root/'tools'))
+    from multiplier_reference import full_core_pairs,multiply,MASK
+    await start(d);pairs=full_core_pairs()
+    # Table-driven loop: loaded operands, all four variants, dependent MUL,
+    # x0 suppression, high-result store/load and immediate consumer.
+    words=[i(1,0,1024),i(2,0,len(pairs)),i(3,1,0,2,3),i(4,1,4,2,3),r(5,3,4,0,1),r(9,5,4,0,1),r(6,3,4,1,1),r(7,3,4,2,1),r(8,3,4,3,1),r(0,3,4,0,1),st(8,0,0x300),i(10,0,0x300,2,3),i(11,10,1),i(1,1,8),i(2,2,-1)]
+    off=8-len(words)*4;v=off&0x1fff;words.append(((v>>12)<<31)|(((v>>5)&63)<<25)|(2<<15)|(1<<12)|(((v>>1)&15)<<8)|(((v>>11)&1)<<7)|0x63)
+    stop=len(words)*4;words += [i(12,0,77),jal(0,0)]
+    image=bytearray(4096)
+    for n,w in enumerate(words):image[n*4:n*4+4]=w.to_bytes(4,'little')
+    for n,(a,b) in enumerate(pairs):image[1024+n*8:1032+n*8]=a.to_bytes(4,'little')+b.to_bytes(4,'little')
+    await boot(d,data=image);rows=[];index=-1;checks=0;started=time.monotonic()
+    for cycle in range(1,40001):
+        await FallingEdge(d.clk);assert not int(d.fatal.value);assert not int(d.trap.value)
+        if not int(d.retire_valid.value):continue
+        pc=int(d.retire_pc.value);rd=int(d.retire_rd.value);value=int(d.retire_result.value);raw=int(d.retire_insn.value);rows.append((pc,rd,value,raw))
+        if pc==16:index+=1
+        if 16<=pc<=48:
+            a,b=pairs[index];low=multiply(0,a,b);expected={16:(5,low),20:(9,multiply(0,low,b)),24:(6,multiply(1,a,b)),28:(7,multiply(2,a,b)),32:(8,multiply(3,a,b)),36:(0,0),40:(0,0),44:(10,multiply(3,a,b)),48:(11,(multiply(3,a,b)+1)&MASK)}
+            assert (rd,value)==expected[pc],(index,a,b,pc,rd,value,expected[pc]);checks+=1
+        if pc==stop:assert (rd,value)==(12,77);break
+    else:raise AssertionError('Full-core multiply loop timeout')
+    assert index+1==len(pairs)
+    mode='tmr' if TMR else 'ecc';folder=root/'build/multiplier';folder.mkdir(exist_ok=True)
+    result={'mode':mode,'status':'pass','operand_pairs':len(pairs),'multiply_retirements':len(pairs)*6,'result_checks':checks,'cycles':cycle,'retirements':len(rows),'wall_seconds':time.monotonic()-started,'seed':'0x4d554c','scope':'128 pairs, four variants, dependent MUL, x0 and memory round-trip'}
+    (folder/('core-'+mode+'.json')).write_text(json.dumps(result,indent=2)+'\n');d._log.info('Full-core multiply PASS %s',result)
+
+@cocotb.test()
+async def multiplier_full_core_interrupts(d):
+    import json,sys
+    from pathlib import Path
+    root=Path(os.environ['PROJECT_ROOT']);sys.path.insert(0,str(root/'tools'))
+    from multiplier_reference import multiply,MASK
+    await start(d);cases=[]
+    for op in range(4):
+        words=[i(1,0,0x100),csr(0x305,0,1),i(3,0,-2048),csr(0x304,0,3),csr(0x300,0,8,6),i(4,0,-7),i(5,0,9),r(6,4,5,op,1),r(10,6,5,0,1),i(11,6,1),i(12,0,99),jal(0,0)]
+        handler=[csr(0x342,20,0,2),i(21,21,1),0x30200073]
+        await boot(d,words,handler=handler);injected=False;traps=0;rows=[];request_cycle=0
+        for cycle in range(1,2001):
+            await FallingEdge(d.clk);assert not int(d.fatal.value)
+            if not injected and int(d.soc.core.md_ready0.value)==0 and int(d.soc.core.md_ready1.value)==0:
+                assert int(d.soc.core.x_insn.value)==words[7];d.external_irq.value=1;injected=True;request_cycle=cycle
+            if int(d.trap.value):
+                assert int(d.trap_cause.value)==0x8000000b;traps+=1;d.external_irq.value=0
+            if int(d.retire_valid.value):
+                rows.append((int(d.retire_pc.value),int(d.retire_rd.value),int(d.retire_result.value)))
+                if rows[-1][0]==40:break
+        else:raise AssertionError('Multiply IRQ timeout')
+        assert injected and traps==1
+        value=multiply(op,(-7)&MASK,9);wanted={28:(6,value),32:(10,multiply(0,value,9)),36:(11,(value+1)&MASK),40:(12,99)}
+        for pc,expected in wanted.items():assert [r[1:] for r in rows if r[0]==pc]==[expected],(op,pc,rows)
+        assert [v for pc,rd,v in rows if rd==21]==[1]
+        cases.append({'op':op,'request_while_both_lanes_busy':True,'request_cycle':request_cycle,'traps':traps,'cycles':cycle,'retirements':len(rows),'result':value,'status':'pass'})
+    folder=root/'build/multiplier';folder.mkdir(exist_ok=True);mode='tmr' if TMR else 'ecc'
+    (folder/('irq-'+mode+'.json')).write_text(json.dumps({'mode':mode,'cases':cases,'status':'pass'},indent=2)+'\n');d._log.info('Multiply IRQ PASS %s: %s',mode,cases)

@@ -247,3 +247,17 @@ c-workload-build:
 c-workload: c-workload-build
 	TEST_FILTER=compiled_c_workload $(PIPELINE_PYTHON) tools/run_pipeline.py ecc --c-workload
 	TEST_FILTER=compiled_c_workload $(PIPELINE_PYTHON) tools/run_pipeline.py tmr --c-workload
+
+.PHONY: test-multiplier-exhaustive c-fir-build c-fir pipeline-multiplier
+test-multiplier-exhaustive: | build
+	$(PYTHON) tools/multiplier_reference.py
+	$(IVERILOG) -g2012 -s tb_multiplier_exhaustive -o build/tb_multiplier_exhaustive rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_multiplier_exhaustive.sv
+	$(VVP) build/tb_multiplier_exhaustive
+c-fir-build:
+	RISCV_GCC="$(RISCV_GCC)" RISCV_OBJCOPY="$(RISCV_OBJCOPY)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" RISCV_NM="$(RISCV_NM)" $(PYTHON) tools/build_c_fir.py
+c-fir: c-fir-build
+	TEST_FILTER=compiled_c_fir $(PIPELINE_PYTHON) tools/run_pipeline.py ecc --c-workload
+	TEST_FILTER=compiled_c_fir $(PIPELINE_PYTHON) tools/run_pipeline.py tmr --c-workload
+pipeline-multiplier:
+	TEST_FILTER=multiplier_full_core $(PIPELINE_PYTHON) tools/run_pipeline.py ecc
+	TEST_FILTER=multiplier_full_core $(PIPELINE_PYTHON) tools/run_pipeline.py tmr

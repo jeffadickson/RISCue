@@ -1,0 +1,152 @@
+
+build/c-fir/smoke.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00002117          	auipc	x2,0x2
+   4:	e0010113          	addi	x2,x2,-512 # 1e00 <_stack_top>
+   8:	00001197          	auipc	x3,0x1
+   c:	98818193          	addi	x3,x3,-1656 # 990 <__global_pointer$>
+  10:	00000297          	auipc	x5,0x0
+  14:	21028293          	addi	x5,x5,528 # 220 <samples>
+  18:	00000317          	auipc	x6,0x0
+  1c:	29830313          	addi	x6,x6,664 # 2b0 <_bss_end>
+  20:	00628663          	beq	x5,x6,2c <_start+0x2c>
+  24:	0002a023          	sw	x0,0(x5)
+  28:	0291                	c.addi	x5,4
+  2a:	bfdd                	c.j	20 <_start+0x20>
+  2c:	00000097          	auipc	x1,0x0
+  30:	054080e7          	jalr	x1,84(x1) # 80 <main>
+
+00000034 <_finished>:
+  34:	a001                	c.j	34 <_finished>
+
+00000036 <dot>:
+  36:	000008b7          	lui	x17,0x0
+  3a:	00000837          	lui	x16,0x0
+  3e:	832a                	c.mv	x6,x10
+  40:	4701                	c.li	x14,0
+  42:	4501                	c.li	x10,0
+  44:	4581                	c.li	x11,0
+  46:	22088893          	addi	x17,x17,544 # 220 <samples>
+  4a:	19080813          	addi	x16,x16,400 # 190 <coefficients>
+  4e:	02000e13          	addi	x28,x0,32
+  52:	00e307b3          	add	x15,x6,x14
+  56:	00271693          	slli	x13,x14,0x2
+  5a:	078a                	c.slli	x15,0x2
+  5c:	96c2                	c.add	x13,x16
+  5e:	97c6                	c.add	x15,x17
+  60:	439c                	c.lw	x15,0(x15)
+  62:	4290                	c.lw	x12,0(x13)
+  64:	0705                	c.addi	x14,1
+  66:	02c786b3          	mul	x13,x15,x12
+  6a:	02c797b3          	mulh	x15,x15,x12
+  6e:	96aa                	c.add	x13,x10
+  70:	00a6b633          	sltu	x12,x13,x10
+  74:	8536                	c.mv	x10,x13
+  76:	95be                	c.add	x11,x15
+  78:	95b2                	c.add	x11,x12
+  7a:	fdc71ce3          	bne	x14,x28,52 <dot+0x1c>
+  7e:	8082                	c.jr	x1
+
+00000080 <main>:
+  80:	1101                	c.addi	x2,-32
+  82:	00000637          	lui	x12,0x0
+  86:	00000537          	lui	x10,0x0
+  8a:	ce06                	c.swsp	x1,28(x2)
+  8c:	cc22                	c.swsp	x8,24(x2)
+  8e:	ca26                	c.swsp	x9,20(x2)
+  90:	c84a                	c.swsp	x18,16(x2)
+  92:	c64e                	c.swsp	x19,12(x2)
+  94:	c452                	c.swsp	x20,8(x2)
+  96:	c256                	c.swsp	x21,4(x2)
+  98:	c05a                	c.swsp	x22,0(x2)
+  9a:	4701                	c.li	x14,0
+  9c:	19060613          	addi	x12,x12,400 # 190 <coefficients>
+  a0:	22050513          	addi	x10,x10,544 # 220 <samples>
+  a4:	02300813          	addi	x16,x0,35
+  a8:	08062783          	lw	x15,128(x12)
+  ac:	00271693          	slli	x13,x14,0x2
+  b0:	96aa                	c.add	x13,x10
+  b2:	00d79593          	slli	x11,x15,0xd
+  b6:	8fad                	c.xor	x15,x11
+  b8:	0117d593          	srli	x11,x15,0x11
+  bc:	8fad                	c.xor	x15,x11
+  be:	00579593          	slli	x11,x15,0x5
+  c2:	8fad                	c.xor	x15,x11
+  c4:	08f62023          	sw	x15,128(x12)
+  c8:	c29c                	c.sw	x15,0(x13)
+  ca:	0705                	c.addi	x14,1
+  cc:	fd071ee3          	bne	x14,x16,a8 <main+0x28>
+  d0:	80000437          	lui	x8,0x80000
+  d4:	c100                	c.sw	x8,0(x10)
+  d6:	147d                	c.addi	x8,-1 # 7fffffff <mailbox+0x7fffe0ff>
+  d8:	c140                	c.sw	x8,4(x10)
+  da:	57fd                	c.li	x15,-1
+  dc:	c51c                	c.sw	x15,8(x10)
+  de:	00052623          	sw	x0,12(x10)
+  e2:	f8a437b7          	lui	x15,0xf8a43
+  e6:	4705                	c.li	x14,1
+  e8:	c918                	c.sw	x14,16(x10)
+  ea:	2eb78793          	addi	x15,x15,747 # f8a432eb <mailbox+0xf8a413eb>
+  ee:	74f1                	c.lui	x9,0xffffc
+  f0:	00002b37          	lui	x22,0x2
+  f4:	c95c                	c.sw	x15,20(x10)
+  f6:	4a05                	c.li	x20,1
+  f8:	4a81                	c.li	x21,0
+  fa:	f00b0b13          	addi	x22,x22,-256 # 1f00 <mailbox>
+  fe:	6991                	c.lui	x19,0x4
+ 100:	14fd                	c.addi	x9,-1 # ffffbfff <mailbox+0xffffa0ff>
+ 102:	4911                	c.li	x18,4
+ 104:	8556                	c.mv	x10,x21
+ 106:	00000097          	auipc	x1,0x0
+ 10a:	f30080e7          	jalr	x1,-208(x1) # 36 <dot>
+ 10e:	86a2                	c.mv	x13,x8
+ 110:	0335d563          	bge	x11,x19,13a <main+0xba>
+ 114:	0695ca63          	blt	x11,x9,188 <main+0x108>
+ 118:	41f5d793          	srai	x15,x11,0x1f
+ 11c:	07c6                	c.slli	x15,0x11
+ 11e:	83c5                	c.srli	x15,0x11
+ 120:	00a78733          	add	x14,x15,x10
+ 124:	00f736b3          	sltu	x13,x14,x15
+ 128:	96ae                	c.add	x13,x11
+ 12a:	06c6                	c.slli	x13,0x11
+ 12c:	833d                	c.srli	x14,0xf
+ 12e:	77e1                	c.lui	x15,0xffff8
+ 130:	00959463          	bne	x11,x9,138 <main+0xb8>
+ 134:	04a7fa63          	bgeu	x15,x10,188 <main+0x108>
+ 138:	8ed9                	c.or	x13,x14
+ 13a:	002a1613          	slli	x12,x20,0x2
+ 13e:	001a0713          	addi	x14,x20,1
+ 142:	002a0793          	addi	x15,x20,2
+ 146:	965a                	c.add	x12,x22
+ 148:	070a                	c.slli	x14,0x2
+ 14a:	c208                	c.sw	x10,0(x12)
+ 14c:	975a                	c.add	x14,x22
+ 14e:	078a                	c.slli	x15,0x2
+ 150:	c30c                	c.sw	x11,0(x14)
+ 152:	97da                	c.add	x15,x22
+ 154:	0a85                	c.addi	x21,1
+ 156:	c394                	c.sw	x13,0(x15)
+ 158:	0a0d                	c.addi	x20,3
+ 15a:	fb2a95e3          	bne	x21,x18,104 <main+0x84>
+ 15e:	40f2                	c.lwsp	x1,28(x2)
+ 160:	4462                	c.lwsp	x8,24(x2)
+ 162:	504157b7          	lui	x15,0x50415
+ 166:	08000713          	addi	x14,x0,128
+ 16a:	02eb2a23          	sw	x14,52(x22)
+ 16e:	35378793          	addi	x15,x15,851 # 50415353 <mailbox+0x50413453>
+ 172:	00fb2023          	sw	x15,0(x22)
+ 176:	44d2                	c.lwsp	x9,20(x2)
+ 178:	4942                	c.lwsp	x18,16(x2)
+ 17a:	49b2                	c.lwsp	x19,12(x2)
+ 17c:	4a22                	c.lwsp	x20,8(x2)
+ 17e:	4a92                	c.lwsp	x21,4(x2)
+ 180:	4b02                	c.lwsp	x22,0(x2)
+ 182:	4501                	c.li	x10,0
+ 184:	6105                	c.addi16sp	x2,32
+ 186:	8082                	c.jr	x1
+ 188:	800006b7          	lui	x13,0x80000
+ 18c:	b77d                	c.j	13a <main+0xba>

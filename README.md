@@ -176,3 +176,12 @@ recursive Fibonacci, binary search and a one-shot C timer interrupt handler.
 ECC/TMR modes both pass: 3340 retirements in 20232 cycles.
 See [the detailed simulation report](docs/C_WORKLOAD_SIMULATION.md),
 [source](firmware/workload/main.c), and complete traces in verification.
+
+## Multiplier and signed FIR
+
+`make test-multiplier-exhaustive` checks 264448 Python-reference vectors in
+two arithmetic lanes. `make c-fir` runs a compiled 32-tap signed FIR with
+64-bit accumulators in ECC/TMR modes. `make pipeline-multiplier` checks all
+four multiply variants, dependencies, x0, memory consumers and interrupt/MRET
+behavior. See [the verification report](docs/MULTIPLIER_VERIFICATION.md) and
+[the FIR source](firmware/fir/main.c).

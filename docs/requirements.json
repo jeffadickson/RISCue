@@ -598,5 +598,13 @@
     "verification": "compiled_c_workload; verification/c-workload-results.json; per-retirement traces; docs/C_WORKLOAD_SIMULATION.md",
     "status": "implemented; ECC/TMR directed simulation passed; full compliance/physical validation pending",
     "priority": "should"
+  },
+  {
+    "id": "VERIFY-MUL-001",
+    "category": "Verification",
+    "requirement": "Validate all four RV32 multiply instructions against arbitrary-precision integer references: exhaustive sign-extended signed8 operand pairs at arithmetic-unit level, full-width edge/random pairs, full-core operand loads and dependent operations, x0 suppression and store/load consumers, and an external interrupt requested while both multiply lanes are busy with exactly-once retirement after MRET. Exercise signed product halves and 64-bit accumulation in a compiled 32-tap FIR with explicit normalization/clipping. Keep unit/full-core/physical evidence distinct.",
+    "verification": "test-multiplier-exhaustive; pipeline-multiplier; c-fir; verification/multiplier-results.json",
+    "status": "implemented; exhaustive bounded unit, FIR and full-core ECC/TMR tests passed; full32 formal/physical validation pending",
+    "priority": "must"
   }
 ]
