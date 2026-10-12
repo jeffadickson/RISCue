@@ -1,8 +1,8 @@
 {
-  "version": "0.6.0",
-  "recorded_utc": "2026-10-12T20:09:43.474102+00:00",
-  "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr, M-mode only",
-  "validation_scope": "Short ECC/TMR pipeline/jump/AXI simulations, selected cocotb jump tests, loader validation, compilation and conversion checks pass. Full regressions, formal proofs, cross-compiled C firmware execution and Vivado/Linux/physical board/radiation validation remain pending.",
+  "version": "0.7.0",
+  "recorded_utc": "2026-10-12T21:41:08.496914+00:00",
+  "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only",
+  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending.",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -113,5 +113,6 @@
     "KC705 pipeline/instrumented RTL target",
     "KV260 ARM/AXI laboratory wrapper and host tools"
   ],
-  "debug": "Debug 1.0 requirements specified; standard debug mode/DM/DMI/step not implemented"
+  "debug": "Debug 1.0 requirements specified; standard debug mode/DM/DMI/step not implemented",
+  "bitmanip_evidence": "verification/bitmanip-results.json"
 }

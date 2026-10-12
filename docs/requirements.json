@@ -566,5 +566,21 @@
     "verification": "mission FMEA/ICD/WCET and extension golden/formal tests",
     "status": "open; mission-specific requirements",
     "priority": "conditional"
+  },
+  {
+    "id": "ISA-BIT-001",
+    "category": "ISA",
+    "requirement": "Implement all RV32 Zbb/Zbc/Zbs 1.0 instructions with exact encodings, 5-bit rotate/bit indices, zero-count behavior, signed/unsigned extrema and carryless product slices. Reject reserved RV32 encodings with precise illegal-instruction traps. Advertise named extensions, keeping misa.B clear while Zba is absent.",
+    "verification": "test-bitmanip 5002 vectors; pipeline-bitmanip ECC/TMR; docs/BITMANIP.md",
+    "status": "implemented; directed ECC/TMR tests passed; full formal/physical validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "FT-BIT-001",
+    "category": "Protection",
+    "requirement": "Evaluate bit manipulation independently in both preserved compared execution lanes, retaining normal forwarding, load-use interlocks, x0 suppression, precise retirement and integrity fail-stop behavior. Any future multicycle implementation shall protect its new state and update the FI map.",
+    "verification": "lane0/lane1 hierarchy; pipeline-bitmanip ECC/TMR; future timing and fault/formal campaigns",
+    "status": "implemented; directed ECC/TMR tests passed; full formal/physical validation pending",
+    "priority": "must"
   }
 ]

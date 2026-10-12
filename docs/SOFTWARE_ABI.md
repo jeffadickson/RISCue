@@ -7,7 +7,7 @@ a `riscv64-unknown-elf` multilib compiler can target RV32. No GCC backend fork
 is required for the implemented standard instructions.
 
 `make firmware-platform` builds a RAM-linked RV32IMC machine-mode demonstration
-for the KV260 wrapper. It supplies startup, 16-byte aligned stack, global
+for the KV260 wrapper with Zbb/Zbc/Zbs enabled. It supplies startup, 16-byte aligned stack, global
 pointer setup, BSS clearing, mtvec, a trap entry saving all GPRs, CLINT timer
 helpers and a diagnostic mailbox. GCC must recognize the named extensions
 and provide compatible ILP32 libgcc. Compiler flags are explicit in Makefile;

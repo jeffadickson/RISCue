@@ -1,3 +1,10 @@
+# 0.7.0 — standard bit manipulation
+
+- Implement RV32 Zbb, Zbc and Zbs 1.0 (29 instructions) in both compared pipeline execution lanes.
+- Update firmware/upstream compiler profile and requirements; retain legacy RV32IM profile and FI ABI 2.
+- Add independent polynomial reference, exact decode/corner tests and ECC/TMR pipeline dependency/trap regressions.
+- Physical area/timing and extended full-core formal/compliance remain pending.
+
 # Changelog
 
 ## 0.6.0 — KV260 laboratory control and software contract

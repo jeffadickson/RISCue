@@ -26,3 +26,14 @@ AXI ABI 1 and FI ABI 2. It defaults to loopback and same-origin browser control,
 serializes commands, rejects running memory access, validates ELF segments and
 verifies the loaded SRAM. No Linux/ARM authentication, isolation or radiation
 tolerance claim is made. Standard debug access governance remains DBG-001/002.
+
+## Standard bit manipulation (0.7)
+
+Zbb/Zbc/Zbs add combinational EX logic to both compared lanes; they introduce
+no unprotected sequential state or new FI windows. A reserved extension
+encoding takes the existing precise illegal-instruction trap. Requirements
+ISA-BIT-001 and FT-BIT-001 cover exact decoding and pipeline integrity.
+Duplicated logic detects lane disagreement but does not address shared operand,
+clock, routing or configuration common-mode faults. Larger CLMUL logic requires
+physical timing and placement validation; digital tests do not establish
+radiation qualification. See BITMANIP.md and bitmanip-results.json.

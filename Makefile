@@ -185,8 +185,22 @@ test-kv260-axi: | build
 
 RISCV_GCC ?= riscv64-unknown-elf-gcc
 RISCV_OBJCOPY ?= riscv64-unknown-elf-objcopy
-PLATFORM_FLAGS = -march=rv32imc_zicsr_zifencei_zicntr -mabi=ilp32 -mcmodel=medlow -mstrict-align -mno-relax -msmall-data-limit=0 -ffreestanding -fno-builtin -fno-pic -fno-stack-protector -nostdlib -nostartfiles -O2 -Wall -Wextra
+PLATFORM_FLAGS = -march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs -mabi=ilp32 -mcmodel=medlow -mstrict-align -mno-relax -msmall-data-limit=0 -ffreestanding -fno-builtin -fno-pic -fno-stack-protector -nostdlib -nostartfiles -O2 -Wall -Wextra
 .PHONY: firmware-platform
 firmware-platform: | build
 	$(RISCV_GCC) $(PLATFORM_FLAGS) -DRISCUE_CLOCK_HZ=$(KV260_CLK_HZ) -Wl,--no-relax -Wl,-Map,build/platform-demo.map -T firmware/platform/link.ld firmware/platform/start.S firmware/platform/demo.c -lgcc -o build/platform-demo.elf
 	$(RISCV_OBJCOPY) -O binary build/platform-demo.elf build/platform-demo.bin
+
+.PHONY: test-bitmanip pipeline-bitmanip
+build/bitmanip_vectors.txt: tools/bitmanip_vectors.py | build
+	$(PYTHON) tools/bitmanip_vectors.py
+test-bitmanip: build/bitmanip_vectors.txt
+	$(IVERILOG) -g2012 -s tb_bitmanip -o build/tb_bitmanip rtl/ft_pkg.sv rtl/riscue_execute.sv tests/tb_bitmanip.sv
+	$(VVP) build/tb_bitmanip
+pipeline-bitmanip:
+	TEST_FILTER=bitmanip $(PIPELINE_PYTHON) tools/run_pipeline.py ecc
+	TEST_FILTER=bitmanip $(PIPELINE_PYTHON) tools/run_pipeline.py tmr
+
+.PHONY: formal-bitmanip
+formal-bitmanip: formal-tools
+	$(PYTHON) tools/run_formal.py bitmanip $(FORMAL_ARGS)

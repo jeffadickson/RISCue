@@ -3,7 +3,7 @@
 import argparse,json,os,shutil,subprocess,time,signal,fcntl
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('group',choices=['ecc','ram','monitor','fault','isa','all','prepare','cover','execute','pipeline','pipeline-prepare','muldiv','injector']);p.add_argument('--jobs',type=int,default=2);p.add_argument('--timeout',type=int,default=300);p.add_argument('--instruction',action='append');p.add_argument('--build-dir',default='build/formal');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('group',choices=['ecc','ram','monitor','fault','isa','all','prepare','cover','execute','pipeline','pipeline-prepare','muldiv','injector','bitmanip']);p.add_argument('--jobs',type=int,default=2);p.add_argument('--timeout',type=int,default=300);p.add_argument('--instruction',action='append');p.add_argument('--build-dir',default='build/formal');a=p.parse_args()
 if a.jobs<1 or a.timeout<1:p.error('--jobs and --timeout must be positive')
 env=os.environ.copy();suite=ROOT/'.tools/oss-cad-suite';env['PATH']=str(suite/'bin')+os.pathsep+env['PATH'];env['PYTHONNOUSERSITE']='1'
 sv2v=os.environ.get('SV2V',str(ROOT/'.tools/sv2v-Linux/sv2v'))
@@ -31,7 +31,11 @@ def job(name,files,top,mode='prove',depth=4,params=''):
  return cfg
 jobs=[]
 from prepare_formal_models import prepare_models
-models=prepare_models(build/'models')
+models=prepare_models(build/'models') if a.group!='bitmanip' else None
+if a.group=='bitmanip':
+ from bitmanip_vectors import NAMES
+ for op,name in enumerate(NAMES):
+  jobs.append(job('bitmanip_'+name.replace('.','_'),['rtl/ft_pkg.sv','rtl/riscue_execute.sv','formal/bitmanip.sv'],'formal_bitmanip',depth=1,params=f'chparam -set OP {op} formal_bitmanip'))
 if a.group=='muldiv':
  for funct3,name in enumerate(['mul','mulh','mulhsu','mulhu','div','divu','rem','remu']):
   jobs.append(job('multicycle_'+name,['rtl/ft_pkg.sv','rtl/riscue_pipeline_pkg.sv','rtl/riscue_muldiv.sv','formal/muldiv.sv'],'formal_muldiv','bmc',40,f'chparam -set FUNCT3 {funct3} formal_muldiv'))

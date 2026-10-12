@@ -39,8 +39,9 @@ Prefer standard extensions when useful: Zbb supplies basic bit manipulation
 operations useful for packed registers/flags. Zbc supplies carryless multiply
 for CRC and binary-field calculations. Their value is workload-dependent;
 CRC polynomials, bit order and initialization must come from the mission ICD.
-Zicond may reduce some unpredictable conditional sequences. None of these
-extensions is implemented or advertised by the current profile.
+Zbb/Zbc/Zbs 1.0 are implemented in both compared pipeline execution lanes.
+See BITMANIP.md for the instruction and verification contract. Zicond remains
+unimplemented; it may reduce some unpredictable conditional sequences.
 
 A custom saturating fixed-point arithmetic instruction or a specific CRC
 step can be worthwhile after profiling shows a concrete control/telemetry

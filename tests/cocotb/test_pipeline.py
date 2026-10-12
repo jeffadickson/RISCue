@@ -194,3 +194,51 @@ async def direct_jump_links_wrong_paths_and_trap_priority(d):
     assert [v for pc,rd,v,raw in rows if rd==20]==[11,2]
     # Speculative fall-through store at PC12 must never execute.
     assert int(d.soc.ram.mem[0x340//4].value)==encode(0)
+
+@cocotb.test()
+async def bitmanip_retirement_and_dependencies(d):
+    import random,sys
+    from pathlib import Path
+    sys.path.insert(0,str(Path(os.environ['PROJECT_ROOT'])/'tools'))
+    from bitmanip_vectors import NAMES,IMM,instruction,reference
+    await start(d);rng=random.Random(0xBBBCCB5)
+    def constant(rd,x):
+        upper=(x+0x800)&0xfffff000
+        return [upper|(rd<<7)|0x37,i(rd,rd,x&4095)]
+    # Chunked programs avoid the trap handler at 0x100 and stress forwarding,
+    # a load-use hazard, x0 suppression and store data from each extension.
+    for name in NAMES:
+        d._log.info('bitmanip instruction %s',name)
+        cases=[(0,0),(0x80000000,31),(0xffffffff,0xffffffff),(0x00800080,32)]
+        cases += [(rng.getrandbits(32),rng.getrandbits(32)) for _ in range(4)]
+        words=[];expected={}
+        for a,b in cases:
+            words+=constant(1,a)+constant(2,b)
+            words += [st(1,0,0x300),i(1,0,0x300,2,3)]
+            pc=len(words)*4;words += [instruction(name,3,1,2,b&31)]
+            value=reference(name,a,b);expected[pc]=(3,value)
+            pc=len(words)*4;words += [i(4,3,1)];expected[pc]=(4,(value+1)&0xffffffff)
+            words += [st(3,0,0x304),i(5,0,0x304,2,3)]
+            expected[(len(words)-1)*4]=(5,value)
+            words += [instruction(name,0,1,2,b&31),i(6,0,7)]
+            expected[(len(words)-1)*4]=(6,7)
+        stop=(len(words)-1)*4;words+=[jal(0,0)]
+        await boot(d,words);rows=await retired(d,stop)
+        for pc,rd,result,raw in rows:
+            if pc in expected:assert (rd,result)==expected[pc],(name,pc,result,expected[pc])
+        assert set(expected)<=set(row[0] for row in rows)
+
+@cocotb.test()
+async def bitmanip_reserved_encoding_traps(d):
+    import sys
+    from pathlib import Path
+    sys.path.insert(0,str(Path(os.environ['PROJECT_ROOT'])/'tools'))
+    from bitmanip_vectors import vectors
+    await start(d)
+    illegal=[w for w,a,b,v,bad in vectors() if bad]
+    handler=[csr(0x342,20,0,2),csr(0x341,21,0,2),csr(0x343,22,0,2),i(21,21,4),csr(0x341,0,21),0x30200073]
+    words=[i(1,0,0x100),csr(0x305,0,1)]+illegal+[i(7,0,99),jal(0,0)]
+    await boot(d,words,handler=handler);rows=await retired(d,(len(words)-2)*4)
+    assert [v for pc,rd,v,w in rows if rd==20]==[2]*len(illegal)
+    assert [v for pc,rd,v,w in rows if rd==22]==illegal
+    assert last_values(rows)[7]==99

@@ -2,7 +2,7 @@
 
 A KV260 ARM/AXI lab target now includes a program loader, browser dashboard, telemetry, IRQ and hardware injection controls. See [KV260 setup](boards/kv260/README.md), [C software contract](docs/SOFTWARE_ABI.md), and [standard debug / mission priorities](docs/DEBUG_AND_MISSION_FEATURES.md). Generic AXI simulation passes; Vivado/Linux/physical board validation and standard debug implementation are pending.
 
-Version 0.5.2 adds compared direct-jump target lanes and ID-stage JAL/C.J/C.JAL redirection. `make pipeline-jump` compares early/late resolution in ECC/TMR modes. The 30-instruction short test takes 144 versus 172 clocks; full-workload performance and formal results remain pending.
+Version 0.6.0 added compared direct-jump target lanes and ID-stage JAL/C.J/C.JAL redirection. `make pipeline-jump` compares early/late resolution in ECC/TMR modes. The 30-instruction short test takes 144 versus 172 clocks; full-workload performance and formal results remain pending.
 
 Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
 
@@ -152,3 +152,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md), and the [r
 ## KC705 FPGA target
 
 See [boards/kc705/README.md](boards/kc705/README.md). `make kc705` prepares firmware and builds the XC7K325T target with Vivado; `RF_MODE=tmr` selects triplicated registers. The wrapper provides LEDs, periodic USB-UART status and optional button fault injection. No target bitstream or timing result is claimed yet.
+
+## Zbb, Zbc and Zbs
+
+The pipeline implements all 29 RV32 Zbb/Zbc/Zbs 1.0 instructions. Use the named
+extensions in [the software profile](docs/software-profile.json); the legacy
+serialized target remains RV32IM. `make test-bitmanip` runs the standalone
+reference vectors; `make pipeline-bitmanip` runs ECC/TMR integration tests.
+See [BITMANIP.md](docs/BITMANIP.md) for semantics and validation limits.

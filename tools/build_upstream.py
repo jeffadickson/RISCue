@@ -4,7 +4,7 @@ import json,os,subprocess,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];pipeline=os.environ.get('FT_PIPELINE')=='1';out=ROOT/('build/pipeline-upstream' if pipeline else 'build/upstream');out.mkdir(parents=True,exist_ok=True)
 cc=os.environ.get('RISCV_GCC','riscv64-unknown-elf-gcc');objcopy=os.environ.get('RISCV_OBJCOPY','riscv64-unknown-elf-objcopy')
-common=['-march='+('rv32imc_zicsr_zifencei' if pipeline else 'rv32im'),'-mabi=ilp32','-nostdlib','-nostartfiles','-ffreestanding','-fno-builtin','-fno-pic','-msmall-data-limit=0','-Wl,--no-relax','-T',str(ROOT/'firmware/upstream/link.ld')]
+common=['-march='+('rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs' if pipeline else 'rv32im'),'-mabi=ilp32','-nostdlib','-nostartfiles','-ffreestanding','-fno-builtin','-fno-pic','-msmall-data-limit=0','-Wl,--no-relax','-T',str(ROOT/'firmware/upstream/link.ld')]
 records=[];tests=ROOT/'third_party/riscv-tests';pico=ROOT/'third_party/picorv32'
 if not tests.exists() or not pico.exists():raise SystemExit('Run make fetch first.')
 for repo,item in json.loads((ROOT/'upstream.lock.json').read_text()).items():

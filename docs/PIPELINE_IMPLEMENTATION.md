@@ -8,7 +8,7 @@ KC705 now selects the pipeline. New RTL is implemented but functional
 verification, synthesis, timing closure, and board operation are pending.
 Historical results under `verification/evidence` apply to the legacy target.
 
-The pipeline target is RV32IMC_Zicsr_Zifencei_Zicntr, M-mode only. IF fetches
+The pipeline target is RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only. IF fetches
 ECC-coded words, expands RV32C integer instructions and assembles straddling
 32-bit instructions. ID obtains register operands. EX forwards older results
 and runs either of two compared integer lanes or two compared multicycle

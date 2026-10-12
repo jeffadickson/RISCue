@@ -1,0 +1,102 @@
+{
+  "version": "0.7.0",
+  "recorded_utc": "2026-10-12T21:41:08.496914+00:00",
+  "profile": "rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+  "tools": {
+    "iverilog": "12.0",
+    "cocotb": "2.0.1"
+  },
+  "scope": "Directed bitmanip semantics, exact reserved decode, ECC/TMR dependencies and traps; short legacy-pipeline behavior regressions. Not full ISA compliance, solver proof, timing closure or radiation qualification.",
+  "instruction_count": 29,
+  "standalone_vector_count": 5002,
+  "checks": [
+    {
+      "name": "ecc:bitmanip_retirement_and_dependencies",
+      "status": "pass",
+      "simulation_ns": 150535.0
+    },
+    {
+      "name": "ecc:bitmanip_reserved_encoding_traps",
+      "status": "pass",
+      "simulation_ns": 3815.0
+    },
+    {
+      "name": "ecc:updated-Zba-reserved-trap",
+      "status": "pass"
+    },
+    {
+      "name": "tmr:bitmanip_retirement_and_dependencies",
+      "status": "pass",
+      "simulation_ns": 150535.0
+    },
+    {
+      "name": "tmr:bitmanip_reserved_encoding_traps",
+      "status": "pass",
+      "simulation_ns": 3815.0
+    },
+    {
+      "name": "PASS bitmanip 5002 vectors",
+      "status": "pass"
+    },
+    {
+      "name": "PASS pipeline smoke RF_TMR=0:          20 retirements in         165 clocks",
+      "status": "pass"
+    },
+    {
+      "name": "PASS pipeline smoke RF_TMR=1:          20 retirements in         165 clocks",
+      "status": "pass"
+    },
+    {
+      "name": "PASS direct jump RF_TMR=0 EARLY_JUMP=0 retirements=         30 clocks=        172",
+      "status": "pass"
+    },
+    {
+      "name": "PASS direct jump RF_TMR=0 EARLY_JUMP=1 retirements=         30 clocks=        144",
+      "status": "pass"
+    },
+    {
+      "name": "PASS direct jump RF_TMR=1 EARLY_JUMP=0 retirements=         30 clocks=        172",
+      "status": "pass"
+    },
+    {
+      "name": "PASS direct jump RF_TMR=1 EARLY_JUMP=1 retirements=         30 clocks=        144",
+      "status": "pass"
+    },
+    {
+      "name": "PASS multicycle arithmetic",
+      "status": "pass"
+    },
+    {
+      "name": "PASS KV260 AXI host loading, byte enables, running-access rejection, backpressure, telemetry and injection",
+      "status": "pass"
+    },
+    {
+      "name": "PASS KV260 AXI host loading, byte enables, running-access rejection, backpressure, telemetry and injection",
+      "status": "pass"
+    },
+    {
+      "name": "sv2v pipeline conversion",
+      "status": "pass"
+    },
+    {
+      "name": "sv2v formal bitmanip harness conversion",
+      "status": "pass"
+    }
+  ],
+  "source_sha256": {
+    "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+    "tests/tb_bitmanip.sv": "aed70b6ddb5c08fbaafb2db2b7ddbeaff14c70e9ea1787a3de88c543beaa8632",
+    "tools/bitmanip_vectors.py": "0ec3cb12b70eef98b814d0e6c2fc12286ff9cabcf58add88072b3b021507f163",
+    "tests/cocotb/test_pipeline.py": "5637238adbc9bcc7949fb661da1688037bc7458b6aebbffee17480f5beaff748",
+    "formal/bitmanip.sv": "afd866e57ff83eb821e7466dc0f8ce8924c06f042637e506621c7043c3764776",
+    "tools/run_formal.py": "64f3c70136d85184970a1efa65b0a2b517db01d0e8a889e3ff156fed3b6bd313",
+    "docs/software-profile.json": "f78ba9b171478d8add611cdcb58dd4468d71ae8422f588ef269e14e49e77846d"
+  },
+  "formal": "29 combinational jobs configured; harness conversion checked; solver not run",
+  "pending": [
+    "full extended-ISA compliance/RVFI formal",
+    "cross-compiler firmware execution",
+    "Vivado synthesis/area/timing",
+    "physical board/radiation qualification"
+  ]
+}
