@@ -1,5 +1,7 @@
 # KC705 laboratory target
 
+Version 0.5 selects riscue_pipeline_soc (five-stage RV32IMC machine core). Its functional verification and Vivado/board bring-up are pending. The board image/clock/pin interface below is retained. VIO/ILA campaign builds and ABI 2 are documented in lab/README.md. The external IRQ core input is tied inactive by this board wrapper.
+
 Target part: `xc7k325tffg900-2`. This adds a board wrapper and an explicit Vivado synthesis/implementation flow. No Vivado build, simulation, formal campaign or board programming has been run for this target. Timing, pin operation and resource fit remain unverified.
 
 ## Build

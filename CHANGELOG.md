@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 — pipeline/platform implementation; functional validation pending
+
+- Add overlapping five-stage RV32IMC machine core, CSRs/counters, CLINT,
+  precise traps/interrupts, FENCE.I and duplicated multicycle arithmetic.
+- Protect pipeline/platform/arithmetic state and add versioned FI windows.
+- Select the pipeline for KC705 and add explicit VIO/ILA campaign builds.
+- Configure ECC/TMR cocotb, arithmetic/injector regressions and RV32IMC RVFI.
+- Preserve legacy modules and evidence; new results are compile-only.
+
+
 ## 0.4.0 — KC705 laboratory target
 
 - Vivado build/program targets, clock/reset wrapper and UG810 pin constraints.

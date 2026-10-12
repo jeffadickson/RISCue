@@ -1,0 +1,108 @@
+{
+  "version": "0.5.0",
+  "recorded_utc": "2026-10-12T19:16:17.372164+00:00",
+  "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr, M-mode only",
+  "validation_scope": "syntax, elaboration, conversion only; no simulation, proof, upstream execution, Vivado implementation, hardware or radiation validation",
+  "compile_results": [
+    {
+      "name": "pipeline-ecc",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "pipeline-tmr",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "pipeline-rvfi",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "injector",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "muldiv",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "legacy-soc",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "legacy-execute",
+      "status": "pass",
+      "kind": "compile-only",
+      "notes": []
+    },
+    {
+      "name": "pipeline-sv2v",
+      "status": "pass",
+      "kind": "conversion-only",
+      "notes": []
+    },
+    {
+      "name": "python-ast",
+      "status": "pass",
+      "kind": "syntax-only",
+      "notes": []
+    },
+    {
+      "name": "formal-muldiv",
+      "kind": "compile-only",
+      "status": "pass",
+      "notes": []
+    },
+    {
+      "name": "formal-muldiv-sv2v",
+      "kind": "conversion-only",
+      "status": "pass",
+      "notes": []
+    },
+    {
+      "name": "formal-injector",
+      "kind": "compile-only",
+      "status": "pass",
+      "notes": []
+    },
+    {
+      "name": "formal-injector-sv2v",
+      "kind": "conversion-only",
+      "status": "pass",
+      "notes": []
+    },
+    {
+      "name": "board-production",
+      "kind": "compile-only with black-box vendor stubs",
+      "status": "pass",
+      "notes": []
+    },
+    {
+      "name": "board-instrumented",
+      "kind": "compile-only with black-box vendor stubs",
+      "status": "pass",
+      "notes": []
+    }
+  ],
+  "pending": [
+    "cocotb ECC/TMR directed and randomized retirement regressions",
+    "multicycle arithmetic and injection scheduler simulation",
+    "pinned upstream RV32I/M/C and benchmark execution",
+    "RV32IMC RVFI and dedicated privileged/fault proofs",
+    "actual Vivado IP generation, synthesis and place/route",
+    "KC705 programming, VIO/ILA and injection campaigns",
+    "physical separation, configuration scrubbing and radiation qualification"
+  ],
+  "legacy_evidence": "verification/evidence retains legacy serialized-core results only"
+}

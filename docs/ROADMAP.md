@@ -1,11 +1,17 @@
-# RISCue roadmap
+# Remaining target and verification work
 
-1. Close whole-core M and register-consistency proof timeouts with compositional invariants and solver tuning.
-2. Complete ECC/TMR whole-core fault containment; retain reachability and explicit fault-model limits.
-3. Broaden RAM proofs to arbitrary partial writes, scrub arbitration and realistic memory/bus consistency.
-4. Add decoded-ISA completeness and equivalence checks for RVFI-enabled/disabled builds.
-5. Add target synthesis/placement constraints and netlist fault injection before physical radiation claims.
+The five-stage machine pipeline, compressed decoder, multicycle arithmetic,
+CLINT, interrupts and instrumented KC705 integration are implemented in 0.5.
+They have compile-only evidence. Functional verification and target hardware
+qualification remain open:
 
-The formal campaigns were stopped at the user's request after setup. Historical successful checks are useful development evidence, not complete processor signoff. Current details are in `verification/evidence/formal/RUN_STATUS.md`.
-
-KC705 next steps: actual Vivado/board bring-up, placement-separated replica regions, configuration-memory scrubbing and a target-specific clock/reset fault model.
+- Execute cocotb, arithmetic/injector regressions and pinned upstream programs.
+- Run RV32IMC RVFI and dedicated CSR/interrupt/fault properties; retain failures,
+  covers and timeouts explicitly. Compliance testing is not yet established.
+- Run real Vivado IP generation, synthesis, physical redundancy audits,
+  place/route, timing and board/debug campaigns.
+- Engineer physical replica separation, memory interleaving, configuration
+  scrubbing, voter/SET/common-mode coverage and radiation qualification.
+- Consider A/Zalrsc/Zaamo only if multihart/DMA/atomic software requires it.
+- Cache, predictor, higher-throughput dual-port memory and external IRQ board
+  wiring are future performance/platform options, not enabled features.

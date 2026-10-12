@@ -1,5 +1,7 @@
 # Formal verification — RV32IM-FT v0.3
 
+New explicit targets formal-pipeline-prepare and formal-pipeline stage RV32IMC RVFI jobs for riscue_pipeline_core with 64-cycle instruction depths. formal-muldiv and formal-injector add dedicated bounded arithmetic/campaign checks and cover witnesses. These jobs have not been run. Existing results below remain legacy evidence.
+
 ## Reproduce on Linux x86-64 or Windows WSL2
 
 Python 3.12+, GNU Make, git, internet access and about 4 GB of disk are needed. No paid tools or licenses are needed. Tool archives and riscv-formal are pinned; archive SHA256 values are checked before extraction. The suite download is about 713 MB. Binaries stay in `.tools/`; upstream source stays in `third_party/`.

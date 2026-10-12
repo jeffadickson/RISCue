@@ -1,6 +1,7 @@
 #ifndef FT_RISCV_TEST_H
 #define FT_RISCV_TEST_H
 #define RVTEST_RV32U
+#define RVTEST_RV32UC
 #define RVTEST_RV64U
 #define TESTNUM gp
 #define RVTEST_CODE_BEGIN .section .text; .balign 4; .globl _start; _start:

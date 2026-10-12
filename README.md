@@ -1,5 +1,21 @@
 # RISCue
 
+**0.5 pipeline target:** KC705 now selects `riscue_pipeline_soc`, an
+implemented RV32IMC_Zicsr_Zifencei_Zicntr M-only five-stage core with CLINT,
+precise traps, interrupts, and multicycle arithmetic. New simulations,
+formal proofs, Vivado builds and board testing are pending; historical results
+below concern the preserved legacy serialized core. See
+[the pipeline design/status](docs/PIPELINE_IMPLEMENTATION.md),
+[STRIDE and fault model](docs/STRIDE.md), and
+[the instrumented KC705 build](boards/kc705/lab/README.md).
+
+Explicit new commands: `make pipeline-compile`, `make pipeline-test`,
+`make test-muldiv`, `make test-injector`, `make formal-pipeline-prepare`,
+`make formal-pipeline`, and `make kc705-instrumented`.
+
+
+## Legacy prototype (0.4)
+
 **RV32IM with ECC, TMR, fault injection, and formal verification.**
 
 Original SystemVerilog RV32IM implementation with radiation-fault mitigation mechanisms, pinned upstream programs, cocotb testing, fault-injection hooks and a triplicated error recorder. **This is a tested prototype, not a radiation-qualified or flight-ready processor.**

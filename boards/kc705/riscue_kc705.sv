@@ -1,7 +1,7 @@
 // KC705 bring-up wrapper. Board diagnostics/clock/reset are outside the SEU guarantee.
 module riscue_kc705 #(
  parameter integer WORDS=1024, CLK_DIV=100,
- parameter bit RF_TMR=0,FI_ENABLE=0,
+ parameter bit RF_TMR=0,FI_ENABLE=0,INSTRUMENTED=0,
  parameter INIT_FILE="firmware.hex"
 )(input wire sys_clk_p,sys_clk_n,cpu_reset,fault_button,
  output wire [7:0] led,output wire uart_tx);
@@ -34,10 +34,30 @@ module riscue_kc705 #(
  end
  wire halted,fatal,trap,retire_valid,fi_ack;
  wire [31:0] pc,cause,tval,corrected_count,uncorrectable_count,disagreement_count,fatal_count;
- wire [15:0] flags;
- (* keep_hierarchy="yes" *) rv32im_ft_soc #(.WORDS(WORDS),.INIT_FILE(INIT_FILE),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE)) soc(
-  .clk(clk),.rst_n(rst_n),.halted(halted),.fatal(fatal),.trap(trap),.pc(pc),.trap_cause(cause),.trap_value(tval),
-  .retire_valid(retire_valid),.fi_valid(FI_ENABLE&&inject),.fi_target(4'd8),.fi_index(WORDS-1),.fi_mask(512'd1),.fi_ack(fi_ack),
+ wire [15:0] flags,first_flags,last_flags;
+ wire [31:0] retire_pc,first_pc,first_address,last_pc,last_address;
+ wire event_valid,lab_core_reset,fi_valid;
+ wire [3:0] fi_target;wire [31:0] fi_index;wire [511:0] fi_mask;
+ wire soc_rst_n=rst_n&&!lab_core_reset;
+ generate if(INSTRUMENTED)begin:instrumented
+  riscue_kc705_lab #(.WORDS(WORDS),.RF_TMR(RF_TMR)) lab(
+   .clk(clk),.rst_n(rst_n),.external_trigger(inject),.core_fatal(fatal),
+   .retire_valid(retire_valid),.retire_pc(retire_pc),.pc(pc),.flags(flags),.cause(cause),
+   .corrected_count(corrected_count),.uncorrectable_count(uncorrectable_count),
+   .disagreement_count(disagreement_count),.fatal_count(fatal_count),.fi_ack(fi_ack),.event_valid(event_valid),
+   .first_flags(first_flags),.first_pc(first_pc),.first_address(first_address),
+   .last_flags(last_flags),.report_last_pc(last_pc),.last_address(last_address),
+   .core_reset(lab_core_reset),.fi_valid(fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask));
+ end else begin:production
+  assign lab_core_reset=0;assign fi_valid=FI_ENABLE&&inject;
+  assign fi_target=8;assign fi_index=WORDS-1;assign fi_mask=512'd1;
+ end endgenerate
+ (* keep_hierarchy="yes" *) riscue_pipeline_soc #(.WORDS(WORDS),.INIT_FILE(INIT_FILE),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE)) soc(
+  .clk(clk),.rst_n(soc_rst_n),.halted(halted),.fatal(fatal),.trap(trap),.pc(pc),.trap_cause(cause),.trap_value(tval),
+  .external_irq(1'b0),.retire_valid(retire_valid),.retire_pc(retire_pc),
+  .fi_valid(FI_ENABLE&&fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask),.fi_ack(fi_ack),
+  .event_valid(event_valid),.first_flags(first_flags),.first_pc(first_pc),.first_address(first_address),
+  .last_flags(last_flags),.last_pc(last_pc),.last_address(last_address),
   .sticky_flags(flags),.corrected_count(corrected_count),.uncorrectable_count(uncorrectable_count),
   .disagreement_count(disagreement_count),.fatal_count(fatal_count));
  logic [23:0] heartbeat;logic [31:0] activity;

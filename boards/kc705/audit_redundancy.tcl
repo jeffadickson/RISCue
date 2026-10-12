@@ -15,6 +15,12 @@ foreach {name prefix replicas} {
  puts $out "$name sequential counts: $counts"
  if {[llength [lsort -unique $counts]]!=1} {error "$name replica counts differ: $counts"}
 }
+foreach unit {arithmetic0 arithmetic1} {
+ foreach n {0 1 2} {puts $out "$unit state $n: [replica_count *soc/core/$unit/s${n}_reg*]"}
+}
+if {$instrumented} {
+ foreach n {0 1 2} {puts $out "injector state $n: [replica_count *instrumented/lab/controller/c${n}_reg*]"}
+}
 foreach lane {lane0 lane1} {
  set cells [get_cells -hierarchical -filter "NAME =~ *soc/core/$lane"]
  if {[llength $cells]!=1} {error "Execution lane $lane was not preserved"}

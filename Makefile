@@ -87,16 +87,64 @@ formal-model-tests: formal-fetch formal-tools
 # Board builds are explicit and never run simulation or formal verification.
 VIVADO ?= vivado
 KC705_FI ?= 0
+KC705_INSTRUMENTED ?= 0
 KC705_WORDS ?= 1024
 KC705_CLK_DIV ?= 100
 KC705_IMAGE ?= firmware/kc705/demo.hex
-KC705_BUILD = build/kc705-$(RF_MODE)-fi$(KC705_FI)-d$(KC705_CLK_DIV)
+KC705_BUILD = build/kc705-pipeline-$(RF_MODE)-fi$(KC705_FI)-d$(KC705_CLK_DIV)$(if $(filter 1,$(KC705_INSTRUMENTED)),-instrumented,)
 .PHONY: kc705-image kc705 kc705-synth kc705-program
 kc705-image:
 	$(PYTHON) tools/prepare_fpga_image.py "$(KC705_IMAGE)" "$(KC705_BUILD)/firmware.hex" --words $(KC705_WORDS)
 kc705: kc705-image
-	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) bit
+	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) bit $(KC705_INSTRUMENTED)
 kc705-synth: kc705-image
-	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) synth
+	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) synth $(KC705_INSTRUMENTED)
 kc705-program:
 	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/program.log" -source boards/kc705/program.tcl -tclargs "$(KC705_BUILD)/riscue_kc705.bit"
+
+# New pipeline targets are explicit; test/formal retain legacy evidence scope.
+PIPELINE_RTL = rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv
+.PHONY: pipeline-compile pipeline-test pipeline-test-ecc pipeline-test-tmr formal-pipeline formal-pipeline-prepare kc705-instrumented kc705-instrumented-synth kc705-inject test-muldiv test-injector
+pipeline-compile: | build
+	$(IVERILOG) -g2012 -s tb_pipeline -o build/pipeline_compile $(PIPELINE_RTL) tests/cocotb/tb_pipeline.sv
+pipeline-test-ecc: pipeline-tools
+	$(PIPELINE_PYTHON) tools/run_pipeline.py ecc
+pipeline-test-tmr: pipeline-tools
+	$(PIPELINE_PYTHON) tools/run_pipeline.py tmr
+pipeline-test: pipeline-test-ecc pipeline-test-tmr
+formal-pipeline formal-pipeline-prepare: formal-fetch formal-tools
+	$(PYTHON) tools/run_formal.py $(patsubst formal-%,%,$@) $(FORMAL_ARGS)
+kc705-instrumented:
+	$(MAKE) kc705 KC705_FI=1 KC705_INSTRUMENTED=1
+kc705-instrumented-synth:
+	$(MAKE) kc705-synth KC705_FI=1 KC705_INSTRUMENTED=1
+KC705_INJECT_TARGET ?= 8
+KC705_INJECT_INDEX ?= 1023
+KC705_INJECT_MASK ?= 1
+kc705-inject:
+	$(MAKE) kc705-inject-run KC705_FI=1 KC705_INSTRUMENTED=1
+.PHONY: kc705-inject-run
+kc705-inject-run:
+	$(VIVADO) -mode batch -nojournal -source boards/kc705/lab/run_injection.tcl -tclargs "$(KC705_BUILD)" $(KC705_INJECT_TARGET) $(KC705_INJECT_INDEX) $(KC705_INJECT_MASK)
+test-muldiv: | build
+	$(IVERILOG) -g2012 -s tb_muldiv -o build/tb_muldiv rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_muldiv.sv
+	$(VVP) build/tb_muldiv
+test-injector: | build
+	$(IVERILOG) -g2012 -s tb_injector -o build/tb_injector rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/fi_campaign_controller.sv tests/tb_injector.sv
+	$(VVP) build/tb_injector
+
+.PHONY: pipeline-upstream-build pipeline-upstream
+pipeline-upstream-build: fetch
+	FT_PIPELINE=1 $(PYTHON) tools/build_upstream.py
+pipeline-upstream: pipeline-tools pipeline-upstream-build
+	$(PIPELINE_PYTHON) tools/run_pipeline.py ecc --upstream
+	$(PIPELINE_PYTHON) tools/run_pipeline.py tmr --upstream
+
+PIPELINE_PYTHON ?= .tools/test-python/bin/python
+.PHONY: pipeline-tools
+pipeline-tools: formal-tools
+	$(PYTHON) tools/setup_testing.py
+
+.PHONY: formal-muldiv formal-injector
+formal-muldiv formal-injector: formal-fetch formal-tools
+	$(PYTHON) tools/run_formal.py $(patsubst formal-%,%,$@) $(FORMAL_ARGS)

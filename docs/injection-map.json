@@ -1,0 +1,557 @@
+{
+  "abi": 2,
+  "core_bits": 4031,
+  "core_windows": [
+    {
+      "index": 0,
+      "lsb": 0,
+      "width": 512
+    },
+    {
+      "index": 1,
+      "lsb": 512,
+      "width": 512
+    },
+    {
+      "index": 2,
+      "lsb": 1024,
+      "width": 512
+    },
+    {
+      "index": 3,
+      "lsb": 1536,
+      "width": 512
+    },
+    {
+      "index": 4,
+      "lsb": 2048,
+      "width": 512
+    },
+    {
+      "index": 5,
+      "lsb": 2560,
+      "width": 512
+    },
+    {
+      "index": 6,
+      "lsb": 3072,
+      "width": 512
+    },
+    {
+      "index": 7,
+      "lsb": 3584,
+      "width": 447
+    }
+  ],
+  "core_fields": [
+    {
+      "field": "f",
+      "width": 529,
+      "lsb": 3502,
+      "msb": 4030
+    },
+    {
+      "field": "d",
+      "width": 529,
+      "lsb": 2973,
+      "msb": 3501
+    },
+    {
+      "field": "x",
+      "width": 529,
+      "lsb": 2444,
+      "msb": 2972
+    },
+    {
+      "field": "m",
+      "width": 529,
+      "lsb": 1915,
+      "msb": 2443
+    },
+    {
+      "field": "w",
+      "width": 529,
+      "lsb": 1386,
+      "msb": 1914
+    },
+    {
+      "field": "fetch_pc",
+      "width": 32,
+      "lsb": 1354,
+      "msb": 1385
+    },
+    {
+      "field": "arch_pc",
+      "width": 32,
+      "lsb": 1322,
+      "msb": 1353
+    },
+    {
+      "field": "half_word",
+      "width": 32,
+      "lsb": 1290,
+      "msb": 1321
+    },
+    {
+      "field": "half_valid",
+      "width": 1,
+      "lsb": 1289,
+      "msb": 1289
+    },
+    {
+      "field": "bus_active",
+      "width": 1,
+      "lsb": 1288,
+      "msb": 1288
+    },
+    {
+      "field": "bus_data",
+      "width": 1,
+      "lsb": 1287,
+      "msb": 1287
+    },
+    {
+      "field": "bus_half",
+      "width": 1,
+      "lsb": 1286,
+      "msb": 1286
+    },
+    {
+      "field": "bus_kill",
+      "width": 1,
+      "lsb": 1285,
+      "msb": 1285
+    },
+    {
+      "field": "bus_cooldown",
+      "width": 1,
+      "lsb": 1284,
+      "msb": 1284
+    },
+    {
+      "field": "bus_pc",
+      "width": 32,
+      "lsb": 1252,
+      "msb": 1283
+    },
+    {
+      "field": "bus_addr",
+      "width": 32,
+      "lsb": 1220,
+      "msb": 1251
+    },
+    {
+      "field": "bus_wdata",
+      "width": 32,
+      "lsb": 1188,
+      "msb": 1219
+    },
+    {
+      "field": "bus_ctrl",
+      "width": 32,
+      "lsb": 1156,
+      "msb": 1187
+    },
+    {
+      "field": "bus_wait",
+      "width": 32,
+      "lsb": 1124,
+      "msb": 1155
+    },
+    {
+      "field": "x_started",
+      "width": 1,
+      "lsb": 1123,
+      "msb": 1123
+    },
+    {
+      "field": "x_done",
+      "width": 1,
+      "lsb": 1122,
+      "msb": 1122
+    },
+    {
+      "field": "x_result",
+      "width": 32,
+      "lsb": 1090,
+      "msb": 1121
+    },
+    {
+      "field": "fatal",
+      "width": 1,
+      "lsb": 1089,
+      "msb": 1089
+    },
+    {
+      "field": "trap_pulse",
+      "width": 1,
+      "lsb": 1088,
+      "msb": 1088
+    },
+    {
+      "field": "irq_drain",
+      "width": 1,
+      "lsb": 1087,
+      "msb": 1087
+    },
+    {
+      "field": "irq_cause",
+      "width": 32,
+      "lsb": 1055,
+      "msb": 1086
+    },
+    {
+      "field": "irq_meta",
+      "width": 1,
+      "lsb": 1054,
+      "msb": 1054
+    },
+    {
+      "field": "irq_sync",
+      "width": 1,
+      "lsb": 1053,
+      "msb": 1053
+    },
+    {
+      "field": "mtvec",
+      "width": 32,
+      "lsb": 1021,
+      "msb": 1052
+    },
+    {
+      "field": "mepc",
+      "width": 32,
+      "lsb": 989,
+      "msb": 1020
+    },
+    {
+      "field": "mcause",
+      "width": 32,
+      "lsb": 957,
+      "msb": 988
+    },
+    {
+      "field": "mtval",
+      "width": 32,
+      "lsb": 925,
+      "msb": 956
+    },
+    {
+      "field": "mscratch",
+      "width": 32,
+      "lsb": 893,
+      "msb": 924
+    },
+    {
+      "field": "mie",
+      "width": 32,
+      "lsb": 861,
+      "msb": 892
+    },
+    {
+      "field": "mie_global",
+      "width": 1,
+      "lsb": 860,
+      "msb": 860
+    },
+    {
+      "field": "mpie",
+      "width": 1,
+      "lsb": 859,
+      "msb": 859
+    },
+    {
+      "field": "msip",
+      "width": 1,
+      "lsb": 858,
+      "msb": 858
+    },
+    {
+      "field": "mcycle",
+      "width": 64,
+      "lsb": 794,
+      "msb": 857
+    },
+    {
+      "field": "minstret",
+      "width": 64,
+      "lsb": 730,
+      "msb": 793
+    },
+    {
+      "field": "mtime",
+      "width": 64,
+      "lsb": 666,
+      "msb": 729
+    },
+    {
+      "field": "mtimecmp",
+      "width": 64,
+      "lsb": 602,
+      "msb": 665
+    },
+    {
+      "field": "order",
+      "width": 64,
+      "lsb": 538,
+      "msb": 601
+    },
+    {
+      "field": "scrub",
+      "width": 5,
+      "lsb": 533,
+      "msb": 537
+    },
+    {
+      "field": "retire",
+      "width": 1,
+      "lsb": 532,
+      "msb": 532
+    },
+    {
+      "field": "retire_trap",
+      "width": 1,
+      "lsb": 531,
+      "msb": 531
+    },
+    {
+      "field": "retire_intr",
+      "width": 1,
+      "lsb": 530,
+      "msb": 530
+    },
+    {
+      "field": "interrupt_next",
+      "width": 1,
+      "lsb": 529,
+      "msb": 529
+    },
+    {
+      "field": "retired",
+      "width": 529,
+      "lsb": 0,
+      "msb": 528
+    }
+  ],
+  "slot_fields": [
+    {
+      "field": "valid",
+      "width": 1,
+      "lsb": 528,
+      "msb": 528
+    },
+    {
+      "field": "trap",
+      "width": 1,
+      "lsb": 527,
+      "msb": 527
+    },
+    {
+      "field": "serial",
+      "width": 1,
+      "lsb": 526,
+      "msb": 526
+    },
+    {
+      "field": "csr",
+      "width": 1,
+      "lsb": 525,
+      "msb": 525
+    },
+    {
+      "field": "csr_write",
+      "width": 1,
+      "lsb": 524,
+      "msb": 524
+    },
+    {
+      "field": "mret",
+      "width": 1,
+      "lsb": 523,
+      "msb": 523
+    },
+    {
+      "field": "fencei",
+      "width": 1,
+      "lsb": 522,
+      "msb": 522
+    },
+    {
+      "field": "pc",
+      "width": 32,
+      "lsb": 490,
+      "msb": 521
+    },
+    {
+      "field": "raw",
+      "width": 32,
+      "lsb": 458,
+      "msb": 489
+    },
+    {
+      "field": "insn",
+      "width": 32,
+      "lsb": 426,
+      "msb": 457
+    },
+    {
+      "field": "cause",
+      "width": 32,
+      "lsb": 394,
+      "msb": 425
+    },
+    {
+      "field": "tval",
+      "width": 32,
+      "lsb": 362,
+      "msb": 393
+    },
+    {
+      "field": "a",
+      "width": 32,
+      "lsb": 330,
+      "msb": 361
+    },
+    {
+      "field": "b",
+      "width": 32,
+      "lsb": 298,
+      "msb": 329
+    },
+    {
+      "field": "csr_value",
+      "width": 32,
+      "lsb": 266,
+      "msb": 297
+    },
+    {
+      "field": "mem_data",
+      "width": 32,
+      "lsb": 234,
+      "msb": 265
+    },
+    {
+      "field": "bytes",
+      "width": 3,
+      "lsb": 231,
+      "msb": 233
+    },
+    {
+      "field": "rs1",
+      "width": 5,
+      "lsb": 226,
+      "msb": 230
+    },
+    {
+      "field": "rs2",
+      "width": 5,
+      "lsb": 221,
+      "msb": 225
+    },
+    {
+      "field": "csr_addr",
+      "width": 12,
+      "lsb": 209,
+      "msb": 220
+    },
+    {
+      "field": "e",
+      "width": 209,
+      "lsb": 0,
+      "msb": 208
+    }
+  ],
+  "arithmetic_bits": 307,
+  "arithmetic_fields": [
+    {
+      "field": "busy",
+      "width": 1,
+      "lsb": 306,
+      "msb": 306
+    },
+    {
+      "field": "done",
+      "width": 1,
+      "lsb": 305,
+      "msb": 305
+    },
+    {
+      "field": "fatal",
+      "width": 1,
+      "lsb": 304,
+      "msb": 304
+    },
+    {
+      "field": "op",
+      "width": 3,
+      "lsb": 301,
+      "msb": 303
+    },
+    {
+      "field": "count",
+      "width": 6,
+      "lsb": 295,
+      "msb": 300
+    },
+    {
+      "field": "quotient",
+      "width": 32,
+      "lsb": 263,
+      "msb": 294
+    },
+    {
+      "field": "divisor",
+      "width": 32,
+      "lsb": 231,
+      "msb": 262
+    },
+    {
+      "field": "result",
+      "width": 32,
+      "lsb": 199,
+      "msb": 230
+    },
+    {
+      "field": "original",
+      "width": 32,
+      "lsb": 167,
+      "msb": 198
+    },
+    {
+      "field": "remainder",
+      "width": 33,
+      "lsb": 134,
+      "msb": 166
+    },
+    {
+      "field": "qnegative",
+      "width": 1,
+      "lsb": 133,
+      "msb": 133
+    },
+    {
+      "field": "rnegative",
+      "width": 1,
+      "lsb": 132,
+      "msb": 132
+    },
+    {
+      "field": "a",
+      "width": 33,
+      "lsb": 99,
+      "msb": 131
+    },
+    {
+      "field": "b",
+      "width": 33,
+      "lsb": 66,
+      "msb": 98
+    },
+    {
+      "field": "product",
+      "width": 66,
+      "lsb": 0,
+      "msb": 65
+    }
+  ]
+}

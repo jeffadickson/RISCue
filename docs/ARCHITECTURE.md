@@ -1,5 +1,7 @@
 # RISCue architecture
 
+The new five-stage machine core is described in PIPELINE_IMPLEMENTATION.md. The serialized architecture below belongs to the preserved legacy implementation.
+
 The core serializes fetch, execution and memory transactions. It uses RV32IM semantics with a fail-stop execution environment; it is not a complete privileged RISC-V platform. The public module names retain `rv32im_ft_*` to avoid unnecessary interface churn.
 
 ```mermaid

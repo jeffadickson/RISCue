@@ -1,6 +1,8 @@
 # vivado -mode batch -source boards/kc705/build.tcl -tclargs OUTDIR RF_TMR FI WORDS CLK_DIV STAGE
-if {$argc!=6} {error "Expected OUTDIR RF_TMR FI WORDS CLK_DIV STAGE"}
-lassign $argv output rf_tmr fi words clk_div stage
+if {$argc ni {6 7}} {error "Expected OUTDIR RF_TMR FI WORDS CLK_DIV STAGE"}
+lassign $argv output rf_tmr fi words clk_div stage instrumented
+if {$instrumented eq ""} {set instrumented 0}
+if {$instrumented ni {0 1} || ($instrumented && !$fi)} {error "Instrumentation requires FI=1"}
 foreach value [list $rf_tmr $fi $words $clk_div] {if {![string is integer -strict $value]} {error "Non-integer configuration"}}
 if {$rf_tmr ni {0 1} || $fi ni {0 1} || $words<1024 || $words>8192 || $clk_div<8 || $clk_div>128 || $stage ni {synth bit}} {error "Invalid KC705 configuration"}
 set boarddir [file dirname [file normalize [info script]]]
@@ -11,12 +13,20 @@ if {![file exists [file join $outdir firmware.hex]]} {error "Prepare firmware.he
 cd $outdir
 set part xc7k325tffg900-2
 if {[llength [get_parts $part]]!=1} {error "Install Kintex-7 device support for $part"}
-foreach name {ft_pkg.sv rv32_execute.sv rv32im_ft_core.sv ft_ecc_ram.sv ft_event_monitor.sv rv32im_ft_soc.sv} {
+if {$instrumented} {source [file join $boarddir lab create_debug_ip.tcl]}
+foreach name {ft_pkg.sv riscue_pipeline_pkg.sv riscue_rvc.sv riscue_execute.sv riscue_muldiv.sv riscue_pipeline_core.sv ft_ecc_ram.sv ft_event_monitor.sv riscue_pipeline_soc.sv fi_campaign_controller.sv} {
  read_verilog -sv [file join $root rtl $name]
 }
+if {$instrumented} {read_verilog -sv [file join $boarddir lab riscue_kc705_lab.sv]}
 foreach name {uart_tx.sv status_uart.sv riscue_kc705.sv} {read_verilog -sv [file join $boarddir $name]}
-synth_design -top riscue_kc705 -part $part -flatten_hierarchy none -generic [list RF_TMR=$rf_tmr FI_ENABLE=$fi WORDS=$words CLK_DIV=$clk_div]
+synth_design -top riscue_kc705 -part $part -flatten_hierarchy none -generic [list RF_TMR=$rf_tmr FI_ENABLE=$fi WORDS=$words CLK_DIV=$clk_div INSTRUMENTED=$instrumented]
 read_xdc [file join $boarddir kc705.xdc]
+if {$instrumented} {
+ set hubs [get_debug_cores -quiet dbg_hub]
+ if {[llength $hubs]!=1} {error "Expected one debug hub"}
+ set_property C_CLK_INPUT_FREQ_HZ [expr {int(1.0e9/$clk_div)}] $hubs
+ set_property C_ENABLE_CLK_DIVIDER false $hubs
+}
 source [file join $boarddir audit_redundancy.tcl]
 report_utilization -hierarchical -file utilization_synth.rpt
 write_checkpoint -force riscue_synth.dcp
@@ -38,6 +48,7 @@ foreach delay {max min} {
 }
 set failures [get_drc_violations -quiet -filter {SEVERITY == Error}]
 if {[llength $failures]!=0} {error "DRC errors remain; inspect drc.rpt"}
+if {$instrumented} {write_debug_probes -force riscue_kc705.ltx}
 write_bitstream -force riscue_kc705.bit
 set out [open build-info.txt w]
 puts $out "Vivado: [version -short]"

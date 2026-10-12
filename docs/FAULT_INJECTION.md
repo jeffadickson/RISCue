@@ -1,20 +1,41 @@
-# Fault injection contract
+# Pipeline fault-injection ABI 2
 
-`FI_ENABLE=0` by default in RTL. Test wrapper sets it to 1; this is not a flight interface. Ports: `fi_valid`, target, index, 512-bit XOR mask, combinational `fi_ack`. Testbench drives them before a clock edge. A qualified request flips the specified stored bits at that edge; keep valid asserted for one edge only. Unqualified target/index/mode receives no acknowledgement. Reset takes priority. Only the low mask bits listed below are used; a zero/high-only mask may acknowledge a no-op.
+Masks are post-update XOR faults, applied after architectural writes and
+repair on the injection edge. The controller, receiver and host reject empty,
+out-of-width and out-of-range requests. FI_ENABLE defaults zero. ABI 2 is
+reported in VIO configuration bits 15:8; WORDS is in 31:16, FI/RF_TMR in 1:0.
+The legacy core has ABI 1 with a single 384-bit control record and no target 15;
+its original documentation is preserved in LEGACY_FAULT_INJECTION.md.
 
-| Target | Storage | Index | Mask width |
+| Target | Object | Index | Mask width |
 | --- | --- | --- | --- |
-| 1 | ECC RF | x0–x31 | 39 |
-| 2–4 | RF TMR replicas 0–2 | x0–x31 | 32 |
-| 5–7 | CPU control replicas 0–2 | ignored | 384 |
-| 8 | SRAM word | 0 to WORDS−1 | 39 |
-| 9–11 | RAM control replicas 0–2 | ignored | 35 |
-| 12–14 | Error-recorder replicas 0–2 | ignored | 321 |
+| 1 | SECDED register | 0..31, ECC RF mode only | 39 |
+| 2/3/4 | TMR register replicas 0/1/2 | 0..31, TMR RF mode only | 32 |
+| 5/6/7 | Pipeline/platform record replicas c0/c1/c2 | 512-bit window index | 512, final window shortened |
+| 8 | SRAM codeword | 0..WORDS-1 | 39 |
+| 9/10/11 | SRAM control replicas | 0 | 35 |
+| 12/13/14 | Diagnostic recorder replicas | 0 | 321 |
+| 15 | Arithmetic state replica | 0/1/2 lane 0; 256/257/258 lane 1 | derived MD_BITS |
 
-XOR applies to the post-update value: a same-edge architectural write/repair occurs first, then the upset. This avoids accidentally reverting an advancing state machine or losing a coincident write. Deposits into SRAM through simulator hierarchy are used to load clean firmware; fault campaigns use the qualified injection interface.
+The canonical packed types are in rtl/riscue_pipeline_pkg.sv. Run
+`python3 tools/write_injection_map.py` to regenerate injection-map.json with
+exact bit ranges, slot subfields and final-window width. Bit 0 is the low bit
+of the last declared field. A window mask bit b flips packed state bit
+`512*index+b`. The map must accompany the exact bitstream revision: changing
+packed field order/width changes positions and must update the map/version.
+State windows cover pipeline buffers, CSRs, timer, counters, bus ownership,
+interrupt sampling and retirement snapshots. Arithmetic records use their
+separate target because their updates occur in independent modules.
 
-Campaigns distinguish (a) one-bit stored SEU, (b) multiple-bit same-codeword errors, (c) one replica state upset, (d) deliberate execution-result mismatch. Controlled RTL output forcing is retained in the legacy SV test for execution disagreement; it is not a calibrated SET model.
+Test memory correction by injecting one bit in a codeword, then observing
+repair/reporting before applying a separate two-bit fault to the clean word.
+Scrub traversal depends on foreground bus load; wait for repair rather than
+assuming one word per clock. A two-bit read/partial-write error fail stops the
+pipeline SRAM endpoint; a full-word overwrite can replace a bad codeword.
+Three-or-more-bit ECC patterns can alias and are outside the SECDED guarantee.
 
-A physical-memory campaign must additionally sweep adjacent-cell bursts under the actual layout/interleaving, repeated upsets before scrub, controller/address-selection faults, different operating modes, and reset/power/clock/configuration failures. Three-or-more-bit SECDED errors and multi-replica TMR strikes may be silent; that is outside the declared guarantee, not an allowed flight outcome.
-
-Results are deterministic ordered Python JSON records and cocotb JUnit XML. Simulator random seed is logged, but the current sweep stimuli do not depend on randomness. Failed assertions terminate a campaign; partial JSON must not be treated as complete evidence.
+Campaign sequencing and JTAG commands are in boards/kc705/lab/README.md.
+The software detector log counts newly observed detector flags, not particles
+or every consecutive cycle carrying the same flag. Architectural access
+faults use the RAM bit-4 / combined bit-12 flag without counting as a hardware
+uncorrectable/fatal event. UART and machine CSRs expose architectural traps.

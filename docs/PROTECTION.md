@@ -1,5 +1,7 @@
 # Protection boundaries — v0.2
 
+The new pipeline/platform/arithmetic protection inventory and explicit common-mode limits are in PIPELINE_IMPLEMENTATION.md. The legacy inventory below does not establish verification of the new core.
+
 The RTL implements correction of single stored bits in SECDED memories and masking/repair of one replica error in TMR state. Duplicated execution decisions are compared. These mechanisms do not establish radiation hardness.
 
 Remaining gates are captured as open/partial requirements, not claimed as complete:

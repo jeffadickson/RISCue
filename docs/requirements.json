@@ -18,7 +18,7 @@
   {
     "id": "ISA-003",
     "category": "ISA",
-    "requirement": "Unsupported C/A/F/D/Zicsr/Zifencei and privileged features shall be explicitly declared and never claimed as verified.",
+    "requirement": "The legacy core excludes C/A/F/D/Zicsr/Zifencei/privileged features. The pipeline target has separate profile and verification claims; unsupported features shall trap or remain disabled.",
     "verification": "upstream manifest exclusions; README; review",
     "status": "implemented",
     "priority": "must"
@@ -366,5 +366,157 @@
     "verification": "Vivado and KC705 hardware validation",
     "status": "open",
     "priority": "must"
+  },
+  {
+    "id": "PIPE-001",
+    "category": "Pipeline",
+    "requirement": "Provide overlapping IF/ID/EX/MEM/WB stages with valid backpressure, in-order retirement, forwarding, x0 exclusion, and load-use interlocks.",
+    "verification": "pipeline forwarding_load_use_and_multicycle_m; RVFI checks",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-002",
+    "category": "Pipeline",
+    "requirement": "Resolve redirects by squashing younger stages and invalidating outstanding fetch responses. A killed unified-bus request shall drain without being reused.",
+    "verification": "compressed fetch; self-modifying code; RVFI pc/causal checks",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-003",
+    "category": "Pipeline",
+    "requirement": "Retire precise exceptions at WB: older instructions complete, faulting register/store effects are suppressed, and younger stores cannot issue ahead of an older trap.",
+    "verification": "precise_traps_and_mret; FORMAL assertions",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-001",
+    "category": "ISA",
+    "requirement": "Target RV32IMC_Zicsr_Zifencei_Zicntr in M-mode only and report only I/M/C in misa. Exclude A/F/D, MMU, U-mode and S-mode from this implementation.",
+    "verification": "profile declarations; pipeline ISA checks",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-002",
+    "category": "ISA",
+    "requirement": "Implement fixed misa/mhartid; mstatus MIE/MPIE with MPP fixed M; direct mtvec; mepc/mcause/mtval; MSIE/MTIE/MEIE in mie/mip; and mscratch with documented WARL behavior.",
+    "verification": "CSR directed tests and review",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-003",
+    "category": "ISA",
+    "requirement": "Implement all six Zicsr instructions with rd/rs1/uimm read/write suppression; unknown CSRs and read-only alias writes trap precisely. Fixed misa and hardware mip writes shall be ignored.",
+    "verification": "csr_suppression_counters_and_fence_i; precise trap tests",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-004",
+    "category": "ISA",
+    "requirement": "Provide 64-bit mcycle/minstret and high halves, read-only cycle/instret/time aliases and high halves; minstret excludes traps, and explicit counter-half writes take precedence over that half increment.",
+    "verification": "counter rollover and write tests",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-005",
+    "category": "ISA",
+    "requirement": "Implement illegal instruction, ECALL from M, EBREAK, instruction/load/store misalignment, and instruction/load/store access fault traps into mtvec. Hardware integrity failures remain fail stop.",
+    "verification": "precise_traps_and_mret; fetch/access fault tests",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PRIV-006",
+    "category": "ISA",
+    "requirement": "Implement MRET MIE/MPIE restoration and WFI as a documented NOP; interrupts drain older instructions and use external, software, timer priority at instruction boundaries.",
+    "verification": "external_interrupt_boundary; CLINT interrupt tests",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "TIMER-001",
+    "category": "Platform",
+    "requirement": "Provide msip at 0x02000000, mtimecmp at 0x02004000, mtime at 0x0200bff8 with byte enables and RV32 halves, plus one synchronized external IRQ input. Reset mtime/msip to zero and mtimecmp to all ones.",
+    "verification": "CLINT directed tests; state injection",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "IFENCE-001",
+    "category": "ISA",
+    "requirement": "FENCE.I shall drain older stores and invalidate buffered/outstanding younger fetches before restarting at its following PC.",
+    "verification": "csr_suppression_counters_and_fence_i",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "MUL-001",
+    "category": "ISA",
+    "requirement": "Use a two-execution-clock multiplier and a 32-iteration plus result-clock divider, with no combinational divide/modulo datapath; preserve signed high products, divide by zero, and INT_MIN/-1 semantics.",
+    "verification": "tb_muldiv; pipeline M tests; RVFI M checks",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "RVC-001",
+    "category": "ISA",
+    "requirement": "Implement RV32C integer encodings and hints, reserved encoding traps, 16-bit alignment, word-straddling 32-bit instructions, 2/4-byte link addresses, and raw instruction retirement.",
+    "verification": "compressed_straddling_fetch; RVFI C checks",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PROT-PIPE-001",
+    "category": "Protection",
+    "requirement": "Triplicate all stage records, valid bits, PCs, operands, bus ownership/watchdog, CSRs/counters, CLINT, IRQ sampling state, and arithmetic state. Repair a single replica and fail stop on no matching complete state replicas.",
+    "verification": "protected_state_and_memory_injection; synthesis redundancy audit",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "PROT-PIPE-002",
+    "category": "Protection",
+    "requirement": "Instantiate and preserve two execution and two multicycle arithmetic lanes; compare arithmetic completion/ready/result before architectural use. Shared combinational/control/voter faults remain explicitly outside the guarantee.",
+    "verification": "lane mismatch review; Vivado hierarchy audit; future transient campaigns",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "FI-PIPE-001",
+    "category": "Injection",
+    "requirement": "Expose versioned 512-bit core-state windows for targets 5/6/7 and lane/replica arithmetic target 15; validate masks and indices, acknowledge accepted post-update XOR injections, and protect the hardware campaign controller.",
+    "verification": "tb_injector; fault map; protected_state_and_memory_injection",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "FI-LAB-001",
+    "category": "Injection",
+    "requirement": "Provide explicit KC705 instrumented VIO/ILA builds and clock-driven burst/stride/rotation injection with immediate, retirement-PC, or external triggers, arm/disarm, error status, counts and timestamps. Production builds shall default FI disabled.",
+    "verification": "tb_injector; Vivado debug build and future hardware validation",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "VERIFY-PIPE-001",
+    "category": "Verification",
+    "requirement": "Keep legacy and pipeline evidence separate; supply cocotb ECC/TMR regressions, multicycle and injector tests, pinned upstream fetch/build adapters, and RV32IMC riscv-formal targets. Never treat compilation or configured harnesses as functional proofs.",
+    "verification": "verification/pipeline-status.json; documented commands",
+    "status": "implemented; verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "ATOM-001",
+    "category": "ISA",
+    "requirement": "A/Zalrsc/Zaamo implementation is conditional on future multihart/DMA/atomic software requirements; define reservations, coherence and bus ownership before enabling it.",
+    "verification": "future architecture review",
+    "status": "deferred",
+    "priority": "conditional"
   }
 ]

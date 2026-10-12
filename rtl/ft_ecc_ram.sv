@@ -3,7 +3,7 @@
 module ft_ecc_ram #(
  parameter integer WORDS=1024,
  parameter INIT_FILE="",
- parameter bit FI_ENABLE=0
+ parameter bit FI_ENABLE=0,FAIL_STOP_DED=0
 )(input logic clk,rst_n,req,
  input logic [38:0] addr_code,wdata_code,ctrl_code,
  output logic ready,error,
@@ -64,8 +64,12 @@ module ft_ecc_ram #(
     end
    end
   end
+  if(FAIL_STOP_DED&&req&&!voted.ready&&(ac.uncorrectable||cc.uncorrectable||(cc.data[4]&&wc.uncorrectable)||(!cc.data[4]&&dc.uncorrectable)||(cc.data[4]&&cc.data[3:0]!=15&&dc.uncorrectable)))begin next.fatal=1;write_mem=0;end
   if(corrected_event)begin event_flags[0]=1;event_address=index*4;end
-  if(next.error&&!voted.error)begin event_flags[1]=1;event_address=ac.data;end
+  if(next.error&&!voted.error)begin
+   if(FAIL_STOP_DED&&!ac.uncorrectable&&!cc.uncorrectable&&!wc.uncorrectable&&!dc.uncorrectable)event_flags[4]=1;
+   else event_flags[1]=1;event_address=ac.data;
+  end
   if(disagreement_event)begin event_flags[2]=1;event_address=voted.scrub*4;end
   if(next.fatal&&!voted.fatal)begin event_flags[3]=1;event_address=voted.scrub*4;end
  end

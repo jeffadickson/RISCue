@@ -1,5 +1,7 @@
 # Executed validation — v0.2
 
+Pipeline 0.5 validation is compilation/elaboration and RTL conversion only. New simulations, proofs, upstream execution, Vivado implementation and board checks were not run; see verification/pipeline-status.json. Existing behavioral results below concern the legacy core.
+
 Tools: Icarus Verilog 12.0, cocotb 2.0.1, RISC-V bare-metal GCC 13.2.0/binutils 2.42, sv2v v0.0.13, Yosys 0.33, Python 3.12.4. Verification date: 2026-10-12.
 
 ## Upstream programs

@@ -4,12 +4,17 @@ set bit [file normalize [lindex $argv 0]]
 if {![file exists $bit]} {error "Missing bitstream: $bit"}
 open_hw_manager
 connect_hw_server
+set targets [get_hw_targets]
+if {[llength $targets]!=1} {error "Expected one hardware target"}
+set_property PARAM.FREQUENCY 1000000 [lindex $targets 0]
 open_hw_target
 set devices [get_hw_devices -filter {PART =~ xc7k325t*}]
 if {[llength $devices]!=1} {error "Expected exactly one connected XC7K325T; select the intended target manually"}
 set device [lindex $devices 0]
 current_hw_device $device
 refresh_hw_device $device
+set ltx [file rootname $bit].ltx
+if {[file exists $ltx]} {set_property PROBES.FILE $ltx $device}
 set_property PROGRAM.FILE $bit $device
 program_hw_devices $device
 close_hw_manager

@@ -1,0 +1,368 @@
+// Overlapping five-stage, in-order RV32IMC machine-mode core.
+// Unified ECC-coded bus: req stays asserted through ready, then drops for
+// one cycle. Stores issue only from MEM after older WB traps are resolved.
+module riscue_pipeline_core #(
+ parameter logic [31:0] RESET_PC=0,
+ parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0
+)(
+ input logic clk,rst_n,external_irq,
+ output logic req,output logic [38:0] addr_code,wdata_code,ctrl_code,
+ input logic ready,bus_error,external_fault,input logic [38:0] rdata_code,
+ output logic halted,fatal,trap,output logic [31:0] trap_cause,trap_value,pc,
+ output logic corrected_event,disagreement_event,retire_valid,
+ output logic [31:0] retire_pc,retire_insn,retire_result,output logic [4:0] retire_rd,
+ input logic fi_valid,input logic [3:0] fi_target,input logic [31:0] fi_index,
+ input logic [511:0] fi_mask,output logic fi_ack,
+ output logic [7:0] event_flags,output logic [31:0] event_address,
+ output logic [31:0] rvfi_pc_wdata,rvfi_rs1_rdata,rvfi_rs2_rdata,rvfi_mem_addr,rvfi_mem_rdata,rvfi_mem_wdata,
+ output logic [4:0] rvfi_rs1_addr,rvfi_rs2_addr,
+ output logic [3:0] rvfi_mem_rmask,rvfi_mem_wmask,
+ output logic rvfi_trap,rvfi_intr,output logic [63:0] rvfi_order
+);
+ import ft_pkg::*;
+ import riscue_pipeline_pkg::*;
+ localparam integer STATE_BITS=$bits(state_t),WINDOWS=(STATE_BITS+511)/512;
+ (* keep="true",DONT_TOUCH="TRUE" *) state_t c0,c1,c2;
+ state_t s,n;
+ (* keep="true",DONT_TOUCH="TRUE" *) logic [38:0] rf[0:31];
+ (* keep="true",DONT_TOUCH="TRUE" *) logic [31:0] tmr0[0:31],tmr1[0:31],tmr2[0:31];
+ ecc_result_t ra,rb,scrubbed,response;
+ exec_t e0,e1,executed;
+ logic [31:0] xa,xb,csr_read,csr_operand,csr_new,load_data;
+ logic csr_known,csr_ro,csr_write_intent,record_bad,rf_bad,execute_bad;
+ logic [31:0] pending_irq;logic [31:0] irq_code;
+ logic [15:0] fetch_half;
+ logic [31:0] decompressed;
+ logic compressed_illegal;
+ logic md_start,md_cancel,md_ready0,md_ready1,md_done0,md_done1,md_dis0,md_dis1,md_fatal0,md_fatal1;
+ logic [31:0] md_result0,md_result1;
+ logic md_ack0,md_ack1,core_ack,rf_ack;
+ logic [STATE_BITS-1:0] injection;
+ logic x_mop,x_block,m_block,flush,serial_pending,load_hazard;
+ logic write_rf;logic [4:0] write_rd;logic [31:0] write_value;
+ wire [31:0] x_insn=s.x.insn,x_pc=s.x.pc;wire [2:0] x_bytes=s.x.bytes;
+ logic [38:0] fi_rf_base;
+ logic [3:0] store_mask;logic [31:0] store_data;
+ integer j,k;
+ function automatic logic uses1(input [31:0] insn);
+  case(insn[6:0])
+   7'h33,7'h13,7'h03,7'h23,7'h63,7'h67:uses1=1;
+   7'h73:uses1=insn[14:12]!=0&&!insn[14];
+   default:uses1=0;
+  endcase
+ endfunction
+ function automatic logic uses2(input [31:0] insn);
+  uses2=insn[6:0]==7'h33||insn[6:0]==7'h23||insn[6:0]==7'h63;
+ endfunction
+ function automatic logic serial(input [31:0] insn);
+  serial=insn[6:0]==7'h73||(insn[6:0]==7'h0f&&insn[14:12]==1);
+ endfunction
+ function automatic logic clint(input [31:0] a);
+  clint=(a&32'hfffffffc)==32'h02000000 || (a&32'hfffffff8)==32'h02004000 || (a&32'hfffffff8)==32'h0200bff8;
+ endfunction
+ function automatic [31:0] extend_load(input [31:0] data,input [1:0] offset,input [2:0] kind);
+  logic [31:0] v;
+  begin v=data>>(offset*8);
+   case(kind)
+    0:extend_load={{24{v[7]}},v[7:0]};1:extend_load={{16{v[15]}},v[15:0]};
+    4:extend_load={24'b0,v[7:0]};5:extend_load={16'b0,v[15:0]};default:extend_load=v;
+   endcase
+  end
+ endfunction
+ riscue_rvc decompress(.c(fetch_half),.insn(decompressed),.illegal(compressed_illegal));
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_execute #(.COMPRESSED(1),.MULTICYCLE_M(1)) lane0(
+  .instruction_bytes(x_bytes),.insn(x_insn),.pc(x_pc),.a(xa),.b(xb),.out(e0));
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_execute #(.COMPRESSED(1),.MULTICYCLE_M(1)) lane1(
+  .instruction_bytes(x_bytes),.insn(x_insn),.pc(x_pc),.a(xa),.b(xb),.out(e1));
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_muldiv #(.FI_ENABLE(FI_ENABLE)) arithmetic0(
+  .clk(clk),.rst_n(rst_n),.start(md_start),.cancel(md_cancel),.op(s.x.insn[14:12]),.lhs(xa),.rhs(xb),
+  .ready(md_ready0),.done(md_done0),.disagreement(md_dis0),.fatal(md_fatal0),.result(md_result0),
+  .fi_valid(fi_valid&&fi_target==15&&fi_index[31:8]==0&&fi_index[7:2]==0),.fi_replica(fi_index[1:0]),.fi_mask(fi_mask),.fi_ack(md_ack0));
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_muldiv #(.FI_ENABLE(FI_ENABLE)) arithmetic1(
+  .clk(clk),.rst_n(rst_n),.start(md_start),.cancel(md_cancel),.op(s.x.insn[14:12]),.lhs(xa),.rhs(xb),
+  .ready(md_ready1),.done(md_done1),.disagreement(md_dis1),.fatal(md_fatal1),.result(md_result1),
+  .fi_valid(fi_valid&&fi_target==15&&fi_index[31:8]==1&&fi_index[7:2]==0),.fi_replica(fi_index[1:0]),.fi_mask(fi_mask),.fi_ack(md_ack1));
+ always_comb begin
+  s=(c0&c1)|(c0&c2)|(c1&c2);n=s;
+  store_mask=s.m.e.mask;store_data=s.m.e.wdata;
+  record_bad=(c0!=c1)&&(c0!=c2)&&(c1!=c2);
+  ra=ecc_decode(rf[s.d.insn[19:15]]);rb=ecc_decode(rf[s.d.insn[24:20]]);scrubbed=ecc_decode(rf[s.scrub]);response=ecc_decode(rdata_code);
+  rf_bad=!RF_TMR&&((s.d.valid&&uses1(s.d.insn)&&ra.uncorrectable)||(s.d.valid&&uses2(s.d.insn)&&rb.uncorrectable)||scrubbed.uncorrectable);
+  if(RF_TMR)begin
+   ra.data=(tmr0[s.d.insn[19:15]]&tmr1[s.d.insn[19:15]])|(tmr0[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]])|(tmr1[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]]);
+   rb.data=(tmr0[s.d.insn[24:20]]&tmr1[s.d.insn[24:20]])|(tmr0[s.d.insn[24:20]]&tmr2[s.d.insn[24:20]])|(tmr1[s.d.insn[24:20]]&tmr2[s.d.insn[24:20]]);
+  end
+  xa=s.x.rs1==0?0:s.x.a;xb=s.x.rs2==0?0:s.x.b;
+  if(s.w.valid&&!s.w.trap&&s.w.e.rd_we&&s.w.e.rd!=0)begin
+   if(s.x.rs1==s.w.e.rd)xa=s.w.e.result;
+   if(s.x.rs2==s.w.e.rd)xb=s.w.e.result;
+  end
+  if(s.m.valid&&!s.m.trap&&s.m.e.rd_we&&s.m.e.rd!=0&&!s.m.e.mem)begin
+   if(s.x.rs1==s.m.e.rd)xa=s.m.e.result;
+   if(s.x.rs2==s.m.e.rd)xb=s.m.e.result;
+  end
+  load_hazard=s.m.valid&&s.m.e.mem&&!s.m.e.we&&s.m.e.rd!=0&&((uses1(s.x.insn)&&s.x.rs1==s.m.e.rd)||(uses2(s.x.insn)&&s.x.rs2==s.m.e.rd));
+  csr_known=1;csr_ro=0;csr_read=0;
+  case(s.x.insn[31:20])
+   12'h300:csr_read=32'h1800|(s.mie_global?32'h8:0)|(s.mpie?32'h80:0);
+   12'h301:begin csr_read=32'h40001104;end
+   12'h304:csr_read=s.mie;
+   12'h305:csr_read=s.mtvec;
+   12'h340:csr_read=s.mscratch;
+   12'h341:csr_read=s.mepc;
+   12'h342:csr_read=s.mcause;
+   12'h343:csr_read=s.mtval;
+   12'h344:csr_read=(s.msip?32'h8:0)|(s.mtime>=s.mtimecmp?32'h80:0)|(s.irq_sync?32'h800:0);
+   12'hb00:csr_read=s.mcycle[31:0];12'hb80:csr_read=s.mcycle[63:32];
+   12'hb02:csr_read=s.minstret[31:0];12'hb82:csr_read=s.minstret[63:32];
+   12'hc00:begin csr_read=s.mcycle[31:0];csr_ro=1;end
+   12'hc80:begin csr_read=s.mcycle[63:32];csr_ro=1;end
+   12'hc02:begin csr_read=s.minstret[31:0];csr_ro=1;end
+   12'hc82:begin csr_read=s.minstret[63:32];csr_ro=1;end
+   12'hc01:begin csr_read=s.mtime[31:0];csr_ro=1;end
+   12'hc81:begin csr_read=s.mtime[63:32];csr_ro=1;end
+   12'hf11,12'hf12,12'hf13,12'hf14:begin csr_read=0;csr_ro=1;end
+   default:csr_known=0;
+  endcase
+  csr_operand=s.x.insn[14]?{27'b0,s.x.insn[19:15]}:xa;
+  csr_write_intent=s.x.insn[13:12]==1||(s.x.insn[19:15]!=0);
+  case(s.x.insn[13:12])
+   1:csr_new=csr_operand;2:csr_new=csr_read|csr_operand;3:csr_new=csr_read&~csr_operand;default:csr_new=csr_read;
+  endcase
+  executed=e0;
+  if(s.x.insn[6:0]==7'h73)begin
+   if(s.x.insn[14:12]!=0&&s.x.insn[13:12]!=0)begin
+    executed='0;executed.rd=s.x.insn[11:7];executed.rd_we=1;executed.result=csr_read;executed.next_pc=s.x.pc+s.x.bytes;
+    if(!csr_known||(csr_ro&&csr_write_intent))begin executed.trap=1;executed.cause=2;executed.tval=s.x.raw;end
+   end else if(s.x.insn==32'h30200073||s.x.insn==32'h10500073)begin
+    executed='0;executed.next_pc=s.x.insn==32'h30200073 ?s.mepc:s.x.pc+s.x.bytes;
+   end
+  end
+  if(s.x.trap)begin executed='0;executed.trap=1;executed.cause=s.x.cause;executed.tval=s.x.tval;end
+  if(executed.trap)begin executed.rd_we=0;executed.mem=0;executed.we=0;if(executed.cause==2)executed.tval=s.x.raw;end
+  x_mop=s.x.insn[6:0]==7'h33&&s.x.insn[31:25]==1&&!s.x.trap;
+  if(x_mop)executed.result=s.x_result;
+  execute_bad=(s.x.valid&&e0!=e1)||md_done0!=md_done1||md_ready0!=md_ready1||(md_done0&&md_result0!=md_result1)||md_fatal0||md_fatal1;
+  corrected_event=!RF_TMR&&((s.d.valid&&(ra.corrected||rb.corrected))||scrubbed.corrected)||(s.bus_active&&ready&&response.corrected);
+  disagreement_event=(c0!=c1)||(c0!=c2)||md_dis0||md_dis1;
+  if(RF_TMR)for(j=0;j<32;j=j+1)begin
+   if(tmr0[j]!=tmr1[j]||tmr0[j]!=tmr2[j])disagreement_event=1;
+   if(tmr0[j]!=tmr1[j]&&tmr0[j]!=tmr2[j]&&tmr1[j]!=tmr2[j])rf_bad=1;
+  end
+  fatal=s.fatal||record_bad||rf_bad||execute_bad||external_fault||(s.bus_active&&ready&&response.uncorrectable);
+  halted=fatal;trap=s.trap_pulse;trap_cause=s.mcause;trap_value=s.mtval;pc=s.arch_pc;
+  req=rst_n&&s.bus_active&&!fatal&&!(s.w.valid&&s.w.trap&&s.bus_data);
+  addr_code=ecc_encode(s.bus_addr);wdata_code=ecc_encode(s.bus_wdata);ctrl_code=ecc_encode(s.bus_ctrl);
+  retire_valid=rst_n&&s.retire;retire_pc=s.retired.pc;retire_insn=s.retired.raw;retire_rd=s.retired.e.rd_we?s.retired.e.rd:0;
+  retire_result=retire_rd==0?0:s.retired.e.result;
+  rvfi_pc_wdata=s.retired.e.next_pc;rvfi_rs1_addr=s.retired.rs1;rvfi_rs2_addr=s.retired.rs2;
+  rvfi_rs1_rdata=s.retired.a;rvfi_rs2_rdata=s.retired.b;
+  rvfi_mem_addr=s.retired.e.addr&32'hfffffffc;rvfi_mem_rdata=s.retired.mem_data;rvfi_mem_wdata=s.retired.e.wdata;
+  rvfi_mem_rmask=s.retired.e.mem&&!s.retired.e.we?(s.retired.e.load_kind==0||s.retired.e.load_kind==4?4'b0001:s.retired.e.load_kind==1||s.retired.e.load_kind==5?4'b0011:4'b1111)<<s.retired.e.addr[1:0]:0;
+  rvfi_mem_wmask=s.retired.e.mem&&s.retired.e.we?s.retired.e.mask:0;
+  rvfi_trap=s.retire_trap;rvfi_intr=s.retire_intr;rvfi_order=s.order-1;
+  fetch_half=s.bus_pc[1]?response.data[31:16]:response.data[15:0];
+  event_flags=0;event_address=s.arch_pc;
+  if(corrected_event)event_flags[0]=1;
+  if(rf_bad||(s.bus_active&&ready&&response.uncorrectable))event_flags[1]=1;
+  if(disagreement_event)event_flags[2]=1;
+  if(s.bus_active&&ready&&bus_error)begin if(external_fault)event_flags[3]=1;event_address=s.bus_pc;end
+  if(execute_bad)event_flags[4]=1;
+  if(record_bad)event_flags[6]=1;
+  if(external_fault)event_flags[7]=1;
+  n.retire=0;n.retire_trap=0;n.retire_intr=0;n.trap_pulse=0;
+  n.mcycle=s.mcycle+1;n.mtime=s.mtime+1;n.irq_meta=external_irq;n.irq_sync=s.irq_meta;
+  n.scrub=s.scrub+1'b1;n.bus_cooldown=0;
+  write_rf=0;write_rd=0;write_value=0;flush=0;m_block=0;x_block=0;load_data=0;
+  md_start=0;md_cancel=0;
+  serial_pending=(s.x.valid&&s.x.serial)||(s.m.valid&&s.m.serial)||(s.w.valid&&s.w.serial);
+  if(!fatal)begin
+   // WB is the only architectural register/CSR commit point.
+   if(s.w.valid)begin
+    n.w.valid=0;n.retire=1;n.retired=s.w;n.order=s.order+1;n.retire_intr=s.interrupt_next;n.interrupt_next=0;
+    if(s.w.trap)begin
+     n.mepc=s.w.pc&32'hfffffffe;n.mcause=s.w.cause;n.mtval=s.w.tval;
+     n.mpie=s.mie_global;n.mie_global=0;n.trap_pulse=1;n.retire_trap=1;
+     n.fetch_pc=s.mtvec;n.arch_pc=s.mtvec;n.retired.e.next_pc=s.mtvec;flush=1;
+    end else begin
+     n.minstret=s.minstret+1;n.arch_pc=s.w.e.next_pc;
+     write_rf=s.w.e.rd_we&&s.w.e.rd!=0;write_rd=s.w.e.rd;write_value=s.w.e.result;
+     if(s.w.csr&&s.w.csr_write)case(s.w.csr_addr)
+      12'h300:begin n.mie_global=s.w.csr_value[3];n.mpie=s.w.csr_value[7];end
+      12'h304:n.mie=s.w.csr_value&32'h888;
+      12'h305:n.mtvec=s.w.csr_value&32'hfffffffc;
+      12'h340:n.mscratch=s.w.csr_value;
+      12'h341:n.mepc=s.w.csr_value&32'hfffffffe;
+      12'h342:n.mcause=s.w.csr_value;12'h343:n.mtval=s.w.csr_value;
+      12'hb00:n.mcycle[31:0]=s.w.csr_value;12'hb80:n.mcycle[63:32]=s.w.csr_value;
+      12'hb02:n.minstret[31:0]=s.w.csr_value;12'hb82:n.minstret[63:32]=s.w.csr_value;
+      default:begin end // mip is read-only hardware pending, writes ignored
+     endcase
+     if(s.w.mret)begin n.mie_global=s.mpie;n.mpie=1;n.fetch_pc=s.mepc;flush=1;end
+     if(s.w.fencei)begin n.fetch_pc=s.w.e.next_pc;flush=1;end
+    end
+   end
+   if(!flush)begin
+    // MEM progresses independently of stalled EX and instruction fetch.
+    if(s.m.valid&&!n.w.valid)begin
+     if(!s.m.e.mem||s.m.trap)begin n.w=s.m;n.m.valid=0;end
+     else if(clint(s.m.e.addr)&&!s.bus_active)begin
+      case(s.m.e.addr&32'hfffffffc)
+       32'h02000000:load_data={31'b0,s.msip};
+       32'h02004000:load_data=s.mtimecmp[31:0];32'h02004004:load_data=s.mtimecmp[63:32];
+       32'h0200bff8:load_data=s.mtime[31:0];32'h0200bffc:load_data=s.mtime[63:32];
+       default:load_data=0;
+      endcase
+      if(s.m.e.we)for(k=0;k<4;k=k+1)if(store_mask[k])case(s.m.e.addr&32'hfffffffc)
+       32'h02000000:if(k==0)n.msip=s.m.e.wdata[0];
+       32'h02004000:n.mtimecmp=(n.mtimecmp&~(64'hff<<(k*8)))|({56'b0,store_data[k*8+:8]}<<(k*8));
+       32'h02004004:n.mtimecmp=(n.mtimecmp&~(64'hff<<(32+k*8)))|({56'b0,store_data[k*8+:8]}<<(32+k*8));
+       32'h0200bff8:n.mtime=(n.mtime&~(64'hff<<(k*8)))|({56'b0,store_data[k*8+:8]}<<(k*8));
+       32'h0200bffc:n.mtime=(n.mtime&~(64'hff<<(32+k*8)))|({56'b0,store_data[k*8+:8]}<<(32+k*8));
+       default:begin end
+      endcase
+      n.w=s.m;n.w.mem_data=load_data;n.w.e.result=extend_load(load_data,s.m.e.addr[1:0],s.m.e.load_kind);n.m.valid=0;
+     end
+    end
+    if(s.bus_active)begin
+     if(ready)begin
+      n.bus_active=0;n.bus_wait=0;n.bus_cooldown=1;
+      if(s.bus_data)begin
+       n.w=s.m;n.m.valid=0;n.w.mem_data=response.data;
+       n.w.e.result=extend_load(response.data,s.m.e.addr[1:0],s.m.e.load_kind);
+       if(bus_error)begin n.w.trap=1;n.w.cause=s.m.e.we?7:5;n.w.tval=s.m.e.addr;n.w.e.rd_we=0;n.w.e.mem=0;end
+      end else if(!s.bus_kill&&!s.irq_drain)begin
+       n.f='0;n.f.valid=1;n.f.pc=s.bus_pc;n.f.bytes=4;
+       if(bus_error)begin n.f.trap=1;n.f.cause=1;n.f.tval=s.bus_half?s.bus_pc+2:s.bus_pc;n.f.insn=32'h13;end
+       else if(s.bus_half)begin n.f.raw={response.data[15:0],s.half_word[15:0]};n.f.insn=n.f.raw;n.half_valid=0;end
+       else if(fetch_half[1:0]!=3)begin
+        n.f.bytes=2;n.f.raw={16'b0,fetch_half};n.f.insn=decompressed;
+        n.f.trap=compressed_illegal;n.f.cause=2;n.f.tval=n.f.raw;
+       end else if(s.bus_pc[1])begin n.half_word={16'b0,fetch_half};n.half_valid=1;n.f.valid=0;end
+       else begin n.f.raw=response.data;n.f.insn=response.data;end
+       if(n.f.valid)begin n.fetch_pc=s.bus_pc+n.f.bytes;n.f.serial=serial(n.f.insn)||n.f.trap;end
+      end
+     end else if(s.bus_wait>=BUS_TIMEOUT-1)begin n.fatal=1;event_flags[5]=1;end
+     else n.bus_wait=s.bus_wait+1;
+    end
+    if(s.x.valid)begin
+     n.x.a=xa;n.x.b=xb;
+     if(x_mop&&!s.x_started&&!load_hazard&&md_ready0&&md_ready1)begin md_start=1;n.x_started=1;end
+     if(s.x_started&&md_done0)begin n.x_done=1;n.x_result=md_result0;end
+     x_block=load_hazard||(x_mop&&!s.x_done);
+     if(!n.m.valid&&!x_block)begin
+      n.m=s.x;n.m.e=executed;n.m.a=xa;n.m.b=xb;n.m.trap=executed.trap;n.m.cause=executed.cause;n.m.tval=executed.tval;
+      n.m.csr=s.x.insn[6:0]==7'h73&&s.x.insn[14:12]!=0;
+      n.m.csr_addr=s.x.insn[31:20];n.m.csr_value=csr_new;n.m.csr_write=csr_write_intent;
+      n.m.mret=s.x.insn==32'h30200073;n.m.fencei=s.x.insn[6:0]==7'h0f&&s.x.insn[14:12]==1;
+      n.x.valid=0;n.x_started=0;n.x_done=0;
+      if(!executed.trap&&executed.next_pc!=s.x.pc+s.x.bytes&&!n.m.mret)begin
+       n.fetch_pc=executed.next_pc;n.f.valid=0;n.d.valid=0;n.half_valid=0;
+       if(n.bus_active&&!n.bus_data)n.bus_kill=1;
+      end
+     end
+    end
+    // Drain accepted instructions before taking an interrupt; fetch is squashed.
+    pending_irq=n.mie&((n.msip?32'h8:0)|(n.mtime>=n.mtimecmp?32'h80:0)|(n.irq_sync?32'h800:0));
+    irq_code=pending_irq[11]?32'h8000000b:pending_irq[3]?32'h80000003:32'h80000007;
+    if(!s.irq_drain&&n.mie_global&&pending_irq!=0&&!serial_pending)begin
+     n.irq_drain=1;n.irq_cause=irq_code;n.f.valid=0;n.d.valid=0;n.half_valid=0;
+     if(n.bus_active&&!n.bus_data)n.bus_kill=1;
+    end
+    if(n.irq_drain&&!n.x.valid&&!n.m.valid&&!n.w.valid)begin
+     n.mepc=n.arch_pc;n.mcause=n.irq_cause;n.mtval=0;n.mpie=n.mie_global;n.mie_global=0;
+     n.fetch_pc=n.mtvec;n.arch_pc=n.mtvec;n.irq_drain=0;n.trap_pulse=1;n.interrupt_next=1;flush=1;
+    end
+    if(!n.irq_drain&&!flush)begin
+     if(s.d.valid&&n.d.valid&&!n.x.valid&&!serial_pending&&(!s.d.serial||(!s.x.valid&&!s.m.valid&&!s.w.valid)))begin
+      n.x=s.d;n.d.valid=0;n.x.rs1=uses1(s.d.insn)?s.d.insn[19:15]:0;n.x.rs2=uses2(s.d.insn)?s.d.insn[24:20]:0;
+      n.x.a=n.x.rs1==0?0:ra.data;n.x.b=n.x.rs2==0?0:rb.data;
+      if(write_rf&&write_rd==n.x.rs1)n.x.a=write_value;
+      if(write_rf&&write_rd==n.x.rs2)n.x.b=write_value;
+     end
+     if(s.f.valid&&n.f.valid&&!n.d.valid)begin n.d=s.f;n.f.valid=0;end
+    end
+    // Unified bus arbitration gives MEM priority, with a required idle bubble.
+    if(!s.bus_active&&!s.bus_cooldown&&!n.bus_active)begin
+     if(n.m.valid&&n.m.e.mem&&!n.m.trap&&!(n.w.valid&&n.w.trap)&&!clint(n.m.e.addr))begin
+      n.bus_active=1;n.bus_data=1;n.bus_kill=0;n.bus_pc=n.m.e.addr;
+      n.bus_addr=n.m.e.addr&32'hfffffffc;n.bus_wdata=n.m.e.wdata;n.bus_ctrl={27'b0,n.m.e.we,n.m.e.we?n.m.e.mask:4'b0};n.bus_wait=0;
+     end else if(!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
+      if(n.fetch_pc[0])begin n.f='0;n.f.valid=1;n.f.pc=n.fetch_pc;n.f.trap=1;n.f.serial=1;n.f.cause=0;n.f.tval=n.fetch_pc;n.f.bytes=2;end
+      else begin
+       n.bus_active=1;n.bus_data=0;n.bus_kill=0;n.bus_half=n.half_valid;n.bus_pc=n.fetch_pc;
+       n.bus_addr=n.half_valid?((n.fetch_pc&32'hfffffffc)+4):(n.fetch_pc&32'hfffffffc);n.bus_ctrl=0;n.bus_wdata=0;n.bus_wait=0;
+      end
+     end
+    end
+   end
+   if(flush)begin
+    n.f.valid=0;n.d.valid=0;n.x.valid=0;n.m.valid=0;n.w.valid=0;n.half_valid=0;n.x_started=0;n.x_done=0;
+    if(n.bus_active&&!n.bus_data)begin
+     n.bus_kill=1;
+     if(ready)begin n.bus_active=0;n.bus_cooldown=1;n.bus_wait=0;end
+    end
+    md_cancel=1;
+   end
+  end else begin n.fatal=1;n.bus_active=0;n.retire=0;md_cancel=1;end
+  pending_irq=0;irq_code=0; // temporaries have no architectural storage
+  if(n.fatal)begin n.retire=0;write_rf=0;md_cancel=1;end
+  injection='0;
+  for(j=0;j<STATE_BITS;j=j+1)if(j/512==fi_index)injection[j]=fi_mask[j%512];
+  core_ack=rst_n&&FI_ENABLE&&fi_valid&&fi_target>=5&&fi_target<=7&&fi_index<WINDOWS&&fi_mask!=0;
+  if(fi_index==WINDOWS-1&&(fi_mask>>(STATE_BITS%512==0?512:STATE_BITS%512))!=0)core_ack=0;
+  rf_ack=rst_n&&FI_ENABLE&&fi_valid&&fi_index<32&&fi_mask!=0&&((!RF_TMR&&fi_target==1&&(fi_mask>>39)==0)||(RF_TMR&&fi_target>=2&&fi_target<=4&&(fi_mask>>32)==0));
+  fi_rf_base=rf[fi_index[4:0]];
+  if(s.scrub==fi_index&&scrubbed.corrected)fi_rf_base=scrubbed.repaired;
+  if(s.d.valid&&s.d.insn[19:15]==fi_index&&ra.corrected)fi_rf_base=ra.repaired;
+  if(s.d.valid&&s.d.insn[24:20]==fi_index&&rb.corrected)fi_rf_base=rb.repaired;
+  if(write_rf&&write_rd==fi_index)fi_rf_base=ecc_encode(write_value);
+  if(fi_index==0)fi_rf_base=ecc_encode(0);
+  fi_ack=core_ack||rf_ack||md_ack0||md_ack1;
+ end
+ always_ff @(posedge clk)begin
+  if(!rst_n)begin
+   c0<='0;c1<='0;c2<='0;
+   c0.fetch_pc<=RESET_PC;c1.fetch_pc<=RESET_PC;c2.fetch_pc<=RESET_PC;
+   c0.arch_pc<=RESET_PC;c1.arch_pc<=RESET_PC;c2.arch_pc<=RESET_PC;
+   c0.mtimecmp<='1;c1.mtimecmp<='1;c2.mtimecmp<='1;
+   for(integer z=0;z<32;z=z+1)begin rf[z]<=ecc_encode(0);tmr0[z]<=0;tmr1[z]<=0;tmr2[z]<=0;end
+  end else begin
+   c0<=n;c1<=n;c2<=n;
+   if(core_ack)case(fi_target)5:c0<=n^injection;6:c1<=n^injection;7:c2<=n^injection;endcase
+   if(RF_TMR)begin
+    for(integer z=0;z<32;z=z+1)begin
+     tmr0[z]<=(tmr0[z]&tmr1[z])|(tmr0[z]&tmr2[z])|(tmr1[z]&tmr2[z]);
+     tmr1[z]<=(tmr0[z]&tmr1[z])|(tmr0[z]&tmr2[z])|(tmr1[z]&tmr2[z]);
+     tmr2[z]<=(tmr0[z]&tmr1[z])|(tmr0[z]&tmr2[z])|(tmr1[z]&tmr2[z]);
+    end
+   end else begin
+    if(scrubbed.corrected&&!scrubbed.uncorrectable)rf[s.scrub]<=scrubbed.repaired;
+    if(s.d.valid&&ra.corrected&&!ra.uncorrectable)rf[s.d.insn[19:15]]<=ra.repaired;
+    if(s.d.valid&&rb.corrected&&!rb.uncorrectable)rf[s.d.insn[24:20]]<=rb.repaired;
+   end
+   if(write_rf&&!n.fatal)begin rf[write_rd]<=ecc_encode(write_value);tmr0[write_rd]<=write_value;tmr1[write_rd]<=write_value;tmr2[write_rd]<=write_value;end
+   rf[0]<=ecc_encode(0);tmr0[0]<=0;tmr1[0]<=0;tmr2[0]<=0;
+   if(rf_ack)case(fi_target)
+    1:rf[fi_index]<=fi_rf_base^fi_mask[38:0];
+    2:tmr0[fi_index]<=((write_rf&&write_rd==fi_index)?write_value:((tmr0[fi_index]&tmr1[fi_index])|(tmr0[fi_index]&tmr2[fi_index])|(tmr1[fi_index]&tmr2[fi_index])))^fi_mask[31:0];
+    3:tmr1[fi_index]<=((write_rf&&write_rd==fi_index)?write_value:((tmr0[fi_index]&tmr1[fi_index])|(tmr0[fi_index]&tmr2[fi_index])|(tmr1[fi_index]&tmr2[fi_index])))^fi_mask[31:0];
+    4:tmr2[fi_index]<=((write_rf&&write_rd==fi_index)?write_value:((tmr0[fi_index]&tmr1[fi_index])|(tmr0[fi_index]&tmr2[fi_index])|(tmr1[fi_index]&tmr2[fi_index])))^fi_mask[31:0];
+   endcase
+  end
+ end
+`ifdef FORMAL
+ reg past_valid=0;
+ always @(posedge clk)begin
+  past_valid<=1;
+  if(rst_n)begin
+   assert(!fatal||!req);
+   if(s.w.valid&&s.w.trap)begin assert(!s.bus_data||!req);assert(!write_rf);end
+   if(s.bus_active&&s.bus_data)assert(s.m.valid&&s.m.e.mem);
+   if(retire_valid&&rvfi_trap)assert(!s.retired.e.rd_we&&!s.retired.e.mem);
+   if(retire_valid&&retire_rd==0)assert(retire_result==0);
+   if(past_valid&&$past(rst_n&&!core_ack))assert(c0==c1&&c0==c2);
+  end
+ end
+`endif
+endmodule

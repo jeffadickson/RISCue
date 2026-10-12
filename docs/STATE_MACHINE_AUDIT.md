@@ -1,5 +1,7 @@
 # State-machine and state inventory — v0.2
 
+The new pipeline uses triplicated stage-valid, transaction, CSR/timer/IRQ and retirement records. Arithmetic busy/iteration/result records are triplicated; out-of-range iteration fails stop. The hardware injection FSM uses distance-four state encodings plus triplication and invalid/no-majority rejection. Shared voters/combinational logic and board diagnostics remain outside the guarantee. New synthesis and formal evidence is pending; the audit below concerns the legacy core.
+
 **All explicit sequential controllers in this RTL have protected stored state. This does not mean every control path is radiation hardened.**
 
 | Block/state | Stored-state protection | Detection/recovery | Remaining vulnerability |
