@@ -23,8 +23,8 @@ CRC polynomial, reflection and initial/final XOR remain software choices.
 
 Use `-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs -mabi=ilp32`.
 No custom compiler backend is needed. A toolchain must recognize these named
-extensions and provide suitable ILP32 support; cross-compiled execution remains
-pending. `misa` remains 0x40001104: the B aggregate requires Zba as well as
+extensions and provide suitable ILP32 support; a small compiled C workload now passes ECC/TMR simulation. Full compiler/
+library and platform firmware execution validation remains pending. `misa` remains 0x40001104: the B aggregate requires Zba as well as
 Zbb/Zbs, and Zba is absent. The software profile advertises the named extensions.
 
 ## Verification

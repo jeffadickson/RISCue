@@ -13,7 +13,10 @@ helpers and a diagnostic mailbox. GCC must recognize the named extensions
 and provide compatible ILP32 libgcc. Compiler flags are explicit in Makefile;
 strict alignment prevents compiler-generated misaligned data accesses.
 No libc, malloc, filesystem, semihosting or OS syscall ABI is supplied.
-Firmware build/execution with a cross compiler remains unvalidated here.
+The platform firmware builds and passes the linked-ELF ISA audit with GCC
+13.2/binutils 2.42. Its interrupt/demo execution remains pending. A separate
+small C workload runs successfully in ECC/TMR pipeline simulation; see
+`ELF_COMPATIBILITY.md` and `firmware/smoke/README.md`.
 
 The demo's local SRAM is 32 KiB at zero. Stack top is 0x7f00; the last 256 bytes
 are a mailbox. Timer ticks run at the actual core-clock rate; CLOCK_HZ in the
@@ -39,3 +42,7 @@ Use measured firmware/interrupt budgets; the 30-instruction jump benchmark
 is not a general speedup or mission WCET bound.
 
 Primary compiler reference: https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html
+
+Compiler flags are generated from software-profile.json; linked pipeline
+firmware is audited before conversion to a raw image. The audit checks ISA
+metadata and decoded executable sections, with limits in ELF_COMPATIBILITY.md.

@@ -16,6 +16,9 @@ _start:
  call main
 3: wfi
  j 3b
+ // Pad this input section with assembler-generated NOPs before the linker
+ // aligns the following trap section; zero fill would decode as C.UNIMP.
+ .balign 4
  .section .text
  .balign 4
 _trap_vector:

@@ -582,5 +582,13 @@
     "verification": "lane0/lane1 hierarchy; pipeline-bitmanip ECC/TMR; future timing and fault/formal campaigns",
     "status": "implemented; directed ECC/TMR tests passed; full formal/physical validation pending",
     "priority": "must"
+  },
+  {
+    "id": "SW-002",
+    "category": "Software",
+    "requirement": "Generate pipeline compiler flags from the canonical JSON profile; audit linked firmware ABI/ISA attributes and decoded executable sections before objcopy. Fail on unavailable extensions/instructions, missing metadata or tool failures, document conservative audit limitations, and simulate an actual cross-compiled C workload in ECC/TMR modes.",
+    "verification": "test-software-profile; compiled_c_smoke; actual unsupported-A ELF rejection; verification/c-smoke-results.json",
+    "status": "implemented; unit/build and directed ECC/TMR C simulation passed; full compliance pending",
+    "priority": "must"
   }
 ]

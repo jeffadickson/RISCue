@@ -185,10 +185,20 @@ test-kv260-axi: | build
 
 RISCV_GCC ?= riscv64-unknown-elf-gcc
 RISCV_OBJCOPY ?= riscv64-unknown-elf-objcopy
-PLATFORM_FLAGS = -march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs -mabi=ilp32 -mcmodel=medlow -mstrict-align -mno-relax -msmall-data-limit=0 -ffreestanding -fno-builtin -fno-pic -fno-stack-protector -nostdlib -nostartfiles -O2 -Wall -Wextra
+RISCV_READELF ?= riscv64-unknown-elf-readelf
+RISCV_OBJDUMP ?= riscv64-unknown-elf-objdump
+RISCV_NM ?= riscv64-unknown-elf-nm
+# Include only when firmware is requested, preserving tool-free RTL/clean targets.
+ifneq ($(filter firmware-platform software-profile,$(MAKECMDGOALS)),)
+include build/software-profile.mk
+endif
+build/software-profile.mk: docs/software-profile.json tools/software_profile.py
+	$(PYTHON) tools/software_profile.py --make $@
+PLATFORM_FLAGS = $(RISCUE_PROFILE_FLAGS) -nostdlib -nostartfiles -O2 -Wall -Wextra
 .PHONY: firmware-platform
-firmware-platform: | build
+firmware-platform: build/software-profile.mk | build
 	$(RISCV_GCC) $(PLATFORM_FLAGS) -DRISCUE_CLOCK_HZ=$(KV260_CLK_HZ) -Wl,--no-relax -Wl,-Map,build/platform-demo.map -T firmware/platform/link.ld firmware/platform/start.S firmware/platform/demo.c -lgcc -o build/platform-demo.elf
+	$(PYTHON) tools/check_elf.py build/platform-demo.elf --readelf "$(RISCV_READELF)" --objdump "$(RISCV_OBJDUMP)" --report build/platform-demo-isa.json
 	$(RISCV_OBJCOPY) -O binary build/platform-demo.elf build/platform-demo.bin
 
 .PHONY: test-bitmanip pipeline-bitmanip
@@ -204,3 +214,29 @@ pipeline-bitmanip:
 .PHONY: formal-bitmanip
 formal-bitmanip: formal-tools
 	$(PYTHON) tools/run_formal.py bitmanip $(FORMAL_ARGS)
+
+.PHONY: software-profile check-elf test-software-profile
+software-profile: build/software-profile.mk
+	@cat build/software-profile.mk
+ELF ?= build/platform-demo.elf
+check-elf:
+	$(PYTHON) tools/check_elf.py "$(ELF)" --readelf "$(RISCV_READELF)" --objdump "$(RISCV_OBJDUMP)"
+test-software-profile:
+	$(PYTHON) -m unittest discover -s tests -p 'test_software_profile.py' -v
+
+.PHONY: c-smoke-build c-smoke
+c-smoke-build:
+	RISCV_GCC="$(RISCV_GCC)" RISCV_OBJCOPY="$(RISCV_OBJCOPY)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" RISCV_NM="$(RISCV_NM)" $(PYTHON) tools/build_c_smoke.py
+c-smoke: c-smoke-build
+	TEST_FILTER=compiled_c_smoke $(PIPELINE_PYTHON) tools/run_pipeline.py ecc
+	TEST_FILTER=compiled_c_smoke $(PIPELINE_PYTHON) tools/run_pipeline.py tmr
+
+.PHONY: c-tools c-smoke-local
+c-tools:
+	$(PYTHON) tools/setup_c_toolchain.py
+c-smoke-local: c-tools
+	PATH="$(CURDIR)/.tools/riscv/root/usr/bin:$$PATH" $(MAKE) c-smoke
+
+.PHONY: test-elf-toolchain
+test-elf-toolchain:
+	RISCV_GCC="$(RISCV_GCC)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" $(PYTHON) tools/test_elf_toolchain.py

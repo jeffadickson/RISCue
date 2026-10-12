@@ -1,8 +1,8 @@
 {
-  "version": "0.7.0",
-  "recorded_utc": "2026-10-12T21:41:08.496914+00:00",
+  "version": "0.7.1",
+  "recorded_utc": "2026-10-12T22:06:57.283008+00:00",
   "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only",
-  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending.",
+  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending. A small GCC-compiled C workload passes in ECC/TMR simulation; platform firmware builds and audits, but its execution remains pending.",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -114,5 +114,6 @@
     "KV260 ARM/AXI laboratory wrapper and host tools"
   ],
   "debug": "Debug 1.0 requirements specified; standard debug mode/DM/DMI/step not implemented",
-  "bitmanip_evidence": "verification/bitmanip-results.json"
+  "bitmanip_evidence": "verification/bitmanip-results.json",
+  "compiled_c_evidence": "verification/c-smoke-results.json"
 }

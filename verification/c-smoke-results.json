@@ -1,0 +1,129 @@
+{
+  "version": "0.7.1",
+  "recorded_utc": "2026-10-12T22:06:57.283008+00:00",
+  "compiler": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+  "compiler_flags": [
+    "-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+    "-mabi=ilp32",
+    "-mcmodel=medlow",
+    "-mstrict-align",
+    "-mno-relax",
+    "-msmall-data-limit=0",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-fno-pic",
+    "-fno-stack-protector"
+  ],
+  "binutils": "2.42",
+  "iverilog": "12.0",
+  "cocotb": "2.0.1",
+  "binary_sha256": "16a4fdf24a105ac87577c980d4d95b3e72dd1d98549375c8320ab71ab839d29e",
+  "binary_bytes": 268,
+  "isa_audit": {
+    "file": "build/c-smoke/smoke.elf",
+    "entry": 0,
+    "architecture_attributes": [
+      "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+    ],
+    "instructions_checked": 58,
+    "status": "pass",
+    "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+  },
+  "simulation_results": [
+    {
+      "mode": "ecc",
+      "cycles": 1636,
+      "retirements": 269,
+      "mailbox": [
+        1346458451,
+        1496,
+        213,
+        5,
+        4028917932,
+        13,
+        299440504,
+        2452903544,
+        256
+      ],
+      "expected": [
+        1346458451,
+        1496,
+        213,
+        5,
+        4028917932,
+        13,
+        299440504,
+        2452903544,
+        256
+      ],
+      "status": "pass",
+      "binary_sha256": "16a4fdf24a105ac87577c980d4d95b3e72dd1d98549375c8320ab71ab839d29e"
+    },
+    {
+      "mode": "tmr",
+      "cycles": 1636,
+      "retirements": 269,
+      "mailbox": [
+        1346458451,
+        1496,
+        213,
+        5,
+        4028917932,
+        13,
+        299440504,
+        2452903544,
+        256
+      ],
+      "expected": [
+        1346458451,
+        1496,
+        213,
+        5,
+        4028917932,
+        13,
+        299440504,
+        2452903544,
+        256
+      ],
+      "status": "pass",
+      "binary_sha256": "16a4fdf24a105ac87577c980d4d95b3e72dd1d98549375c8320ab71ab839d29e"
+    }
+  ],
+  "profile_checker_unit_tests": {
+    "count": 16,
+    "status": "pass"
+  },
+  "actual_negative_elf_test": {
+    "description": "Local .option arch,+a introduces AMO without global A attribute",
+    "expected": "rejected",
+    "observed": "ELF compatibility check failed: 0x0: unsupported instruction amoadd.w"
+  },
+  "platform_firmware_build_and_audit": {
+    "file": "build/platform-demo.elf",
+    "entry": 0,
+    "architecture_attributes": [
+      "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+    ],
+    "instructions_checked": 178,
+    "status": "pass",
+    "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+  },
+  "scope": "Small compiled C workload and software build audit. Full ISA/compliance/formal, platform firmware IRQ execution, physical board and radiation qualification pending.",
+  "source_sha256": {
+    "firmware/smoke/main.c": "da74f780689d34645d8a4889c81026278f46600472ef6a70b95db65b3405cad3",
+    "firmware/smoke/start.S": "7aeb57d94309910444d0d67fe3ef362ba3161b425aeeb2e50e18ea85452eb150",
+    "firmware/smoke/link.ld": "0f41622a6df1f974759d6f8a6db6b960f5e41e01330eb4206fef108961429797",
+    "tools/check_elf.py": "965ad6f3d2e1a8f1f6453cbcb4135ac588042fbe599581eb2c9eeb23c0b42966",
+    "tools/software_profile.py": "6a662dc6d241ea8c5b591ac8bad0f53e6f25fad86fb4ac8d6ccc4c046ea7a8b4",
+    "tools/build_c_smoke.py": "88e8112bba15c3aa451c881a6dcb65691c6769cbbbf00b3664fcaab64d7828e0",
+    "tests/cocotb/test_pipeline.py": "9f059867f062512740f38fc4ba4cc6b649a5c3aa6ab5085f6b880906c6a09488"
+  },
+  "real_binutils_negative_tests": {
+    "count": 2,
+    "status": "pass",
+    "cases": [
+      "hidden A instruction rejected by disassembly",
+      "advertised A extension rejected by attributes"
+    ]
+  }
+}

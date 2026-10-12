@@ -37,3 +37,13 @@ Duplicated logic detects lane disagreement but does not address shared operand,
 clock, routing or configuration common-mode faults. Larger CLMUL logic requires
 physical timing and placement validation; digital tests do not establish
 radiation qualification. See BITMANIP.md and bitmanip-results.json.
+
+## Firmware profile integrity (SW-002)
+
+Generate flags from the JSON profile and audit the final linked ELF so library
+or assembly additions cannot silently broaden the advertised ISA. Metadata
+and binutils decoding are evidence, not a trust boundary: the audit cannot
+prove reachability, cover generated/mutable code or establish hardware
+compliance. Production loader/authentication and runtime recovery remain
+separate requirements. Conservative failures must be resolved explicitly,
+without silently disabling the audit.

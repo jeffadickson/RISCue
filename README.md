@@ -160,3 +160,11 @@ extensions in [the software profile](docs/software-profile.json); the legacy
 serialized target remains RV32IM. `make test-bitmanip` runs the standalone
 reference vectors; `make pipeline-bitmanip` runs ECC/TMR integration tests.
 See [BITMANIP.md](docs/BITMANIP.md) for semantics and validation limits.
+
+## Compiled C and ISA audit
+
+`make c-smoke` builds and runs a small C program in ECC/TMR pipeline simulation.
+Both modes pass with 269 retirements in 1,636 cycles. Compiler flags come from
+the JSON profile, and linked firmware passes an ISA audit before objcopy.
+See [setup and limitations](docs/ELF_COMPATIBILITY.md) and
+[the C example](firmware/smoke/main.c).

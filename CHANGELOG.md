@@ -1,3 +1,10 @@
+# 0.7.1 — compiler profile and actual C simulation
+
+- Generate firmware flags from canonical JSON and audit linked ELF metadata/instructions before objcopy.
+- Add checksum-pinned local GCC/binutils setup and small compiled C smoke target.
+- ECC/TMR C simulation passes (269 retirements, 1636 clocks); platform firmware builds/audits.
+- Replace platform startup zero alignment fill with legal NOPs.
+
 # 0.7.0 — standard bit manipulation
 
 - Implement RV32 Zbb, Zbc and Zbs 1.0 (29 instructions) in both compared pipeline execution lanes.

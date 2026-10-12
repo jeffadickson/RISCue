@@ -242,3 +242,36 @@ async def bitmanip_reserved_encoding_traps(d):
     assert [v for pc,rd,v,w in rows if rd==20]==[2]*len(illegal)
     assert [v for pc,rd,v,w in rows if rd==22]==illegal
     assert last_values(rows)[7]==99
+
+@cocotb.test(skip=not os.path.exists(os.path.join(os.environ.get('PROJECT_ROOT','.'),'build/c-smoke/metadata.json')))
+async def compiled_c_smoke(d):
+    import json
+    from pathlib import Path
+    root=Path(os.environ['PROJECT_ROOT']);folder=root/'build/c-smoke'
+    if not (folder/'metadata.json').exists():
+        raise AssertionError('Run make c-smoke-build before compiled_c_smoke')
+    meta=json.loads((folder/'metadata.json').read_text())
+    import hashlib
+    assert hashlib.sha256((folder/'smoke.bin').read_bytes()).hexdigest()==meta['binary_sha256'],'Stale C build metadata'
+    await start(d);await boot(d,data=(folder/'smoke.bin').read_bytes())
+    cycles=0;retirements=0;used=set()
+    for _ in range(12000):
+        await FallingEdge(d.clk);cycles+=1
+        assert not int(d.fatal.value),'C workload hardware fatal'
+        assert not int(d.trap.value),'C workload unexpected trap'
+        if int(d.retire_valid.value):
+            retirements+=1;used.add(int(d.retire_insn.value))
+            if int(d.retire_pc.value)==meta['finish_pc']:break
+    else:raise AssertionError('C workload did not finish')
+    def decode(code):
+        parity={1,2,4,8,16,32};bits=[(code>>(pos-1))&1 for pos in range(1,39) if pos not in parity]
+        return sum(bit<<j for j,bit in enumerate(bits))
+    values=[decode(int(d.soc.ram.mem[0xfc0//4+j].value)) for j in range(9)]
+    x=0x12345678;product=0
+    for j in range(32):
+        if (0x1021>>j)&1:product^=x<<j
+    expected=[0x50415353,1496,213,5,((x>>7)|(x<<25))&0xffffffff,x.bit_count(),product&0xffffffff,x|0x80000000,256]
+    assert values==expected,(values,expected)
+    result={'mode':'tmr' if TMR else 'ecc','cycles':cycles,'retirements':retirements,'mailbox':values,'expected':expected,'status':'pass','binary_sha256':meta['binary_sha256']}
+    (folder/('result-tmr.json' if TMR else 'result-ecc.json')).write_text(json.dumps(result,indent=2)+'\n')
+    d._log.info('Compiled C PASS: %s',result)
