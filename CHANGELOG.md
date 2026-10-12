@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1 — short simulation fixes
+
+- Preserve the store-enable bit with explicitly sized bus control.
+- Stabilize forwarding mux outputs to avoid simulator delta-cycle loops.
+- Add passing ECC/TMR mixed-width pipeline smoke tests and simulation evidence.
+
+
 ## 0.5.0 — pipeline/platform implementation; functional validation pending
 
 - Add overlapping five-stage RV32IMC machine core, CSRs/counters, CLINT,

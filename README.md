@@ -1,5 +1,7 @@
 # RISCue
 
+Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+
 **0.5 pipeline target:** KC705 now selects `riscue_pipeline_soc`, an
 implemented RV32IMC_Zicsr_Zifencei_Zicntr M-only five-stage core with CLINT,
 precise traps, interrupts, and multicycle arithmetic. New simulations,

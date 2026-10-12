@@ -1,5 +1,7 @@
 # Five-stage pipeline and machine platform
 
+Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+
 `riscue_pipeline_core` and `riscue_pipeline_soc` implement the new target;
 `rv32im_ft_core` and `rv32im_ft_soc` preserve the legacy serialized target.
 KC705 now selects the pipeline. New RTL is implemented but functional

@@ -82,6 +82,10 @@ module riscue_pipeline_core #(
   .clk(clk),.rst_n(rst_n),.start(md_start),.cancel(md_cancel),.op(s.x.insn[14:12]),.lhs(xa),.rhs(xb),
   .ready(md_ready1),.done(md_done1),.disagreement(md_dis1),.fatal(md_fatal1),.result(md_result1),
   .fi_valid(fi_valid&&fi_target==15&&fi_index[31:8]==1&&fi_index[7:2]==0),.fi_replica(fi_index[1:0]),.fi_mask(fi_mask),.fi_ack(md_ack1));
+ wire forward_m=s.m.valid&&!s.m.trap&&s.m.e.rd_we&&s.m.e.rd!=0&&!s.m.e.mem;
+ wire forward_w=s.w.valid&&!s.w.trap&&s.w.e.rd_we&&s.w.e.rd!=0;
+ assign xa=s.x.rs1==0?32'b0:forward_m&&s.x.rs1==s.m.e.rd?s.m.e.result:forward_w&&s.x.rs1==s.w.e.rd?s.w.e.result:s.x.a;
+ assign xb=s.x.rs2==0?32'b0:forward_m&&s.x.rs2==s.m.e.rd?s.m.e.result:forward_w&&s.x.rs2==s.w.e.rd?s.w.e.result:s.x.b;
  always_comb begin
   s=(c0&c1)|(c0&c2)|(c1&c2);n=s;
   store_mask=s.m.e.mask;store_data=s.m.e.wdata;
@@ -91,15 +95,6 @@ module riscue_pipeline_core #(
   if(RF_TMR)begin
    ra.data=(tmr0[s.d.insn[19:15]]&tmr1[s.d.insn[19:15]])|(tmr0[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]])|(tmr1[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]]);
    rb.data=(tmr0[s.d.insn[24:20]]&tmr1[s.d.insn[24:20]])|(tmr0[s.d.insn[24:20]]&tmr2[s.d.insn[24:20]])|(tmr1[s.d.insn[24:20]]&tmr2[s.d.insn[24:20]]);
-  end
-  xa=s.x.rs1==0?0:s.x.a;xb=s.x.rs2==0?0:s.x.b;
-  if(s.w.valid&&!s.w.trap&&s.w.e.rd_we&&s.w.e.rd!=0)begin
-   if(s.x.rs1==s.w.e.rd)xa=s.w.e.result;
-   if(s.x.rs2==s.w.e.rd)xb=s.w.e.result;
-  end
-  if(s.m.valid&&!s.m.trap&&s.m.e.rd_we&&s.m.e.rd!=0&&!s.m.e.mem)begin
-   if(s.x.rs1==s.m.e.rd)xa=s.m.e.result;
-   if(s.x.rs2==s.m.e.rd)xb=s.m.e.result;
   end
   load_hazard=s.m.valid&&s.m.e.mem&&!s.m.e.we&&s.m.e.rd!=0&&((uses1(s.x.insn)&&s.x.rs1==s.m.e.rd)||(uses2(s.x.insn)&&s.x.rs2==s.m.e.rd));
   csr_known=1;csr_ro=0;csr_read=0;
@@ -286,7 +281,7 @@ module riscue_pipeline_core #(
     if(!s.bus_active&&!s.bus_cooldown&&!n.bus_active)begin
      if(n.m.valid&&n.m.e.mem&&!n.m.trap&&!(n.w.valid&&n.w.trap)&&!clint(n.m.e.addr))begin
       n.bus_active=1;n.bus_data=1;n.bus_kill=0;n.bus_pc=n.m.e.addr;
-      n.bus_addr=n.m.e.addr&32'hfffffffc;n.bus_wdata=n.m.e.wdata;n.bus_ctrl={27'b0,n.m.e.we,n.m.e.we?n.m.e.mask:4'b0};n.bus_wait=0;
+      n.bus_addr=n.m.e.addr&32'hfffffffc;n.bus_wdata=n.m.e.wdata;n.bus_ctrl=n.m.e.we?(32'h10|32'(n.m.e.mask)):32'b0;n.bus_wait=0;
      end else if(!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
       if(n.fetch_pc[0])begin n.f='0;n.f.valid=1;n.f.pc=n.fetch_pc;n.f.trap=1;n.f.serial=1;n.f.cause=0;n.f.tval=n.fetch_pc;n.f.bytes=2;end
       else begin

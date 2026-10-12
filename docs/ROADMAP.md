@@ -1,5 +1,7 @@
 # Remaining target and verification work
 
+Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+
 The five-stage machine pipeline, compressed decoder, multicycle arithmetic,
 CLINT, interrupts and instrumented KC705 integration are implemented in 0.5.
 They have compile-only evidence. Functional verification and target hardware

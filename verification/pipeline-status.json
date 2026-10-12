@@ -1,8 +1,8 @@
 {
-  "version": "0.5.0",
-  "recorded_utc": "2026-10-12T19:16:17.372164+00:00",
+  "version": "0.5.1",
+  "recorded_utc": "2026-10-12T19:39:02.826982+00:00",
   "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr, M-mode only",
-  "validation_scope": "syntax, elaboration, conversion only; no simulation, proof, upstream execution, Vivado implementation, hardware or radiation validation",
+  "validation_scope": "Short SV pipeline simulations in ECC/TMR modes, arithmetic and campaign simulation passed; compile/conversion history retained. Full cocotb/upstream/formal/Vivado/board/radiation validation pending.",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -104,5 +104,7 @@
     "KC705 programming, VIO/ILA and injection campaigns",
     "physical separation, configuration scrubbing and radiation qualification"
   ],
-  "legacy_evidence": "verification/evidence retains legacy serialized-core results only"
+  "legacy_evidence": "verification/evidence retains legacy serialized-core results only",
+  "simulation_results": "verification/pipeline-smoke-results.json",
+  "compile_results_note": "Compilation records predate this smoke-test fix; final smoke binaries were recompiled from the recorded source hashes."
 }

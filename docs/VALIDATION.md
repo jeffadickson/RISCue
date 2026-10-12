@@ -1,5 +1,7 @@
 # Executed validation — v0.2
 
+Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+
 Pipeline 0.5 validation is compilation/elaboration and RTL conversion only. New simulations, proofs, upstream execution, Vivado implementation and board checks were not run; see verification/pipeline-status.json. Existing behavioral results below concern the legacy core.
 
 Tools: Icarus Verilog 12.0, cocotb 2.0.1, RISC-V bare-metal GCC 13.2.0/binutils 2.42, sv2v v0.0.13, Yosys 0.33, Python 3.12.4. Verification date: 2026-10-12.

@@ -148,3 +148,10 @@ pipeline-tools: formal-tools
 .PHONY: formal-muldiv formal-injector
 formal-muldiv formal-injector: formal-fetch formal-tools
 	$(PYTHON) tools/run_formal.py $(patsubst formal-%,%,$@) $(FORMAL_ARGS)
+
+.PHONY: pipeline-smoke
+pipeline-smoke: | build
+	$(IVERILOG) -g2012 -s tb_pipeline_smoke -o build/pipeline-smoke $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
+	$(VVP) build/pipeline-smoke
+	$(IVERILOG) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=1 -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
+	$(VVP) build/pipeline-smoke-tmr
