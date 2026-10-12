@@ -518,5 +518,53 @@
     "verification": "future architecture review",
     "status": "deferred",
     "priority": "conditional"
+  },
+  {
+    "id": "PIPE-004",
+    "category": "Pipeline",
+    "requirement": "Resolve accepted direct JAL and expanded C.J/C.JAL in ID using compared target lanes; suppress the second EX redirect while retaining EX link/target retirement semantics. Older traps, EX redirects, interrupts and backpressure retain priority; JALR/conditional branches stay in EX.",
+    "verification": "tb_pipeline_jump ECC/TMR early/late trace and cycle comparison; cocotb direct_jump_links_wrong_paths_and_trap_priority; RVFI and local redirect assertions",
+    "status": "implemented; short ECC/TMR simulation passed; full/formal verification pending",
+    "priority": "must"
+  },
+  {
+    "id": "KV260-001",
+    "category": "Platform",
+    "requirement": "Provide a KV260/K26 PS-to-PL AXI4-Lite wrapper with protected AW/W ownership, response backpressure, byte enables, program loading, reset/run control, telemetry, external IRQ and hardware injection. Loader accesses shall be rejected while running; memory-controller reset and idle-scrub pause shall permit full-word lab recovery.",
+    "verification": "tb_kv260_axi; UIO loader tests; future Vivado/Linux/board validation",
+    "status": "implemented; generic AXI simulation passed; physical board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "SW-001",
+    "category": "Software",
+    "requirement": "Publish a standard ILP32 software profile with exact ISA/compiler flags, stack/alignment, memory map, clock/timer semantics, startup/trap support and reference C firmware. The toolchain shall not emit unimplemented extensions.",
+    "verification": "software-profile.json; loader validation; future cross-compiler and firmware execution",
+    "status": "implemented; compiler/firmware execution pending",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-001",
+    "category": "Debug",
+    "requirement": "A future standard single-hart RISC-V Debug Specification 1.0 implementation shall supply precise halt/resume, reset-halt, dcsr/dpc, single-step and abstract GPR/debug CSR access through DMI. Optional trigger/SBA/progbuf scope shall be explicitly declared and validated with debugger tools. Lab reset/run controls shall not be advertised as this debug module.",
+    "verification": "future Debug 1.0 compliance tests and OpenOCD/GDB integration",
+    "status": "open; requirements only",
+    "priority": "should"
+  },
+  {
+    "id": "DBG-002",
+    "category": "Protection",
+    "requirement": "Debug state and command/trigger FSMs shall be protected; define exception/interrupt/step priority, counter/timer behavior, bus/ECC arbitration and fail-stop inspection/recovery before enabling resumable debug.",
+    "verification": "future debug fault campaigns/formal properties",
+    "status": "open; requirements only",
+    "priority": "must"
+  },
+  {
+    "id": "MISSION-001",
+    "category": "Platform",
+    "requirement": "Flight deployments shall define firmware-accessible integrity telemetry, watchdog, bounded scrub/recovery, partitioning and interrupt timing/recovery requirements. New standard/custom ISA extensions shall follow workload evidence and independent verification.",
+    "verification": "mission FMEA/ICD/WCET and extension golden/formal tests",
+    "status": "open; mission-specific requirements",
+    "priority": "conditional"
   }
 ]

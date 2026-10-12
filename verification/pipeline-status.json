@@ -1,8 +1,8 @@
 {
-  "version": "0.5.1",
-  "recorded_utc": "2026-10-12T19:39:02.826982+00:00",
+  "version": "0.6.0",
+  "recorded_utc": "2026-10-12T20:09:43.474102+00:00",
   "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr, M-mode only",
-  "validation_scope": "Short SV pipeline simulations in ECC/TMR modes, arithmetic and campaign simulation passed; compile/conversion history retained. Full cocotb/upstream/formal/Vivado/board/radiation validation pending.",
+  "validation_scope": "Short ECC/TMR pipeline/jump/AXI simulations, selected cocotb jump tests, loader validation, compilation and conversion checks pass. Full regressions, formal proofs, cross-compiled C firmware execution and Vivado/Linux/physical board/radiation validation remain pending.",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -96,15 +96,22 @@
     }
   ],
   "pending": [
-    "cocotb ECC/TMR directed and randomized retirement regressions",
-    "multicycle arithmetic and injection scheduler simulation",
-    "pinned upstream RV32I/M/C and benchmark execution",
-    "RV32IMC RVFI and dedicated privileged/fault proofs",
-    "actual Vivado IP generation, synthesis and place/route",
-    "KC705 programming, VIO/ILA and injection campaigns",
-    "physical separation, configuration scrubbing and radiation qualification"
+    "full cocotb ECC/TMR architectural, CSR/interrupt and fault regressions",
+    "pinned upstream programs",
+    "formal RV32IMC, redirect, arithmetic and fault proofs/cover witnesses",
+    "cross-compiler build and C demo execution",
+    "real Vivado, board preset, synthesis/physical redundancy, timing and debug-IP builds",
+    "KV260 Linux UIO/clock/overlay/physical hardware validation",
+    "standard RISC-V Debug 1.0 DM/hart integration",
+    "physical separation/configuration scrub/radiation qualification"
   ],
   "legacy_evidence": "verification/evidence retains legacy serialized-core results only",
   "simulation_results": "verification/pipeline-smoke-results.json",
-  "compile_results_note": "Compilation records predate this smoke-test fix; final smoke binaries were recompiled from the recorded source hashes."
+  "compile_results_note": "Compilation records predate this smoke-test fix; final smoke binaries were recompiled from the recorded source hashes.",
+  "latest_results": "verification/early-jump-kv260-results.json",
+  "implemented_platforms": [
+    "KC705 pipeline/instrumented RTL target",
+    "KV260 ARM/AXI laboratory wrapper and host tools"
+  ],
+  "debug": "Debug 1.0 requirements specified; standard debug mode/DM/DMI/step not implemented"
 }

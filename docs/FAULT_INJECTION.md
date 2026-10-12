@@ -1,5 +1,7 @@
 # Pipeline fault-injection ABI 2
 
+Early direct-jump resolution changes no packed state fields or window offsets; this remains ABI 2. The added compared target lanes are combinational.
+
 Masks are post-update XOR faults, applied after architectural writes and
 repair on the injection edge. The controller, receiver and host reject empty,
 out-of-width and out-of-range requests. FI_ENABLE defaults zero. ABI 2 is

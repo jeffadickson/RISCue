@@ -1,5 +1,7 @@
 # Remaining target and verification work
 
+Early direct-jump resolution and KV260 generic AXI host interaction now have short simulation evidence. Selected cocotb jump tests also pass. Full regression, standard debug implementation, C toolchain execution and physical KV260/KC705 bring-up remain open.
+
 Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
 
 The five-stage machine pipeline, compressed decoder, multicycle arithmetic,

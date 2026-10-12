@@ -1,5 +1,9 @@
 # RISCue
 
+A KV260 ARM/AXI lab target now includes a program loader, browser dashboard, telemetry, IRQ and hardware injection controls. See [KV260 setup](boards/kv260/README.md), [C software contract](docs/SOFTWARE_ABI.md), and [standard debug / mission priorities](docs/DEBUG_AND_MISSION_FEATURES.md). Generic AXI simulation passes; Vivado/Linux/physical board validation and standard debug implementation are pending.
+
+Version 0.5.2 adds compared direct-jump target lanes and ID-stage JAL/C.J/C.JAL redirection. `make pipeline-jump` compares early/late resolution in ECC/TMR modes. The 30-instruction short test takes 144 versus 172 clocks; full-workload performance and formal results remain pending.
+
 Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
 
 **0.5 pipeline target:** KC705 now selects `riscue_pipeline_soc`, an

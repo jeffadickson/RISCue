@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.0 — KV260 laboratory control and software contract
+
+- Add a protected AXI4-Lite PS/PL bridge, local ECC program loader, retained
+  telemetry, external IRQ and hardware fault campaigns, plus KV260 BD/UIO targets.
+- Supply an ARM CLI/browser dashboard, validated ELF/raw image parser,
+  freestanding ILP32 profile and reference C startup/trap/timer firmware.
+- Specify future standard Debug 1.0 and mission feature requirements; no
+  standard debug module or additional mission instructions are advertised.
+- Short AXI and selected jump/cocotb tests pass in ECC/TMR modes; real board,
+  Vivado/Linux, C toolchain execution and full/formal validation remain pending.
+
+
+## 0.5.2 — early direct jumps
+
+- Resolve accepted JAL/C.J/C.JAL in ID with compared target lanes; retain
+  EX link/next-PC retirement and older-redirect/trap priority.
+- Add ECC/TMR early/late ordered-trace tests (30 retirements, 172 vs 144 clocks),
+  cocotb jump/trap/wrong-path coverage and formal redirect assertions.
+- Update formal/board sources and redundancy audit. RVFI and FI ABI 2 are unchanged.
+
+
 ## 0.5.1 — short simulation fixes
 
 - Preserve the store-enable bit with explicitly sized bus control.

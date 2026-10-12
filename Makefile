@@ -103,7 +103,7 @@ kc705-program:
 	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/program.log" -source boards/kc705/program.tcl -tclargs "$(KC705_BUILD)/riscue_kc705.bit"
 
 # New pipeline targets are explicit; test/formal retain legacy evidence scope.
-PIPELINE_RTL = rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv
+PIPELINE_RTL = rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv
 .PHONY: pipeline-compile pipeline-test pipeline-test-ecc pipeline-test-tmr formal-pipeline formal-pipeline-prepare kc705-instrumented kc705-instrumented-synth kc705-inject test-muldiv test-injector
 pipeline-compile: | build
 	$(IVERILOG) -g2012 -s tb_pipeline -o build/pipeline_compile $(PIPELINE_RTL) tests/cocotb/tb_pipeline.sv
@@ -155,3 +155,38 @@ pipeline-smoke: | build
 	$(VVP) build/pipeline-smoke
 	$(IVERILOG) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=1 -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
 	$(VVP) build/pipeline-smoke-tmr
+
+.PHONY: pipeline-jump
+pipeline-jump: | build
+	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(VVP) build/pipeline-jump-late
+	$(IVERILOG) -g2012 -s tb_pipeline_jump -o build/pipeline-jump-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(VVP) build/pipeline-jump-early
+	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-tmr-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(VVP) build/pipeline-jump-tmr-late
+	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -o build/pipeline-jump-tmr-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(VVP) build/pipeline-jump-tmr-early
+
+KV260_CLK_HZ ?= 10000000
+KV260_FI ?= 1
+KV260_BUILD = build/kv260-$(RF_MODE)-fi$(KV260_FI)-hz$(KV260_CLK_HZ)
+.PHONY: kv260 kv260-synth kv260-dtbo test-kv260-axi
+kv260:
+	$(VIVADO) -mode batch -nojournal -source boards/kv260/build.tcl -tclargs "$(KV260_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KV260_FI) $(KV260_CLK_HZ) bit
+kv260-synth:
+	$(VIVADO) -mode batch -nojournal -source boards/kv260/build.tcl -tclargs "$(KV260_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KV260_FI) $(KV260_CLK_HZ) synth
+kv260-dtbo: | build
+	dtc -@ -I dts -O dtb -o build/riscue-uio.dtbo boards/kv260/riscue-uio.dts
+test-kv260-axi: | build
+	$(IVERILOG) -g2012 -s tb_kv260_axi -o build/tb_kv260_axi $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
+	$(VVP) build/tb_kv260_axi
+	$(IVERILOG) -g2012 -s tb_kv260_axi -Ptb_kv260_axi.RF_TMR=1 -o build/tb_kv260_axi_tmr $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
+	$(VVP) build/tb_kv260_axi_tmr
+
+RISCV_GCC ?= riscv64-unknown-elf-gcc
+RISCV_OBJCOPY ?= riscv64-unknown-elf-objcopy
+PLATFORM_FLAGS = -march=rv32imc_zicsr_zifencei_zicntr -mabi=ilp32 -mcmodel=medlow -mstrict-align -mno-relax -msmall-data-limit=0 -ffreestanding -fno-builtin -fno-pic -fno-stack-protector -nostdlib -nostartfiles -O2 -Wall -Wextra
+.PHONY: firmware-platform
+firmware-platform: | build
+	$(RISCV_GCC) $(PLATFORM_FLAGS) -DRISCUE_CLOCK_HZ=$(KV260_CLK_HZ) -Wl,--no-relax -Wl,-Map,build/platform-demo.map -T firmware/platform/link.ld firmware/platform/start.S firmware/platform/demo.c -lgcc -o build/platform-demo.elf
+	$(RISCV_OBJCOPY) -O binary build/platform-demo.elf build/platform-demo.bin

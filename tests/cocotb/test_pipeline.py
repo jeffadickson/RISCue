@@ -177,3 +177,20 @@ async def pinned_upstream_programs(d):
                 assert value==record['pass_value'],record['name']+' software failure '+str(value)
                 break
         else:raise AssertionError(record['name']+' timeout')
+
+@cocotb.test()
+async def direct_jump_links_wrong_paths_and_trap_priority(d):
+    await start(d)
+    words=[i(5,0,0x100),csr(0x305,0,5),jal(1,12),st(0,0,0x340),0xffffffff,
+           0x90022021,0xffffffff,0x9002a021,0xffffffff,
+           i(2,0,3),i(2,2,-1),0x00010463,jal(0,-8),0x73,jal(3,8),0xffffffff,
+           i(4,3,1),0xffffffff,jal(6,8),0xffffffff,i(7,6,1)]
+    handler=[csr(0x342,20,0,2),csr(0x341,21,0,2),i(21,21,4),csr(0x341,0,21),0x30200073]
+    await boot(d,words,handler=handler)
+    rows=await retired(d,80)
+    expected=[0,4,8,20,28,36,40,44,48,40,44,48,40,44,52,256,260,264,268,272,56,64,68,256,260,264,268,272,72,80]
+    assert [row[0] for row in rows]==expected
+    assert [(pc,rd,v) for pc,rd,v,raw in rows if pc in (8,20,56,64,72,80)]==[(8,1,12),(20,1,22),(56,3,60),(64,4,61),(72,6,76),(80,7,77)]
+    assert [v for pc,rd,v,raw in rows if rd==20]==[11,2]
+    # Speculative fall-through store at PC12 must never execute.
+    assert int(d.soc.ram.mem[0x340//4].value)==encode(0)

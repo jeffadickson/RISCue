@@ -1,6 +1,6 @@
 module riscue_pipeline_soc #(
  parameter integer WORDS=1024,parameter INIT_FILE="",parameter integer BUS_TIMEOUT=1024,
- parameter bit RF_TMR=0,parameter bit FI_ENABLE=0
+ parameter bit RF_TMR=0,parameter bit FI_ENABLE=0,EARLY_JUMP=1
 )(
  input logic clk,rst_n,external_irq,
  output logic halted,fatal,trap,
@@ -22,7 +22,7 @@ module riscue_pipeline_soc #(
  logic core_ack,mem_ack,report_ack;
  logic [7:0] core_flags,mem_flags;logic [31:0] core_address,mem_address;
  logic [38:0] addr_code,wdata_code,ctrl_code,rdata_code;
- riscue_pipeline_core #(.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE)) core(
+ riscue_pipeline_core #(.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
   .clk(clk),.rst_n(rst_n),.external_irq(external_irq),.req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
   .ready(ready),.bus_error(error),.external_fault(mem_fatal),.rdata_code(rdata_code),
   .halted(halted),.fatal(fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),

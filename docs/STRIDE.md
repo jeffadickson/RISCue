@@ -20,3 +20,9 @@ replicas, decoder/voter/control SETs, clock/reset loss, FPGA configuration
 upsets and analog radiation behavior require additional target mitigation and
 evidence. A detected hardware-fatal failure suppresses further bus requests
 and retirement; already accepted external transactions cannot be undone.
+
+The KV260 ARM loader/campaign dashboard is a trusted lab control surface with
+AXI ABI 1 and FI ABI 2. It defaults to loopback and same-origin browser control,
+serializes commands, rejects running memory access, validates ELF segments and
+verifies the loaded SRAM. No Linux/ARM authentication, isolation or radiation
+tolerance claim is made. Standard debug access governance remains DBG-001/002.

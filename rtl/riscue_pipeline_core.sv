@@ -3,7 +3,7 @@
 // one cycle. Stores issue only from MEM after older WB traps are resolved.
 module riscue_pipeline_core #(
  parameter logic [31:0] RESET_PC=0,
- parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0
+ parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1
 )(
  input logic clk,rst_n,external_irq,
  output logic req,output logic [38:0] addr_code,wdata_code,ctrl_code,
@@ -28,6 +28,8 @@ module riscue_pipeline_core #(
  (* keep="true",DONT_TOUCH="TRUE" *) logic [31:0] tmr0[0:31],tmr1[0:31],tmr2[0:31];
  ecc_result_t ra,rb,scrubbed,response;
  exec_t e0,e1,executed;
+ wire [31:0] d_insn=s.d.insn,d_pc=s.d.pc;
+ wire [31:0] jump_target0,jump_target1;
  logic [31:0] xa,xb,csr_read,csr_operand,csr_new,load_data;
  logic csr_known,csr_ro,csr_write_intent,record_bad,rf_bad,execute_bad;
  logic [31:0] pending_irq;logic [31:0] irq_code;
@@ -38,7 +40,7 @@ module riscue_pipeline_core #(
  logic [31:0] md_result0,md_result1;
  logic md_ack0,md_ack1,core_ack,rf_ack;
  logic [STATE_BITS-1:0] injection;
- logic x_mop,x_block,m_block,flush,serial_pending,load_hazard;
+ logic x_mop,x_block,m_block,flush,serial_pending,load_hazard,id_jump_redirect;
  logic write_rf;logic [4:0] write_rd;logic [31:0] write_value;
  wire [31:0] x_insn=s.x.insn,x_pc=s.x.pc;wire [2:0] x_bytes=s.x.bytes;
  logic [38:0] fi_rf_base;
@@ -69,6 +71,8 @@ module riscue_pipeline_core #(
    endcase
   end
  endfunction
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_jump_target jump0(.insn(d_insn),.pc(d_pc),.target(jump_target0));
+ (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_jump_target jump1(.insn(d_insn),.pc(d_pc),.target(jump_target1));
  riscue_rvc decompress(.c(fetch_half),.insn(decompressed),.illegal(compressed_illegal));
  (* keep_hierarchy="yes",DONT_TOUCH="TRUE" *) riscue_execute #(.COMPRESSED(1),.MULTICYCLE_M(1)) lane0(
   .instruction_bytes(x_bytes),.insn(x_insn),.pc(x_pc),.a(xa),.b(xb),.out(e0));
@@ -137,7 +141,7 @@ module riscue_pipeline_core #(
   if(executed.trap)begin executed.rd_we=0;executed.mem=0;executed.we=0;if(executed.cause==2)executed.tval=s.x.raw;end
   x_mop=s.x.insn[6:0]==7'h33&&s.x.insn[31:25]==1&&!s.x.trap;
   if(x_mop)executed.result=s.x_result;
-  execute_bad=(s.x.valid&&e0!=e1)||md_done0!=md_done1||md_ready0!=md_ready1||(md_done0&&md_result0!=md_result1)||md_fatal0||md_fatal1;
+  execute_bad=(EARLY_JUMP&&s.d.valid&&!s.d.trap&&s.d.insn[6:0]==7'h6f&&jump_target0!=jump_target1)||(s.x.valid&&e0!=e1)||md_done0!=md_done1||md_ready0!=md_ready1||(md_done0&&md_result0!=md_result1)||md_fatal0||md_fatal1;
   corrected_event=!RF_TMR&&((s.d.valid&&(ra.corrected||rb.corrected))||scrubbed.corrected)||(s.bus_active&&ready&&response.corrected);
   disagreement_event=(c0!=c1)||(c0!=c2)||md_dis0||md_dis1;
   if(RF_TMR)for(j=0;j<32;j=j+1)begin
@@ -168,7 +172,7 @@ module riscue_pipeline_core #(
   n.retire=0;n.retire_trap=0;n.retire_intr=0;n.trap_pulse=0;
   n.mcycle=s.mcycle+1;n.mtime=s.mtime+1;n.irq_meta=external_irq;n.irq_sync=s.irq_meta;
   n.scrub=s.scrub+1'b1;n.bus_cooldown=0;
-  write_rf=0;write_rd=0;write_value=0;flush=0;m_block=0;x_block=0;load_data=0;
+  id_jump_redirect=0;write_rf=0;write_rd=0;write_value=0;flush=0;m_block=0;x_block=0;load_data=0;
   md_start=0;md_cancel=0;
   serial_pending=(s.x.valid&&s.x.serial)||(s.m.valid&&s.m.serial)||(s.w.valid&&s.w.serial);
   if(!fatal)begin
@@ -251,7 +255,7 @@ module riscue_pipeline_core #(
       n.m.csr_addr=s.x.insn[31:20];n.m.csr_value=csr_new;n.m.csr_write=csr_write_intent;
       n.m.mret=s.x.insn==32'h30200073;n.m.fencei=s.x.insn[6:0]==7'h0f&&s.x.insn[14:12]==1;
       n.x.valid=0;n.x_started=0;n.x_done=0;
-      if(!executed.trap&&executed.next_pc!=s.x.pc+s.x.bytes&&!n.m.mret)begin
+      if(!executed.trap&&executed.next_pc!=s.x.pc+s.x.bytes&&!n.m.mret&&!(EARLY_JUMP&&s.x.insn[6:0]==7'h6f))begin
        n.fetch_pc=executed.next_pc;n.f.valid=0;n.d.valid=0;n.half_valid=0;
        if(n.bus_active&&!n.bus_data)n.bus_kill=1;
       end
@@ -269,11 +273,19 @@ module riscue_pipeline_core #(
      n.fetch_pc=n.mtvec;n.arch_pc=n.mtvec;n.irq_drain=0;n.trap_pulse=1;n.interrupt_next=1;flush=1;
     end
     if(!n.irq_drain&&!flush)begin
-     if(s.d.valid&&n.d.valid&&!n.x.valid&&!serial_pending&&(!s.d.serial||(!s.x.valid&&!s.m.valid&&!s.w.valid)))begin
+     if(s.d.valid&&n.d.valid&&!n.x.valid&&!serial_pending&&!(n.m.valid&&n.m.trap)&&!(n.w.valid&&n.w.trap)&&(!s.d.serial||(!s.x.valid&&!s.m.valid&&!s.w.valid)))begin
       n.x=s.d;n.d.valid=0;n.x.rs1=uses1(s.d.insn)?s.d.insn[19:15]:0;n.x.rs2=uses2(s.d.insn)?s.d.insn[24:20]:0;
       n.x.a=n.x.rs1==0?0:ra.data;n.x.b=n.x.rs2==0?0:rb.data;
       if(write_rf&&write_rd==n.x.rs1)n.x.a=write_value;
       if(write_rf&&write_rd==n.x.rs2)n.x.b=write_value;
+      // Redirect only when ID is accepted into EX. Earlier EX redirects
+      // invalidate n.d above; WB traps/interrupt draining block this path.
+      // EX still computes the link and target for retirement, without a
+      // second JAL flush that would discard instructions at the target.
+      if(EARLY_JUMP&&!s.d.trap&&s.d.insn[6:0]==7'h6f&&jump_target0!=s.d.pc+s.d.bytes)begin
+       id_jump_redirect=1;n.fetch_pc=jump_target0;n.f.valid=0;n.half_valid=0;
+       if(n.bus_active&&!n.bus_data)n.bus_kill=1;
+      end
      end
      if(s.f.valid&&n.f.valid&&!n.d.valid)begin n.d=s.f;n.f.valid=0;end
     end
@@ -352,6 +364,11 @@ module riscue_pipeline_core #(
   past_valid<=1;
   if(rst_n)begin
    assert(!fatal||!req);
+   if(id_jump_redirect)begin
+    assert(n.x.valid&&n.x.pc==s.d.pc&&!s.d.trap);
+    assert(n.fetch_pc==jump_target0&&!n.f.valid&&!n.half_valid);
+    if(s.bus_active&&!s.bus_data&&!ready)assert(n.bus_kill);
+   end
    if(s.w.valid&&s.w.trap)begin assert(!s.bus_data||!req);assert(!write_rf);end
    if(s.bus_active&&s.bus_data)assert(s.m.valid&&s.m.e.mem);
    if(retire_valid&&rvfi_trap)assert(!s.retired.e.rd_we&&!s.retired.e.mem);

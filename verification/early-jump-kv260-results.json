@@ -1,0 +1,121 @@
+{
+  "version": "0.6.0",
+  "recorded_utc": "2026-10-12T20:07:45.484533+00:00",
+  "scope": "short simulation and software unit/syntax checks; no formal proof or physical board validation",
+  "checks": [
+    {
+      "name": "final-smoke-0",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS pipeline smoke RF_TMR=0:          20 retirements in         165 clocks\ntests/tb_pipeline_smoke.sv:46: $finish called at 1680000 (1ps)"
+    },
+    {
+      "name": "final-axi-0",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS KV260 AXI host loading, byte enables, running-access rejection, backpressure, telemetry and injection\ntests/tb_kv260_axi.sv:67: $finish called at 3380000 (1ps)"
+    },
+    {
+      "name": "final-jump-0-0",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS direct jump RF_TMR=0 EARLY_JUMP=0 retirements=         30 clocks=        172\ntests/tb_pipeline_jump.sv:51: $finish called at 1750000 (1ps)"
+    },
+    {
+      "name": "final-jump-0-1",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS direct jump RF_TMR=0 EARLY_JUMP=1 retirements=         30 clocks=        144\ntests/tb_pipeline_jump.sv:51: $finish called at 1470000 (1ps)"
+    },
+    {
+      "name": "final-smoke-1",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS pipeline smoke RF_TMR=1:          20 retirements in         165 clocks\ntests/tb_pipeline_smoke.sv:46: $finish called at 1680000 (1ps)"
+    },
+    {
+      "name": "final-axi-1",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS KV260 AXI host loading, byte enables, running-access rejection, backpressure, telemetry and injection\ntests/tb_kv260_axi.sv:67: $finish called at 3380000 (1ps)"
+    },
+    {
+      "name": "final-jump-1-0",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS direct jump RF_TMR=1 EARLY_JUMP=0 retirements=         30 clocks=        172\ntests/tb_pipeline_jump.sv:51: $finish called at 1750000 (1ps)"
+    },
+    {
+      "name": "final-jump-1-1",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS direct jump RF_TMR=1 EARLY_JUMP=1 retirements=         30 clocks=        144\ntests/tb_pipeline_jump.sv:51: $finish called at 1470000 (1ps)"
+    },
+    {
+      "name": "legacy-ram-compatibility",
+      "status": "pass",
+      "kind": "simulation",
+      "output": "PASS RAM: corrected address, DED address/control/data containment, byte RMW, full overwrite, range check\ntests/tb_ram.sv:31: $finish called at 310 (1s)"
+    },
+    {
+      "name": "cocotb-jump-ecc",
+      "status": "pass",
+      "kind": "simulation",
+      "executed": 1,
+      "skipped": 10,
+      "failures": 0
+    },
+    {
+      "name": "cocotb-jump-tmr",
+      "status": "pass",
+      "kind": "simulation",
+      "executed": 1,
+      "skipped": 10,
+      "failures": 0
+    },
+    {
+      "name": "kv260-loader",
+      "status": "pass",
+      "kind": "unit tests",
+      "tests": 5
+    },
+    {
+      "name": "pipeline-formal",
+      "status": "pass",
+      "kind": "sv2v conversion only"
+    },
+    {
+      "name": "kv260-rtl",
+      "status": "pass",
+      "kind": "sv2v conversion only"
+    }
+  ],
+  "jump_comparison": {
+    "retirements": 30,
+    "late_clocks": 172,
+    "early_clocks": 144,
+    "fewer_clocks_percent": 16.27906976744186,
+    "both_rf_modes": true
+  },
+  "source_sha256": {
+    "rtl/ft_pkg.sv": "1c84b8182a6446c08b0c4929099f7d8fbf10595f1434b4f61318c117698a50dc",
+    "rtl/riscue_pipeline_pkg.sv": "1fe2ce0b627e57c6ac571afadb591d3d575625e8378d0c1341c1f51891514966",
+    "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+    "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+    "rtl/riscue_execute.sv": "8c8a518a8bb5cbc985872e1f63c48b351788012be898bb4d99cb27adb8210c29",
+    "rtl/riscue_muldiv.sv": "88d10b93349881d2df12dcdb8698a9446942d30f6134df6ecd3ae90195f99793",
+    "rtl/riscue_pipeline_core.sv": "cab3808f1d01156dbb7ec92fbd6b06c9cc9e9a2794b98d407b5414a9b6b4a310",
+    "rtl/ft_ecc_ram.sv": "2a2b5f4abe4b55671a80fe2267c069441da0ebfe36abe329d0cf0a82cb0577e7",
+    "rtl/ft_event_monitor.sv": "8185db879b0025bba95c6e0c50f4094b0d0e6580354279669369735c23f51449",
+    "rtl/fi_campaign_controller.sv": "25cbdcb478680c8b12288aeaa14ccc0ef484e5c8807bdfad20fb1fe4faa47124",
+    "rtl/riscue_axi_soc.sv": "72bc7da98ca09db933c825a20be5baa41c3033e37385d906d2100cd24681e3d8",
+    "rtl/riscue_kv260_axi.sv": "74e7860857225d39b003d5a1223b64cba6cbcab8aa9b699504aae95b8366b1ef",
+    "rtl/riscue_pipeline_soc.sv": "e237524d9998c7bad1d5cf45a20d43e985982d3eb320d1dae42326a212c5e8e7",
+    "tests/tb_pipeline_jump.sv": "195859944cb0a0fafa03888f4ac124bfbab68af44e4d5ee32f4fa8fa5f909a3e",
+    "tests/tb_kv260_axi.sv": "da1e244be070be4d67d8ebef8e2fea4c430cf60a2b79db370f357c64305eb9aa",
+    "tests/cocotb/test_pipeline.py": "ebbbce668bd10c7d3f8bb376c455fbe0fb90b98b877031e6e4fc7d64a9d4f157",
+    "tests/cocotb/tb_pipeline.sv": "7dd684b928e9517c4bb3f7bc3e84f9cd093c31deeb2e73c3b2379a1b9cca335f",
+    "tools/run_pipeline.py": "b038a0e71cecf5d514e44d2fbac009ee606ebc3d476864dd39b1a2fef7a973bb",
+    "tools/kv260/riscue_ctl.py": "bf1d2c816976f89f220a67ea5f783b9a989074cc295abdef05f4adf99c2d6b12"
+  }
+}

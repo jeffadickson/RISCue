@@ -1,0 +1,21 @@
+/dts-v1/;
+/plugin/;
+/* Compile with dtc -@; apply to the matching KV260 Linux base tree after PL load.
+ * Verify zynqmp_clk label and PL0_REF clock ID against the chosen BSP. */
+/ {
+ fragment@0 {
+  target-path = "/";
+  __overlay__ {
+   #address-cells = <2>;
+   #size-cells = <2>;
+   riscue@a0000000 {
+    compatible = "generic-uio";
+    reg = <0x0 0xa0000000 0x0 0x00020000>;
+    clocks = <&zynqmp_clk 71>;
+    assigned-clocks = <&zynqmp_clk 71>;
+    assigned-clock-rates = <10000000>;
+    status = "okay";
+   };
+  };
+ };
+};

@@ -15,7 +15,10 @@ and runs either of two compared integer lanes or two compared multicycle
 arithmetic lanes. MEM performs checked loads/stores or CLINT accesses. WB
 retires and commits registers/CSRs, precise traps, MRET, and FENCE.I. Stage
 valid bits and backpressure permit overlap; a unified port limits throughput.
-EX waits for dependent loads and M completion. No cache or branch predictor
+EX waits for dependent loads and M completion. Direct JAL and expanded C.J/C.JAL redirect in ID when accepted into EX.
+Two preserved target lanes are compared before use. EX still computes the
+link and architectural next PC, but suppresses a second direct-jump flush.
+Conditional branches and JALR remain in EX. No cache or branch predictor
 is supplied. This is not a one-instruction-per-clock performance claim.
 
 A held bus transaction owns its address, data and control until ready, with
@@ -107,3 +110,35 @@ Normative references:
 - https://docs.riscv.org/reference/isa/unpriv/zicsr.html
 - https://docs.riscv.org/reference/isa/priv/machine.html
 - https://docs.riscv.org/reference/isa/v20240411/unpriv/m-st-ext.html
+
+## Early direct-jump validation and interface compatibility
+
+EARLY_JUMP defaults 1 in the pipeline core/SoC. Set it to 0 for a controlled
+EX-resolution baseline. The short tb_pipeline_jump scenario retires the same
+30 instructions in 172 clocks with EX resolution and 144 with ID resolution,
+in both RF modes: 28 clocks saved (16.3% fewer), not a general workload result.
+The scenario includes JAL links, C.J/C.JAL, a negative jump loop, taken/untaken
+branches, skipped illegal/store instructions, ECALL and illegal traps/MRET.
+`make pipeline-jump` runs all four configurations. The existing mixed-width
+arithmetic/load/store smoke remains `make pipeline-smoke`.
+
+Redirect priority is WB trap/MRET/FENCE.I, older EX redirect, interrupt drain,
+then an accepted ID direct jump. ID waits under backpressure, serializes behind
+older SYSTEM operations, and never redirects a faulting decode. It discards
+buffered fall-through fetch and partial words, and marks an outstanding IF
+request killed while allowing the held transaction to drain. EX does not
+flush already fetched target instructions a second time.
+
+RVFI and public architectural retirement fields are unchanged; they describe
+retired effects regardless of when fetching redirects. The new target module
+is included in pipeline cocotb, formal and board builds, and in the physical
+redundancy audit. Formal local assertions check accepted redirect state and
+outstanding-fetch invalidation; RV32IMC checks/cover witnesses remain pending.
+Cocotb adds direct_jump_links_wrong_paths_and_trap_priority and validates
+retirement order/links rather than EX-stage timing. Use --late-jump with
+run_pipeline.py for the baseline; do not assert the old cycle count globally.
+
+No protected packed fields changed, so the injection map remains ABI 2 with
+4031 core bits (8 windows) and 307 bits per arithmetic replica. The two new
+jump target lanes are combinational and report disagreement through the
+existing execution-integrity flag. There is no predictor state to protect.

@@ -69,7 +69,7 @@ if a.group in ('isa','all','prepare','pipeline','pipeline-prepare'):
  macros=(upstream/'checks/rvfi_macros.vh').read_text()
  # Preserve the macros for upstream wrapper, but expand the core's optional ports before conversion.
  tmp=build/'rvfi_macros.sv';tmp.write_text(macros)
- cmd=[sv2v,'-E','Assert','-D','FORMAL','-D','RISCV_FORMAL','-D','RISCV_FORMAL_NRET=1','-D','RISCV_FORMAL_XLEN=32','-D','RISCV_FORMAL_ILEN=32',str(tmp)]+[str(ROOT/f) for f in (['rtl/ft_pkg.sv','rtl/riscue_pipeline_pkg.sv','rtl/riscue_rvc.sv','rtl/riscue_execute.sv','rtl/riscue_muldiv.sv','rtl/riscue_pipeline_core.sv','formal/pipeline_wrapper.sv'] if pipeline else ['rtl/ft_pkg.sv','rtl/rv32_execute.sv','rtl/rv32im_ft_core.sv','formal/rvfi_wrapper.sv'])]
+ cmd=[sv2v,'-E','Assert','-D','FORMAL','-D','RISCV_FORMAL','-D','RISCV_FORMAL_NRET=1','-D','RISCV_FORMAL_XLEN=32','-D','RISCV_FORMAL_ILEN=32',str(tmp)]+[str(ROOT/f) for f in (['rtl/ft_pkg.sv','rtl/riscue_pipeline_pkg.sv','rtl/riscue_rvc.sv','rtl/riscue_jump_target.sv','rtl/riscue_execute.sv','rtl/riscue_muldiv.sv','rtl/riscue_pipeline_core.sv','formal/pipeline_wrapper.sv'] if pipeline else ['rtl/ft_pkg.sv','rtl/rv32_execute.sv','rtl/rv32im_ft_core.sv','formal/rvfi_wrapper.sv'])]
  with (core/'core.v').open('w') as dst:subprocess.run(cmd,stdout=dst,check=True,env=env)
  if (core/'core.v').stat().st_size==0:raise SystemExit('sv2v produced empty core')
  subprocess.run(['python3',str(stage/'checks/genchecks.py')],cwd=core,check=True,env=env)

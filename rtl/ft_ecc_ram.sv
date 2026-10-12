@@ -3,8 +3,8 @@
 module ft_ecc_ram #(
  parameter integer WORDS=1024,
  parameter INIT_FILE="",
- parameter bit FI_ENABLE=0,FAIL_STOP_DED=0
-)(input logic clk,rst_n,req,
+ parameter bit FI_ENABLE=0,FAIL_STOP_DED=0,EXTERNAL_SCRUB_CONTROL=0
+)(input logic clk,rst_n,req,scrub_enable,
  input logic [38:0] addr_code,wdata_code,ctrl_code,
  output logic ready,error,
  output logic [38:0] rdata_code,
@@ -54,7 +54,7 @@ module ft_ecc_ram #(
       else if(dc.corrected)begin write_mem=1;write_code=dc.repaired;corrected_event=1;end
      end
     end
-   end else if(!req&&!voted.ready)begin
+   end else if(!req&&!voted.ready&&(!EXTERNAL_SCRUB_CONTROL||scrub_enable))begin
     if(voted.scrub>=WORDS)begin next.fatal=1;end
     else begin
      index=voted.scrub;sc=ecc_decode(mem[index]);

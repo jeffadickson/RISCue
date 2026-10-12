@@ -1,5 +1,7 @@
 # Executed validation — v0.2
 
+Latest evidence: verification/early-jump-kv260-results.json records ECC/TMR jump and AXI simulations, selected cocotb jump tests, loader image validation and conversion checks. Full suite, proofs, C firmware and physical boards are not validated.
+
 Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
 
 Pipeline 0.5 validation is compilation/elaboration and RTL conversion only. New simulations, proofs, upstream execution, Vivado implementation and board checks were not run; see verification/pipeline-status.json. Existing behavioral results below concern the legacy core.

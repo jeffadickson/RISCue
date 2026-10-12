@@ -1,5 +1,7 @@
 # Formal verification — RV32IM-FT v0.3
 
+Early direct-jump target lanes are included in the pipeline conversion/RVFI inputs. Added local assertions cover redirect acceptance and killed pending fetches. The RVFI format is unchanged; new timing/redirect proof jobs and cover witnesses remain unexecuted.
+
 New explicit targets formal-pipeline-prepare and formal-pipeline stage RV32IMC RVFI jobs for riscue_pipeline_core with 64-cycle instruction depths. formal-muldiv and formal-injector add dedicated bounded arithmetic/campaign checks and cover witnesses. These jobs have not been run. Existing results below remain legacy evidence.
 
 ## Reproduce on Linux x86-64 or Windows WSL2
