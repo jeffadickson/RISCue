@@ -1,0 +1,8 @@
+[
+  {
+    "job": "monitor",
+    "status": "PASS 0 2",
+    "seconds": 1.78,
+    "log": "build/formal/monitor.console.log"
+  }
+]

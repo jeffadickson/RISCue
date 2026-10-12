@@ -1,0 +1,338 @@
+[
+  {
+    "id": "ISA-001",
+    "category": "ISA",
+    "requirement": "The core shall implement every RV32I integer instruction and every RV32M operation in the declared unprivileged execution environment.",
+    "verification": "tb_exec; upstream_programs; tb_trace",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "ISA-002",
+    "category": "ISA",
+    "requirement": "The core shall implement x0=0, little-endian loads/stores, signed/unsigned extensions, and precise alignment/illegal-instruction fail-stop trap outputs.",
+    "verification": "tb_soc; tb_exec; rv32ui load/store programs",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "ISA-003",
+    "category": "ISA",
+    "requirement": "Unsupported C/A/F/D/Zicsr/Zifencei and privileged features shall be explicitly declared and never claimed as verified.",
+    "verification": "upstream manifest exclusions; README; review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-001",
+    "category": "Memory",
+    "requirement": "Each SRAM word shall store 32 data bits plus 7 SECDED bits; all single-bit positions shall correct and all double-bit pairs shall detect.",
+    "verification": "tb_ecc; stored_fault_campaign",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-002",
+    "category": "Memory",
+    "requirement": "SRAM shall check and correct data before use and write corrected codewords back without a race with a foreground partial write.",
+    "verification": "tb_ram; tb_fault; stored_fault_campaign",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-003",
+    "category": "Memory",
+    "requirement": "Detected uncorrectable load/read or partial-RMW data shall not be consumed or written as a new valid codeword.",
+    "verification": "tb_ram; tb_fault; fail-stop checks",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-004",
+    "category": "Memory",
+    "requirement": "Background scrub arbitration shall have a specified worst-case service interval under continuous foreground traffic.",
+    "verification": "future saturation test and timing analysis",
+    "status": "open",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-005",
+    "category": "Memory",
+    "requirement": "Physical codeword interleaving and any stronger ECC shall be selected using target multi-cell-upset data.",
+    "verification": "target layout review and irradiation",
+    "status": "target-dependent",
+    "priority": "must"
+  },
+  {
+    "id": "MEM-006",
+    "category": "Memory",
+    "requirement": "ECC initialization and boot-memory contents shall be valid before processor release from reset.",
+    "verification": "simulation loader tested; physical boot sequencer not implemented",
+    "status": "partial",
+    "priority": "must"
+  },
+  {
+    "id": "RF-001",
+    "category": "Registers",
+    "requirement": "A static RF_TMR parameter shall select either 39-bit SECDED words or three independent 32-bit register replicas.",
+    "verification": "cocotb ecc/tmr build matrix; synthesis audit",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "RF-002",
+    "category": "Registers",
+    "requirement": "ECC mode shall correct operands before use and repair every nonzero register within 31 background-scrub clocks.",
+    "verification": "stored_fault_campaign all x1\u2013x31/code bits; tb_fault",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "RF-003",
+    "category": "Registers",
+    "requirement": "TMR mode shall vote operands and repair all replicas after any one replica-bit upset, including x0 restoration.",
+    "verification": "stored_fault_campaign all x1\u2013x31/replicas/data bits",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "RF-004",
+    "category": "Registers",
+    "requirement": "TMR mode shall declare two-replica identical corruption outside the guaranteed correction model rather than claiming detection.",
+    "verification": "explicit limitation; future fault-characterization matrix",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "CTL-001",
+    "category": "Control",
+    "requirement": "PC, instruction, pending transaction, watchdog, halt/fault status and RF scrub pointer shall have triplicated voted state with repair feedback.",
+    "verification": "tb_fault; protected_state_and_reporting; synthesis audit",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "CTL-002",
+    "category": "Control",
+    "requirement": "The CPU FSM shall use explicit distance-four encodings and halt on an invalid voted state; correction shall be attributed to TMR, not to nonexistent Hamming decoding.",
+    "verification": "tb_fault; FSM encoding review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "CTL-003",
+    "category": "Control",
+    "requirement": "RAM response, error/fatal state and scrub pointer shall be triplicated and repaired.",
+    "verification": "protected_state_and_reporting; synthesis audit",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "CTL-004",
+    "category": "Control",
+    "requirement": "Every sequential controller and stateful helper shall appear in a protection inventory, including newly added blocks.",
+    "verification": "STATE_MACHINE_AUDIT.md; requirement review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "EXEC-001",
+    "category": "Execution",
+    "requirement": "Two execution decision records shall agree before architectural writes or memory requests derived from execution are authorized.",
+    "verification": "tb_fault execution mismatch; synthesis audit",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "EXEC-002",
+    "category": "Execution",
+    "requirement": "Shared decode/voter/commit logic and address-selection common modes shall be closed with target-specific mitigation before a radiation-tolerance claim.",
+    "verification": "netlist fault injection and physical implementation",
+    "status": "open",
+    "priority": "must"
+  },
+  {
+    "id": "BUS-001",
+    "category": "Bus",
+    "requirement": "The reference receiver shall reject detected bad address/control/write-data codewords and out-of-range requests without committing a store.",
+    "verification": "tb_ram",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "BUS-002",
+    "category": "Bus",
+    "requirement": "Requests shall be serialized and stalled transactions shall trigger a bounded fail-stop timeout.",
+    "verification": "tb_fault timeout; upstream runs",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "REP-001",
+    "category": "Reporting",
+    "requirement": "Detector observations shall produce sticky source flags and saturating corrected/uncorrectable/disagreement/fatal counters.",
+    "verification": "protected_state_and_reporting; reporter tests",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "REP-002",
+    "category": "Reporting",
+    "requirement": "The recorder shall preserve first and last observation PC/address/flags, retaining the first record until reset.",
+    "verification": "protected_state_and_reporting",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "REP-003",
+    "category": "Reporting",
+    "requirement": "Recorder state shall be triplicated with repair and shall report its own replica disagreement.",
+    "verification": "protected_state_and_reporting all recorder bits; synthesis audit",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "REP-004",
+    "category": "Reporting",
+    "requirement": "Simultaneous-event metadata priority, repeated-detection counting, record loss, reset behavior and counter saturation shall be explicitly specified.",
+    "verification": "README reporting contract; reporter tests",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FI-001",
+    "category": "Verification",
+    "requirement": "Production FI_ENABLE=0 builds shall acknowledge no injection and retain normal behavior even if fault ports toggle.",
+    "verification": "test_interfaces.injection_qualification_and_reporting; synthesis review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FI-002",
+    "category": "Verification",
+    "requirement": "Test builds shall expose deterministic clock-edge XOR injection for stored SRAM/RF/control/report state, with bounded indices and acknowledgement.",
+    "verification": "stored_fault_campaign; protected_state_and_reporting; hook rejection tests",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FI-003",
+    "category": "Verification",
+    "requirement": "Fault campaigns shall record mode, target, index, bit mask, expected outcome, and actual pass/fail with reproducible stimulus.",
+    "verification": "build/fault_results_*.json; JUnit XML; source deterministic order",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FI-004",
+    "category": "Verification",
+    "requirement": "No fault campaign shall describe stored-bit injection as validation of analog SET pulse widths, multiple-node strike coverage or clock/reset susceptibility.",
+    "verification": "PROTECTION.md; review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "BUILD-001",
+    "category": "Build",
+    "requirement": "Upstream code shall be fetched at immutable commits specified by a lockfile; dirty or mismatched checkouts shall be rejected.",
+    "verification": "fetch_upstream.py; build_upstream.py checks",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "BUILD-002",
+    "category": "Build",
+    "requirement": "cocotb shall run upstream instruction/workload tests and fault campaigns in both register modes, with bounded test timeouts and nonzero failure exit status.",
+    "verification": "run_cocotb.py; results.xml; mode matrix",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "BUILD-003",
+    "category": "Build",
+    "requirement": "Synthesis shall preserve and audit separate sequential drivers for CPU/RAM/report TMR state and optional RF replicas, plus distinct execution instances.",
+    "verification": "audit_netlist.py; make synth-ecc/synth-tmr",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "QUAL-001",
+    "category": "Qualification",
+    "requirement": "Radiation qualification shall require target implementation, timing/CDC/reset analysis, representative irradiation and a mission-level residual error/outage budget.",
+    "verification": "future qualification plan",
+    "status": "open",
+    "priority": "must"
+  },
+  {
+    "id": "FV-001",
+    "category": "Formal",
+    "requirement": "The project shall fetch formal sources at immutable commits and verify downloaded tool archives against SHA256 before execution.",
+    "verification": "upstream.lock.json; formal-tools.lock.json; formal-fetch; formal-tools",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-002",
+    "category": "Formal",
+    "requirement": "The ECC encoder/decoder shall have a combinational proof covering all data values and all single/double stored-bit faults.",
+    "verification": "formal-ecc; verification/evidence/formal",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-003",
+    "category": "Formal",
+    "requirement": "The error monitor shall have inductive checks for sticky observations, exact saturating counts, first/last records and repair of one corrupted replica.",
+    "verification": "formal-monitor; formal/monitor.sv",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-004",
+    "category": "Formal",
+    "requirement": "ISA checks shall use an optional RVFI interface and the pinned upstream RV32IM models; real M arithmetic shall not be silently replaced by ALTOPS.",
+    "verification": "formal-isa; formal-execute; formal/checks.cfg",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-005",
+    "category": "Formal",
+    "requirement": "Core and RAM fault harnesses shall state injection multiplicity, permitted locations, environment assumptions and cycle bounds.",
+    "verification": "formal-fault; formal-ram; docs/FORMAL.md",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-006",
+    "category": "Formal",
+    "requirement": "Every formal campaign shall retain per-job outcomes and counterexamples; FAIL, UNKNOWN, ERROR and TIMEOUT shall fail the command.",
+    "verification": "tools/run_formal.py; results-*.json",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-007",
+    "category": "Formal",
+    "requirement": "Reachability covers shall accompany directed fault scenarios and instruction checks to identify vacuous configurations.",
+    "verification": "formal cover jobs; tools/run_formal.py cover",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FV-008",
+    "category": "Formal",
+    "requirement": "Whole-core instruction and single-upset containment checks shall complete without unresolved jobs before whole-core formal verification is claimed.",
+    "verification": "formal-isa; formal-fault; verification/evidence/formal/summary.json",
+    "status": "open",
+    "priority": "must"
+  },
+  {
+    "id": "FV-009",
+    "category": "Formal",
+    "requirement": "Bus/memory consistency, unbounded progress, completeness of decoded ISA coverage and equivalence with RVFI disabled shall be separately verified before broader certification claims.",
+    "verification": "additional formal harnesses",
+    "status": "open",
+    "priority": "must"
+  }
+]

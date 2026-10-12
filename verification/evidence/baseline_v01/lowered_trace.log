@@ -1,0 +1,2 @@
+PASS differential program: 202 retirement records and all 32 registers, 729 cycles
+tests/tb_trace.sv:19: $finish called at 7310 (1s)

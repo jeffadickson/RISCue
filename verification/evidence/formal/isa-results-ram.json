@@ -1,0 +1,14 @@
+[
+  {
+    "job": "ram_0",
+    "status": "TIMEOUT 8 5",
+    "seconds": 301.98,
+    "log": "build/formal/ram_0.console.log"
+  },
+  {
+    "job": "ram_1",
+    "status": "PASS 0 12",
+    "seconds": 12.31,
+    "log": "build/formal/ram_1.console.log"
+  }
+]

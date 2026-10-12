@@ -1,0 +1,8 @@
+[
+  {
+    "job": "ecc",
+    "status": "PASS 0 18",
+    "seconds": 14.52,
+    "log": "build/formal-ecc-final/ecc.console.log"
+  }
+]

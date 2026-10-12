@@ -1,0 +1,36 @@
+SBY  2:31:38 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] Removing directory '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor'.
+SBY  2:31:38 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] Copy '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/monitor.v' to '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/src/monitor.v'.
+SBY  2:31:38 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: smtbmc bitwuzla
+SBY  2:31:38 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] base: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] base: finished (returncode=0)
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] prep: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/model; yosys -ql design_prep.log design_prep.ys"
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] prep: finished (returncode=0)
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] smt2: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] smt2: finished (returncode=0)
+SBY  2:31:39 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor; yosys-smtbmc -s bitwuzla --presat --unroll -c --noprogress -t 6  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Solver: bitwuzla
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Reached cover statement in step 2 at formal_monitor: monitor.v:195.3-195.42 (_witness_.cover_cover_monitor_v_195_265)
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Reached cover statement in step 2 at formal_monitor: monitor.v:196.3-196.59 (_witness_.cover_cover_monitor_v_196_267)
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace1.vcd
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace1_tb.v
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace1.smtc
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace1.yw
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: ##   0:00:00  Status: passed
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: finished (returncode=0)
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] engine_0: Status returned by engine: pass
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary: engine_0 (smtbmc bitwuzla) returned pass
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary: cover trace: /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/engine_0/trace0.vcd
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary:   reached cover statement formal_monitor._witness_.cover_cover_monitor_v_195_265 at monitor.v:195.3-195.42 step 2
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary: cover trace: /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor/engine_0/trace1.vcd
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] summary:   reached cover statement formal_monitor._witness_.cover_cover_monitor_v_196_267 at monitor.v:196.3-196.59 step 2
+SBY  2:31:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-monitor-final/cover_monitor] DONE (PASS, rc=0)

@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1791818904" />
+    <testcase name="upstream_programs" classname="test_ft" file="/workspace/scratch/c59c397b704c/rv32im_ft_v0_2/tests/cocotb/test_ft.py" lineno="50" time="250.46691393852234" sim_time_ns="2546295.0" ratio_time="10166.193051051021" />
+    <testcase name="stored_fault_campaign" classname="test_ft" file="/workspace/scratch/c59c397b704c/rv32im_ft_v0_2/tests/cocotb/test_ft.py" lineno="62" time="56.80807304382324" sim_time_ns="1469535.0" ratio_time="25868.418364875044" />
+    <testcase name="protected_state_and_reporting" classname="test_ft" file="/workspace/scratch/c59c397b704c/rv32im_ft_v0_2/tests/cocotb/test_ft.py" lineno="94" time="11.762569189071655" sim_time_ns="178955.00000000047" ratio_time="15213.938139149364" />
+  </testsuite>
+</testsuites>

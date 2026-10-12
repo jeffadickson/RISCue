@@ -1,0 +1,73 @@
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1791818904
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /workspace/scratch/c59c397b704c/hdl_tools/python/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_ft.upstream_programs (1/3)
+ 12835.00ns INFO     cocotb.tb_python                   PASS rv32ui-add (1280-cycle polling bound)
+ 19255.00ns INFO     cocotb.tb_python                   PASS rv32ui-addi (640-cycle polling bound)
+ 32715.00ns INFO     cocotb.tb_python                   PASS rv32ui-and (1344-cycle polling bound)
+ 37535.00ns INFO     cocotb.tb_python                   PASS rv32ui-andi (480-cycle polling bound)
+ 38195.00ns INFO     cocotb.tb_python                   PASS rv32ui-auipc (64-cycle polling bound)
+ 45895.00ns INFO     cocotb.tb_python                   PASS rv32ui-beq (768-cycle polling bound)
+ 54235.00ns INFO     cocotb.tb_python                   PASS rv32ui-bge (832-cycle polling bound)
+ 63215.00ns INFO     cocotb.tb_python                   PASS rv32ui-bgeu (896-cycle polling bound)
+ 70915.00ns INFO     cocotb.tb_python                   PASS rv32ui-blt (768-cycle polling bound)
+ 79255.00ns INFO     cocotb.tb_python                   PASS rv32ui-bltu (832-cycle polling bound)
+ 86955.00ns INFO     cocotb.tb_python                   PASS rv32ui-bne (768-cycle polling bound)
+ 87615.00ns INFO     cocotb.tb_python                   PASS rv32ui-jal (64-cycle polling bound)
+ 90195.00ns INFO     cocotb.tb_python                   PASS rv32ui-jalr (256-cycle polling bound)
+ 97255.00ns INFO     cocotb.tb_python                   PASS rv32ui-lb (704-cycle polling bound)
+104315.00ns INFO     cocotb.tb_python                   PASS rv32ui-lbu (704-cycle polling bound)
+139855.00ns INFO     cocotb.tb_python                   PASS rv32ui-ld_st (3552-cycle polling bound)
+147555.00ns INFO     cocotb.tb_python                   PASS rv32ui-lh (768-cycle polling bound)
+155255.00ns INFO     cocotb.tb_python                   PASS rv32ui-lhu (768-cycle polling bound)
+156235.00ns INFO     cocotb.tb_python                   PASS rv32ui-lui (96-cycle polling bound)
+164255.00ns INFO     cocotb.tb_python                   PASS rv32ui-lw (800-cycle polling bound)
+178035.00ns INFO     cocotb.tb_python                   PASS rv32ui-or (1376-cycle polling bound)
+183175.00ns INFO     cocotb.tb_python                   PASS rv32ui-ori (512-cycle polling bound)
+197275.00ns INFO     cocotb.tb_python                   PASS rv32ui-sb (1408-cycle polling bound)
+212975.00ns INFO     cocotb.tb_python                   PASS rv32ui-sh (1568-cycle polling bound)
+213315.00ns INFO     cocotb.tb_python                   PASS rv32ui-simple (32-cycle polling bound)
+227095.00ns INFO     cocotb.tb_python                   PASS rv32ui-sll (1376-cycle polling bound)
+233195.00ns INFO     cocotb.tb_python                   PASS rv32ui-slli (608-cycle polling bound)
+246015.00ns INFO     cocotb.tb_python                   PASS rv32ui-slt (1280-cycle polling bound)
+252115.00ns INFO     cocotb.tb_python                   PASS rv32ui-slti (608-cycle polling bound)
+258215.00ns INFO     cocotb.tb_python                   PASS rv32ui-sltiu (608-cycle polling bound)
+271035.00ns INFO     cocotb.tb_python                   PASS rv32ui-sltu (1280-cycle polling bound)
+285455.00ns INFO     cocotb.tb_python                   PASS rv32ui-sra (1440-cycle polling bound)
+292195.00ns INFO     cocotb.tb_python                   PASS rv32ui-srai (672-cycle polling bound)
+306295.00ns INFO     cocotb.tb_python                   PASS rv32ui-srl (1408-cycle polling bound)
+312715.00ns INFO     cocotb.tb_python                   PASS rv32ui-srli (640-cycle polling bound)
+328095.00ns INFO     cocotb.tb_python                   PASS rv32ui-st_ld (1536-cycle polling bound)
+340915.00ns INFO     cocotb.tb_python                   PASS rv32ui-sub (1280-cycle polling bound)
+356615.00ns INFO     cocotb.tb_python                   PASS rv32ui-sw (1568-cycle polling bound)
+370075.00ns INFO     cocotb.tb_python                   PASS rv32ui-xor (1344-cycle polling bound)
+375215.00ns INFO     cocotb.tb_python                   PASS rv32ui-xori (512-cycle polling bound)
+377155.00ns INFO     cocotb.tb_python                   PASS rv32um-div (192-cycle polling bound)
+379095.00ns INFO     cocotb.tb_python                   PASS rv32um-divu (192-cycle polling bound)
+391915.00ns INFO     cocotb.tb_python                   PASS rv32um-mul (1280-cycle polling bound)
+404735.00ns INFO     cocotb.tb_python                   PASS rv32um-mulh (1280-cycle polling bound)
+417555.00ns INFO     cocotb.tb_python                   PASS rv32um-mulhsu (1280-cycle polling bound)
+430375.00ns INFO     cocotb.tb_python                   PASS rv32um-mulhu (1280-cycle polling bound)
+432315.00ns INFO     cocotb.tb_python                   PASS rv32um-rem (192-cycle polling bound)
+434255.00ns INFO     cocotb.tb_python                   PASS rv32um-remu (192-cycle polling bound)
+623075.00ns INFO     cocotb.tb_python                   PASS sieve (18880-cycle polling bound)
+2546295.00ns INFO     cocotb.tb_python                   PASS dhrystone (192320-cycle polling bound)
+2546295.00ns INFO     cocotb.regression                  test_ft.upstream_programs passed
+2546295.00ns INFO     cocotb.regression                  running test_ft.stored_fault_campaign (2/3)
+4015830.00ns INFO     cocotb.regression                  test_ft.stored_fault_campaign passed
+4015830.00ns INFO     cocotb.regression                  running test_ft.protected_state_and_reporting (3/3)
+4194785.00ns INFO     cocotb.regression                  test_ft.protected_state_and_reporting passed
+4194785.00ns INFO     cocotb.regression                  ***********************************************************************************************
+                                                         ** TEST                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                         ***********************************************************************************************
+                                                         ** test_ft.upstream_programs               PASS     2546295.00         250.47      10166.19  **
+                                                         ** test_ft.stored_fault_campaign           PASS     1469535.00          56.81      25868.42  **
+                                                         ** test_ft.protected_state_and_reporting   PASS      178955.00          11.76      15213.94  **
+                                                         ***********************************************************************************************
+                                                         ** TESTS=3 PASS=3 FAIL=0 SKIP=0                     4194785.00         319.04      13148.03  **
+                                                         ***********************************************************************************************
+cocotb ecc 3 tests, 0 failed

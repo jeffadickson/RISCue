@@ -1,0 +1,24 @@
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_ecc -o build/tb_ecc rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_ecc.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_exec -o build/tb_exec rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_exec.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_soc -o build/tb_soc rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_soc.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_fault -o build/tb_fault rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_fault.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_ram -o build/tb_ram rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_ram.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/iverilog -B /workspace/scratch/c59c397b704c/hdl_tools/full/usr/lib/x86_64-linux-gnu/ivl -g2012 -s tb_trace -o build/tb_trace rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv tests/tb_trace.sv
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_ecc
+PASS ECC: 9360 single/double bit injections
+tests/tb_ecc.sv:20: $finish called at 0 (1s)
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_exec
+PASS execution: 5938 arithmetic vectors + branches/jumps/traps
+tests/tb_exec.sv:40: $finish called at 5968 (1s)
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_soc
+PASS SoC: compiled-style loop, M operations, loads/stores, subword sign extension, JAL, trap; 113 cycles
+tests/tb_soc.sv:34: $finish called at 1150 (1s)
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_fault
+PASS faults: 1191 exhaustive single-bit control/RF injections + 7 directed containment cases
+tests/tb_fault.sv:54: $finish called at 51980 (1s)
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_ram
+PASS RAM: corrected address, DED address/control/data containment, byte RMW, full overwrite, range check
+tests/tb_ram.sv:31: $finish called at 310 (1s)
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/vvp build/tb_trace
+PASS differential program: 202 retirement records and all 32 registers, 729 cycles
+tests/tb_trace.sv:19: $finish called at 7310 (1s)

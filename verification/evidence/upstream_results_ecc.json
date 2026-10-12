@@ -1,0 +1,252 @@
+[
+  {
+    "name": "rv32ui-add",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32ui-addi",
+    "pass": true,
+    "cycles_upper_bound": 640
+  },
+  {
+    "name": "rv32ui-and",
+    "pass": true,
+    "cycles_upper_bound": 1344
+  },
+  {
+    "name": "rv32ui-andi",
+    "pass": true,
+    "cycles_upper_bound": 480
+  },
+  {
+    "name": "rv32ui-auipc",
+    "pass": true,
+    "cycles_upper_bound": 64
+  },
+  {
+    "name": "rv32ui-beq",
+    "pass": true,
+    "cycles_upper_bound": 768
+  },
+  {
+    "name": "rv32ui-bge",
+    "pass": true,
+    "cycles_upper_bound": 832
+  },
+  {
+    "name": "rv32ui-bgeu",
+    "pass": true,
+    "cycles_upper_bound": 896
+  },
+  {
+    "name": "rv32ui-blt",
+    "pass": true,
+    "cycles_upper_bound": 768
+  },
+  {
+    "name": "rv32ui-bltu",
+    "pass": true,
+    "cycles_upper_bound": 832
+  },
+  {
+    "name": "rv32ui-bne",
+    "pass": true,
+    "cycles_upper_bound": 768
+  },
+  {
+    "name": "rv32ui-jal",
+    "pass": true,
+    "cycles_upper_bound": 64
+  },
+  {
+    "name": "rv32ui-jalr",
+    "pass": true,
+    "cycles_upper_bound": 256
+  },
+  {
+    "name": "rv32ui-lb",
+    "pass": true,
+    "cycles_upper_bound": 704
+  },
+  {
+    "name": "rv32ui-lbu",
+    "pass": true,
+    "cycles_upper_bound": 704
+  },
+  {
+    "name": "rv32ui-ld_st",
+    "pass": true,
+    "cycles_upper_bound": 3552
+  },
+  {
+    "name": "rv32ui-lh",
+    "pass": true,
+    "cycles_upper_bound": 768
+  },
+  {
+    "name": "rv32ui-lhu",
+    "pass": true,
+    "cycles_upper_bound": 768
+  },
+  {
+    "name": "rv32ui-lui",
+    "pass": true,
+    "cycles_upper_bound": 96
+  },
+  {
+    "name": "rv32ui-lw",
+    "pass": true,
+    "cycles_upper_bound": 800
+  },
+  {
+    "name": "rv32ui-or",
+    "pass": true,
+    "cycles_upper_bound": 1376
+  },
+  {
+    "name": "rv32ui-ori",
+    "pass": true,
+    "cycles_upper_bound": 512
+  },
+  {
+    "name": "rv32ui-sb",
+    "pass": true,
+    "cycles_upper_bound": 1408
+  },
+  {
+    "name": "rv32ui-sh",
+    "pass": true,
+    "cycles_upper_bound": 1568
+  },
+  {
+    "name": "rv32ui-simple",
+    "pass": true,
+    "cycles_upper_bound": 32
+  },
+  {
+    "name": "rv32ui-sll",
+    "pass": true,
+    "cycles_upper_bound": 1376
+  },
+  {
+    "name": "rv32ui-slli",
+    "pass": true,
+    "cycles_upper_bound": 608
+  },
+  {
+    "name": "rv32ui-slt",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32ui-slti",
+    "pass": true,
+    "cycles_upper_bound": 608
+  },
+  {
+    "name": "rv32ui-sltiu",
+    "pass": true,
+    "cycles_upper_bound": 608
+  },
+  {
+    "name": "rv32ui-sltu",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32ui-sra",
+    "pass": true,
+    "cycles_upper_bound": 1440
+  },
+  {
+    "name": "rv32ui-srai",
+    "pass": true,
+    "cycles_upper_bound": 672
+  },
+  {
+    "name": "rv32ui-srl",
+    "pass": true,
+    "cycles_upper_bound": 1408
+  },
+  {
+    "name": "rv32ui-srli",
+    "pass": true,
+    "cycles_upper_bound": 640
+  },
+  {
+    "name": "rv32ui-st_ld",
+    "pass": true,
+    "cycles_upper_bound": 1536
+  },
+  {
+    "name": "rv32ui-sub",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32ui-sw",
+    "pass": true,
+    "cycles_upper_bound": 1568
+  },
+  {
+    "name": "rv32ui-xor",
+    "pass": true,
+    "cycles_upper_bound": 1344
+  },
+  {
+    "name": "rv32ui-xori",
+    "pass": true,
+    "cycles_upper_bound": 512
+  },
+  {
+    "name": "rv32um-div",
+    "pass": true,
+    "cycles_upper_bound": 192
+  },
+  {
+    "name": "rv32um-divu",
+    "pass": true,
+    "cycles_upper_bound": 192
+  },
+  {
+    "name": "rv32um-mul",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32um-mulh",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32um-mulhsu",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32um-mulhu",
+    "pass": true,
+    "cycles_upper_bound": 1280
+  },
+  {
+    "name": "rv32um-rem",
+    "pass": true,
+    "cycles_upper_bound": 192
+  },
+  {
+    "name": "rv32um-remu",
+    "pass": true,
+    "cycles_upper_bound": 192
+  },
+  {
+    "name": "sieve",
+    "pass": true,
+    "cycles_upper_bound": 18880
+  },
+  {
+    "name": "dhrystone",
+    "pass": true,
+    "cycles_upper_bound": 192320
+  }
+]

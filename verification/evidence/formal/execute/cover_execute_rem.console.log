@@ -1,0 +1,26 @@
+SBY  2:24:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] Removing directory '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem'.
+SBY  2:24:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] Copy '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/execute_rem.v' to '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem/src/execute_rem.v'.
+SBY  2:24:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: smtbmc bitwuzla
+SBY  2:24:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] base: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] base: finished (returncode=0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] prep: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem/model; yosys -ql design_prep.log design_prep.ys"
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] prep: finished (returncode=0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] smt2: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] smt2: finished (returncode=0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem; yosys-smtbmc -s bitwuzla --presat --unroll -c --noprogress -t 1  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Solver: bitwuzla
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Reached cover statement in step 0 at formal_execute_m: execute_rem.v:338.3-338.57 (_witness_.check_cover_execute_rem_v_338_139)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: ##   0:00:00  Status: passed
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: finished (returncode=0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] engine_0: Status returned by engine: pass
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] summary: engine_0 (smtbmc bitwuzla) returned pass
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] summary: cover trace: /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem/engine_0/trace0.vcd
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] summary:   reached cover statement formal_execute_m._witness_.check_cover_execute_rem_v_338_139 at execute_rem.v:338.3-338.57
+SBY  2:24:43 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-execute-fixed/cover_execute_rem] DONE (PASS, rc=0)

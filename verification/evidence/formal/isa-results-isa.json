@@ -1,0 +1,302 @@
+[
+  {
+    "job": "causal_ch0",
+    "status": "PASS 0 14",
+    "seconds": 14.3,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/causal_ch0.console.log"
+  },
+  {
+    "job": "insn_add_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.85,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_add_ch0.console.log"
+  },
+  {
+    "job": "insn_addi_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.0,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_addi_ch0.console.log"
+  },
+  {
+    "job": "insn_and_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.14,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_and_ch0.console.log"
+  },
+  {
+    "job": "insn_andi_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.0,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_andi_ch0.console.log"
+  },
+  {
+    "job": "insn_auipc_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.63,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_auipc_ch0.console.log"
+  },
+  {
+    "job": "insn_beq_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.72,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_beq_ch0.console.log"
+  },
+  {
+    "job": "insn_bge_ch0",
+    "status": "PASS 0 9",
+    "seconds": 9.07,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_bge_ch0.console.log"
+  },
+  {
+    "job": "insn_bgeu_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.48,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_bgeu_ch0.console.log"
+  },
+  {
+    "job": "insn_blt_ch0",
+    "status": "PASS 0 9",
+    "seconds": 9.46,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_blt_ch0.console.log"
+  },
+  {
+    "job": "insn_bltu_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.65,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_bltu_ch0.console.log"
+  },
+  {
+    "job": "insn_bne_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.32,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_bne_ch0.console.log"
+  },
+  {
+    "job": "insn_div_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 121.97,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_div_ch0.console.log"
+  },
+  {
+    "job": "insn_divu_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 121.91,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_divu_ch0.console.log"
+  },
+  {
+    "job": "insn_jal_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.7,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_jal_ch0.console.log"
+  },
+  {
+    "job": "insn_jalr_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.41,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_jalr_ch0.console.log"
+  },
+  {
+    "job": "insn_lb_ch0",
+    "status": "PASS 0 30",
+    "seconds": 30.1,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lb_ch0.console.log"
+  },
+  {
+    "job": "insn_lbu_ch0",
+    "status": "PASS 0 55",
+    "seconds": 55.19,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lbu_ch0.console.log"
+  },
+  {
+    "job": "insn_lh_ch0",
+    "status": "PASS 0 35",
+    "seconds": 35.81,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lh_ch0.console.log"
+  },
+  {
+    "job": "insn_lhu_ch0",
+    "status": "PASS 0 55",
+    "seconds": 55.44,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lhu_ch0.console.log"
+  },
+  {
+    "job": "insn_lui_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.38,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lui_ch0.console.log"
+  },
+  {
+    "job": "insn_lw_ch0",
+    "status": "PASS 0 57",
+    "seconds": 57.08,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lw_ch0.console.log"
+  },
+  {
+    "job": "insn_mul_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 121.9,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_mul_ch0.console.log"
+  },
+  {
+    "job": "insn_mulh_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 121.76,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_mulh_ch0.console.log"
+  },
+  {
+    "job": "insn_mulhsu_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 121.3,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_mulhsu_ch0.console.log"
+  },
+  {
+    "job": "insn_mulhu_ch0",
+    "status": "TIMEOUT 8 2",
+    "seconds": 122.02,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_mulhu_ch0.console.log"
+  },
+  {
+    "job": "insn_or_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.15,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_or_ch0.console.log"
+  },
+  {
+    "job": "insn_ori_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.76,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_ori_ch0.console.log"
+  },
+  {
+    "job": "insn_rem_ch0",
+    "status": "TIMEOUT 8 3",
+    "seconds": 121.66,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_rem_ch0.console.log"
+  },
+  {
+    "job": "insn_remu_ch0",
+    "status": "TIMEOUT 8 1",
+    "seconds": 121.84,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_remu_ch0.console.log"
+  },
+  {
+    "job": "insn_sb_ch0",
+    "status": "PASS 0 38",
+    "seconds": 38.52,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sb_ch0.console.log"
+  },
+  {
+    "job": "insn_sh_ch0",
+    "status": "PASS 0 31",
+    "seconds": 31.39,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sh_ch0.console.log"
+  },
+  {
+    "job": "insn_sll_ch0",
+    "status": "PASS 0 12",
+    "seconds": 12.68,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sll_ch0.console.log"
+  },
+  {
+    "job": "insn_slli_ch0",
+    "status": "PASS 0 13",
+    "seconds": 13.69,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_slli_ch0.console.log"
+  },
+  {
+    "job": "insn_slt_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.46,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_slt_ch0.console.log"
+  },
+  {
+    "job": "insn_slti_ch0",
+    "status": "PASS 0 9",
+    "seconds": 9.92,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_slti_ch0.console.log"
+  },
+  {
+    "job": "insn_sltiu_ch0",
+    "status": "PASS 0 25",
+    "seconds": 26.06,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sltiu_ch0.console.log"
+  },
+  {
+    "job": "insn_sltu_ch0",
+    "status": "PASS 0 17",
+    "seconds": 17.87,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sltu_ch0.console.log"
+  },
+  {
+    "job": "insn_sra_ch0",
+    "status": "PASS 0 13",
+    "seconds": 13.65,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sra_ch0.console.log"
+  },
+  {
+    "job": "insn_srai_ch0",
+    "status": "PASS 0 27",
+    "seconds": 27.61,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_srai_ch0.console.log"
+  },
+  {
+    "job": "insn_srl_ch0",
+    "status": "PASS 0 15",
+    "seconds": 15.23,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_srl_ch0.console.log"
+  },
+  {
+    "job": "insn_srli_ch0",
+    "status": "PASS 0 19",
+    "seconds": 19.2,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_srli_ch0.console.log"
+  },
+  {
+    "job": "insn_sub_ch0",
+    "status": "PASS 0 14",
+    "seconds": 14.1,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sub_ch0.console.log"
+  },
+  {
+    "job": "insn_sw_ch0",
+    "status": "PASS 0 44",
+    "seconds": 44.35,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_sw_ch0.console.log"
+  },
+  {
+    "job": "insn_xor_ch0",
+    "status": "PASS 0 10",
+    "seconds": 10.35,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_xor_ch0.console.log"
+  },
+  {
+    "job": "insn_xori_ch0",
+    "status": "PASS 0 8",
+    "seconds": 8.68,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_xori_ch0.console.log"
+  },
+  {
+    "job": "pc_bwd_ch0",
+    "status": "PASS 0 16",
+    "seconds": 16.49,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/pc_bwd_ch0.console.log"
+  },
+  {
+    "job": "pc_fwd_ch0",
+    "status": "PASS 0 12",
+    "seconds": 12.54,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/pc_fwd_ch0.console.log"
+  },
+  {
+    "job": "reg_ch0",
+    "status": "TIMEOUT 8 3",
+    "seconds": 121.23,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/reg_ch0.console.log"
+  },
+  {
+    "job": "unique_ch0",
+    "status": "PASS 0 12",
+    "seconds": 12.69,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/unique_ch0.console.log"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "job": "fault_0",
+    "status": "TIMEOUT 8 4",
+    "seconds": 121.45,
+    "log": "build/formal-fault/fault_0.console.log"
+  },
+  {
+    "job": "fault_1",
+    "status": "TIMEOUT 8 7",
+    "seconds": 121.79,
+    "log": "build/formal-fault/fault_1.console.log"
+  },
+  {
+    "job": "cover_fault_0",
+    "status": "PASS 0 11",
+    "seconds": 11.68,
+    "log": "build/formal-fault/cover_fault_0.console.log"
+  },
+  {
+    "job": "cover_fault_1",
+    "status": "PASS 0 17",
+    "seconds": 17.14,
+    "log": "build/formal-fault/cover_fault_1.console.log"
+  }
+]

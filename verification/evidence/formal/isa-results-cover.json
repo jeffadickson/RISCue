@@ -1,0 +1,38 @@
+[
+  {
+    "job": "insn_add_ch0",
+    "status": "PASS 0 9",
+    "seconds": 9.12,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_add_ch0.console.log"
+  },
+  {
+    "job": "insn_lw_ch0",
+    "status": "PASS 0 50",
+    "seconds": 50.89,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_lw_ch0.console.log"
+  },
+  {
+    "job": "insn_mul_ch0",
+    "status": "TIMEOUT 8 3",
+    "seconds": 61.74,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/insn_mul_ch0.console.log"
+  },
+  {
+    "job": "cover_insn_add_ch0",
+    "status": "ERROR 16 4",
+    "seconds": 59.86,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/cover_insn_add_ch0.console.log"
+  },
+  {
+    "job": "cover_insn_lw_ch0",
+    "status": "ERROR 16 5",
+    "seconds": 36.11,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/cover_insn_lw_ch0.console.log"
+  },
+  {
+    "job": "cover_insn_mul_ch0",
+    "status": "ERROR 16 0",
+    "seconds": 0.27,
+    "log": "build/formal/riscv-formal/cores/ftcore/checks/cover_insn_mul_ch0.console.log"
+  }
+]

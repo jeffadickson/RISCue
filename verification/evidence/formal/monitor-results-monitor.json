@@ -1,0 +1,14 @@
+[
+  {
+    "job": "monitor",
+    "status": "PASS 0 5",
+    "seconds": 9.3,
+    "log": "build/formal-monitor-final/monitor.console.log"
+  },
+  {
+    "job": "cover_monitor",
+    "status": "PASS 0 1",
+    "seconds": 3.08,
+    "log": "build/formal-monitor-final/cover_monitor.console.log"
+  }
+]

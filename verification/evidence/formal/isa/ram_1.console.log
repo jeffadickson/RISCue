@@ -1,0 +1,43 @@
+SBY  2:12:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] Removing directory '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1'.
+SBY  2:12:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] Copy '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1.v' to '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1/src/ram_1.v'.
+SBY  2:12:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: smtbmc bitwuzla
+SBY  2:12:42 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  2:12:46 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: Warning: Replacing memory \mem with list of registers. See ram_1.v:234, ram_1.v:88
+SBY  2:12:48 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: Warning: Latch inferred for signal `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.\byte_i [1:0]' from process `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.$proc$ram_1.v:131$4803': $auto$proc_dlatch.cc:555:proc_dlatch$11158
+SBY  2:12:48 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: Warning: Latch inferred for signal `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.\byte_i [2]' from process `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.$proc$ram_1.v:131$4803': $auto$proc_dlatch.cc:557:proc_dlatch$11259
+SBY  2:12:48 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: Warning: Latch inferred for signal `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.\byte_i [31:3]' from process `$paramod$35d0a0fd7df05550d79a95859b2896e849b02a8a\ft_ecc_ram.$proc$ram_1.v:131$4803': $auto$proc_dlatch.cc:555:proc_dlatch$11262
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] base: finished (returncode=0)
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] prep: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1/model; yosys -ql design_prep.log design_prep.ys"
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] prep: finished (returncode=0)
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] smt2: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] smt2: finished (returncode=0)
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 10  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Solver: bitwuzla
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY  2:12:49 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:00  Checking assertions in step 3..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assumptions in step 4..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assertions in step 4..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assumptions in step 5..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assertions in step 5..
+SBY  2:12:50 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assumptions in step 6..
+SBY  2:12:51 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:01  Checking assertions in step 6..
+SBY  2:12:53 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:04  Checking assumptions in step 7..
+SBY  2:12:53 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:04  Checking assertions in step 7..
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:04  Checking assumptions in step 8..
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:04  Checking assertions in step 8..
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:04  Checking assumptions in step 9..
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:05  Checking assertions in step 9..
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: ##   0:00:05  Status: passed
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: finished (returncode=0)
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] engine_0: Status returned by engine: pass
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:11 (11)
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:12 (12)
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] summary: engine_0 (smtbmc bitwuzla) returned pass
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] summary: engine_0 did not produce any traces
+SBY  2:12:54 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal/ram_1] DONE (PASS, rc=0)

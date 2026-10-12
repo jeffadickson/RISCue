@@ -1,0 +1,11 @@
+{
+  "release": "2026-10-12",
+  "linux-x64": {
+    "url": "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-12/oss-cad-suite-linux-x64-20261012.tgz",
+    "sha256": "2eb5c50cc03fa817f0fa9b8cccbfef9584528433a13e693792514326b63451de"
+  },
+  "sv2v": {
+    "url": "https://github.com/zachjs/sv2v/releases/download/v0.0.13/sv2v-Linux.zip",
+    "sha256": "552799a1d76cd177b9b4cc63a3e77823a3d2a6eb4ec006569288abeff28e1ff8"
+  }
+}

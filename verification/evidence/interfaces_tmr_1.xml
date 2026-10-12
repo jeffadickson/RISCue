@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1791819222" />
+    <testcase name="injection_qualification_and_reporting" classname="test_interfaces" file="/workspace/scratch/c59c397b704c/rv32im_ft_v0_2/tests/cocotb/test_interfaces.py" lineno="5" time="0.6772353649139404" sim_time_ns="1145.0" ratio_time="1690.6972956816876" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,8 @@
+{
+  "upstream_program_runs": 100,
+  "stored_fault_cases": 5901,
+  "control_replica_fault_cases": 4440,
+  "requirements": 33,
+  "status": "passed",
+  "qualifications": "RTL simulation and generic synthesis only"
+}

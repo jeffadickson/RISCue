@@ -1,0 +1,4 @@
+PASS signed model context regression
+/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/tests/tb_formal_model_context.sv:24: $finish called at 2 (1s)
+PASS signed model context regression
+/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/tests/tb_formal_model_context.sv:24: $finish called at 2 (1s)

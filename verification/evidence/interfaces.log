@@ -1,0 +1,72 @@
+python3 tools/run_interfaces.py ecc 0
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1791819213
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /workspace/scratch/c59c397b704c/hdl_tools/python/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_interfaces.injection_qualification_and_reporting (1/1)
+  1195.00ns INFO     cocotb.regression                  test_interfaces.injection_qualification_and_reporting passed
+  1195.00ns INFO     cocotb.regression                  ***************************************************************************************************************
+                                                        ** TEST                                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***************************************************************************************************************
+                                                        ** test_interfaces.injection_qualification_and_reporting   PASS        1195.00           0.96       1246.17  **
+                                                        ***************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                        1195.00           0.96       1242.39  **
+                                                        ***************************************************************************************************************
+interfaces ecc 0 1 0
+python3 tools/run_interfaces.py tmr 0
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1791819216
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /workspace/scratch/c59c397b704c/hdl_tools/python/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_interfaces.injection_qualification_and_reporting (1/1)
+  1195.00ns INFO     cocotb.regression                  test_interfaces.injection_qualification_and_reporting passed
+  1195.00ns INFO     cocotb.regression                  ***************************************************************************************************************
+                                                        ** TEST                                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***************************************************************************************************************
+                                                        ** test_interfaces.injection_qualification_and_reporting   PASS        1195.00           0.67       1780.04  **
+                                                        ***************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                        1195.00           0.67       1775.97  **
+                                                        ***************************************************************************************************************
+interfaces tmr 0 1 0
+python3 tools/run_interfaces.py ecc 1
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1791819219
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /workspace/scratch/c59c397b704c/hdl_tools/python/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_interfaces.injection_qualification_and_reporting (1/1)
+  1585.00ns INFO     cocotb.regression                  test_interfaces.injection_qualification_and_reporting passed
+  1585.00ns INFO     cocotb.regression                  ***************************************************************************************************************
+                                                        ** TEST                                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***************************************************************************************************************
+                                                        ** test_interfaces.injection_qualification_and_reporting   PASS        1585.00           0.93       1698.75  **
+                                                        ***************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                        1585.00           0.93       1696.32  **
+                                                        ***************************************************************************************************************
+interfaces ecc 1 1 0
+python3 tools/run_interfaces.py tmr 1
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1791819222
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /workspace/scratch/c59c397b704c/hdl_tools/python/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_interfaces.injection_qualification_and_reporting (1/1)
+  1145.00ns INFO     cocotb.regression                  test_interfaces.injection_qualification_and_reporting passed
+  1145.00ns INFO     cocotb.regression                  ***************************************************************************************************************
+                                                        ** TEST                                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***************************************************************************************************************
+                                                        ** test_interfaces.injection_qualification_and_reporting   PASS        1145.00           0.68       1690.70  **
+                                                        ***************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                        1145.00           0.68       1687.17  **
+                                                        ***************************************************************************************************************
+interfaces tmr 1 1 0

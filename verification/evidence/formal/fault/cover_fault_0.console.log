@@ -1,0 +1,30 @@
+SBY  2:28:30 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] Removing directory '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0'.
+SBY  2:28:30 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] Copy '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/fault_0.v' to '/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0/src/fault_0.v'.
+SBY  2:28:30 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: smtbmc bitwuzla
+SBY  2:28:30 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] base: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  2:28:30 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] base: Warning: Replacing memory \rf with list of registers. See fault_0.v:410
+SBY  2:28:33 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] base: finished (returncode=0)
+SBY  2:28:33 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] prep: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0/model; yosys -ql design_prep.log design_prep.ys"
+SBY  2:28:33 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] prep: finished (returncode=0)
+SBY  2:28:33 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] smt2: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  2:28:34 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] smt2: finished (returncode=0)
+SBY  2:28:34 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: starting process "cd /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0; yosys-smtbmc -s bitwuzla --presat --unroll -c --noprogress -t 12  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  2:28:34 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:00  Solver: bitwuzla
+SBY  2:28:34 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  2:28:34 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY  2:28:35 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:01  Checking cover reachability in step 2..
+SBY  2:28:36 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:01  Checking cover reachability in step 3..
+SBY  2:28:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:06  Reached cover statement in step 3 at formal_core_fault: fault_0.v:824.4-824.28 (_witness_.cover_cover_fault_0_v_824_830)
+SBY  2:28:40 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:06  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:07  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:07  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:07  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: ##   0:00:07  Status: passed
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: finished (returncode=0)
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] engine_0: Status returned by engine: pass
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:11 (11)
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:11 (11)
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] summary: engine_0 (smtbmc bitwuzla) returned pass
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] summary: cover trace: /workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0/engine_0/trace0.vcd
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] summary:   reached cover statement formal_core_fault._witness_.cover_cover_fault_0_v_824_830 at fault_0.v:824.4-824.28 step 3
+SBY  2:28:41 [/workspace/scratch/c59c397b704c/rv32im_ft_v0_3/build/formal-fault/cover_fault_0] DONE (PASS, rc=0)

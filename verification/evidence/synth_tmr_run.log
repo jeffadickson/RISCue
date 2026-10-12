@@ -1,0 +1,12 @@
+/workspace/scratch/c59c397b704c/hdl_tools/sv2v/sv2v-Linux/sv2v rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv > build/rtl.v
+/workspace/scratch/c59c397b704c/hdl_tools/full/usr/bin/yosys -Q -p 'read_verilog build/rtl.v; hierarchy -check -top rv32im_ft_soc -chparam WORDS 16 -chparam RF_TMR 1; proc; setattr -set keep 1 t:$adff t:$dff t:rv32_execute; opt; memory_collect; check -assert; stat; write_json build/netlist.json' > build/synthesis.log 2>&1
+     $xor                            2
+
+9. Executing JSON backend.
+
+Warnings: 5 unique messages, 6 total
+End of script. Logfile hash: c6682527f1, CPU: user 12.84s system 0.04s, MEM: 95.32 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 57% 2x read_verilog (7 sec), 14% 5x opt_expr (1 sec), ...
+python3 tools/audit_netlist.py build/netlist.json tmr
+PASS netlist audit: CPU/RAM/reporter TMR, two execution instances, RF TMR words: 31
