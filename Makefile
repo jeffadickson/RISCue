@@ -240,3 +240,10 @@ c-smoke-local: c-tools
 .PHONY: test-elf-toolchain
 test-elf-toolchain:
 	RISCV_GCC="$(RISCV_GCC)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" $(PYTHON) tools/test_elf_toolchain.py
+
+.PHONY: c-workload-build c-workload
+c-workload-build:
+	RISCV_GCC="$(RISCV_GCC)" RISCV_OBJCOPY="$(RISCV_OBJCOPY)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" RISCV_NM="$(RISCV_NM)" $(PYTHON) tools/build_c_workload.py
+c-workload: c-workload-build
+	TEST_FILTER=compiled_c_workload $(PIPELINE_PYTHON) tools/run_pipeline.py ecc --c-workload
+	TEST_FILTER=compiled_c_workload $(PIPELINE_PYTHON) tools/run_pipeline.py tmr --c-workload

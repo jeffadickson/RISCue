@@ -275,3 +275,47 @@ async def compiled_c_smoke(d):
     result={'mode':'tmr' if TMR else 'ecc','cycles':cycles,'retirements':retirements,'mailbox':values,'expected':expected,'status':'pass','binary_sha256':meta['binary_sha256']}
     (folder/('result-tmr.json' if TMR else 'result-ecc.json')).write_text(json.dumps(result,indent=2)+'\n')
     d._log.info('Compiled C PASS: %s',result)
+
+@cocotb.test(skip=os.environ.get('PIPELINE_C_WORKLOAD')!='1' or not os.path.exists(os.path.join(os.environ.get('PROJECT_ROOT','.'),'build/c-workload/metadata.json')))
+async def compiled_c_workload(d):
+    import csv,hashlib,json,re,sys,time
+    from collections import Counter
+    from pathlib import Path
+    root=Path(os.environ['PROJECT_ROOT']);folder=root/'build/c-workload';sys.path.insert(0,str(root/'tools'))
+    from workload_reference import expected
+    meta=json.loads((folder/'metadata.json').read_text());binary=(folder/'smoke.bin').read_bytes()
+    assert hashlib.sha256(binary).hexdigest()==meta['binary_sha256']
+    names={int(m[1],16):m[2] for line in (folder/'smoke.dis').read_text().splitlines() if (m:=re.match(r'^\s*([0-9a-f]+):\s+[0-9a-f]+\s+(\S+)',line))}
+    symbols=sorted((address,name) for name,address in meta['symbols'].items());ranges=[(address,name,symbols[n+1][0] if n+1<len(symbols) else 0xffffffff) for n,(address,name) in enumerate(symbols)]
+    await start(d);await boot(d,data=binary)
+    started=time.monotonic();hist=Counter();functions=Counter();rows=[];interrupts=[];minimum_sp=0x1e00
+    for cycle in range(1,60001):
+        await FallingEdge(d.clk)
+        assert not int(d.fatal.value),'workload integrity failure'
+        if int(d.trap.value):
+            cause=int(d.trap_cause.value);assert cause==0x80000007,('unexpected trap',cause,int(d.trap_value.value));interrupts.append({'cycle':cycle,'cause':cause})
+        if int(d.retire_valid.value):
+            pc=int(d.retire_pc.value);raw=int(d.retire_insn.value);rd=int(d.retire_rd.value);value=int(d.retire_result.value)
+            mnemonic=names.get(pc,'unknown');assert mnemonic!='unknown',('unknown retired PC',pc)
+            hist[mnemonic]+=1
+            for start_pc,name,end in ranges:
+                if start_pc<=pc<end:functions[name]+=1;break
+            if rd==2 and 0x1000<=value<=0x1e00:minimum_sp=min(minimum_sp,value)
+            rows.append((cycle,pc,raw,mnemonic,rd,value))
+            if pc==meta['finish_pc']:break
+    else:raise AssertionError('C workload timed out')
+    assert len(interrupts)==1,interrupts
+    def decode(code):
+        positions=[p for p in range(1,39) if p not in (1,2,4,8,16,32)]
+        return sum(((code>>(p-1))&1)<<j for j,p in enumerate(positions))
+    values=[decode(int(d.soc.ram.mem[0x1f00//4+j].value)) for j in range(32)]
+    reference=expected()
+    for index,value in reference['mailbox'].items():assert values[index]==value,(index,values[index],value)
+    assert values[25] in names,('IRQ resume PC is not an instruction boundary',values[25])
+    assert all(values[n]>0 for n in (1,2,3,4,26,27))
+    mode='tmr' if TMR else 'ecc'
+    result={'mode':mode,'status':'pass','cycles':cycle,'retirements':len(rows),'cpi':cycle/len(rows),'simulation_clock_period_ns':10,'execution_time_at_reference_10MHz_us':cycle/10,'wall_seconds':time.monotonic()-started,'instruction_histogram':dict(sorted(hist.items())),'function_retirements':dict(functions),'compressed_retirements':sum(raw&3!=3 for _,_,raw,_,_,_ in rows),'interrupts':interrupts,'minimum_observed_sp':minimum_sp,'stack_bytes_observed':0x1e00-minimum_sp,'phase_cycles':dict(zip(['sort_including_irq','matrix','crc32','recursive_fibonacci'],values[1:5])),'mailbox':values,'reference':reference,'binary_sha256':meta['binary_sha256'],'fatal_count':int(d.fatal_count.value),'uncorrectable_count':int(d.uncorrectable_count.value),'corrected_count':int(d.corrected_count.value),'disagreement_count':int(d.disagreement_count.value)}
+    (folder/('result-'+mode+'.json')).write_text(json.dumps(result,indent=2)+'\n')
+    with (folder/('trace-'+mode+'.csv')).open('w') as f:
+        writer=csv.writer(f);writer.writerow(['cycle','pc','raw_instruction','mnemonic','rd','result']);writer.writerows(rows)
+    d._log.info('C workload PASS: mode=%s cycles=%d retirements=%d IRQ=%s phases=%s',mode,cycle,len(rows),interrupts,result['phase_cycles'])

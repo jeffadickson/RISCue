@@ -1,3 +1,9 @@
+# 0.7.2 — larger C integration workload
+
+- Add sorting/matrix/CRC/recursion/search/signed division/bit manipulation and one-shot timer IRQ workload.
+- Compile/audit and simulate actual ELF image in ECC/TMR modes; publish independent reference, dynamic instruction counts, phase counters, stack observation and full retirement traces.
+- Both modes pass: 3340 retirements, 20232 cycles, one timer IRQ and matching results. No intentional faults injected.
+
 # 0.7.1 — compiler profile and actual C simulation
 
 - Generate firmware flags from canonical JSON and audit linked ELF metadata/instructions before objcopy.

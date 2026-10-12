@@ -1,8 +1,8 @@
 {
-  "version": "0.7.1",
+  "version": "0.7.2",
   "recorded_utc": "2026-10-12T22:06:57.283008+00:00",
   "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only",
-  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending. A small GCC-compiled C workload passes in ECC/TMR simulation; platform firmware builds and audits, but its execution remains pending.",
+  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending. A small GCC-compiled C workload passes in ECC/TMR simulation; platform firmware builds and audits, but its execution remains pending. Larger compiled C workload with one-shot timer IRQ passes in ECC/TMR (3340 retirements, 20232 cycles each).",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -115,5 +115,6 @@
   ],
   "debug": "Debug 1.0 requirements specified; standard debug mode/DM/DMI/step not implemented",
   "bitmanip_evidence": "verification/bitmanip-results.json",
-  "compiled_c_evidence": "verification/c-smoke-results.json"
+  "compiled_c_evidence": "verification/c-smoke-results.json",
+  "c_workload_evidence": "verification/c-workload-results.json"
 }

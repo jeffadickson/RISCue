@@ -168,3 +168,11 @@ Both modes pass with 269 retirements in 1,636 cycles. Compiler flags come from
 the JSON profile, and linked firmware passes an ISA audit before objcopy.
 See [setup and limitations](docs/ELF_COMPATIBILITY.md) and
 [the C example](firmware/smoke/main.c).
+
+## Larger C integration workload
+
+`make c-workload` compiles and runs sorting, 3x3 matrix multiplication, CRC-32,
+recursive Fibonacci, binary search and a one-shot C timer interrupt handler.
+ECC/TMR modes both pass: 3340 retirements in 20232 cycles.
+See [the detailed simulation report](docs/C_WORKLOAD_SIMULATION.md),
+[source](firmware/workload/main.c), and complete traces in verification.

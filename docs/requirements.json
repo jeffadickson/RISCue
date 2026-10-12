@@ -590,5 +590,13 @@
     "verification": "test-software-profile; compiled_c_smoke; actual unsupported-A ELF rejection; verification/c-smoke-results.json",
     "status": "implemented; unit/build and directed ECC/TMR C simulation passed; full compliance pending",
     "priority": "must"
+  },
+  {
+    "id": "SW-003",
+    "category": "Verification",
+    "requirement": "Provide a deterministic compiled C integration workload covering sorting, matrix arithmetic, signed division, CRC, recursive calls, search, bit manipulation and a one-shot CLINT timer interrupt with assembly/C context preservation and MRET. Validate results against an independent reference in ECC/TMR modes and publish cycle, retirement, stack observation, instruction histogram and trace evidence with explicit limits.",
+    "verification": "compiled_c_workload; verification/c-workload-results.json; per-retirement traces; docs/C_WORKLOAD_SIMULATION.md",
+    "status": "implemented; ECC/TMR directed simulation passed; full compliance/physical validation pending",
+    "priority": "should"
   }
 ]
