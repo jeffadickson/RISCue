@@ -8,6 +8,7 @@ Original SystemVerilog RV32IM implementation with radiation-fault mitigation mec
 
 | Directory | Contents |
 | --- | --- |
+| `boards/` | FPGA wrappers, pin constraints and explicit vendor build flows |
 | `rtl/` | Core, execution unit, ECC RAM, error recorder and reference SoC |
 | `formal/` | RVFI wrapper, riscv-formal configuration and fault/property harnesses |
 | `tests/` | SystemVerilog regressions and Python/cocotb campaigns |
@@ -125,3 +126,7 @@ Compiler outputs and upstream test binaries are rebuilt with `make upstream`; ge
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md), and the [roadmap](docs/ROADMAP.md). Original code is MIT licensed; third-party notices are retained in `licenses/` and upstream sources keep their own licenses.
+
+## KC705 FPGA target
+
+See [boards/kc705/README.md](boards/kc705/README.md). `make kc705` prepares firmware and builds the XC7K325T target with Vivado; `RF_MODE=tmr` selects triplicated registers. The wrapper provides LEDs, periodic USB-UART status and optional button fault injection. No target bitstream or timing result is claimed yet.

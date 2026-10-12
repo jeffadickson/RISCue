@@ -7,3 +7,5 @@
 5. Add target synthesis/placement constraints and netlist fault injection before physical radiation claims.
 
 The formal campaigns were stopped at the user's request after setup. Historical successful checks are useful development evidence, not complete processor signoff. Current details are in `verification/evidence/formal/RUN_STATUS.md`.
+
+KC705 next steps: actual Vivado/board bring-up, placement-separated replica regions, configuration-memory scrubbing and a target-specific clock/reset fault model.

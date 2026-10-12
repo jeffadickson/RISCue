@@ -1,4 +1,4 @@
-# Strict requirements and traceability — RISCue 0.3
+# Strict requirements and traceability — RISCue 0.4
 
 Implemented describes available RTL/harnesses, not completed verification. Executed evidence is reported separately; open requirements remain open.
 
@@ -46,3 +46,7 @@ Implemented describes available RTL/harnesses, not completed verification. Execu
 | FV-007 | Reachability covers shall accompany directed fault scenarios and instruction checks to identify vacuous configurations. | formal cover jobs; tools/run_formal.py cover | implemented |
 | FV-008 | Whole-core instruction and single-upset containment checks shall complete without unresolved jobs before whole-core formal verification is claimed. | formal-isa; formal-fault; verification/evidence/formal/summary.json | open |
 | FV-009 | Bus/memory consistency, unbounded progress, completeness of decoded ISA coverage and equivalence with RVFI disabled shall be separately verified before broader certification claims. | additional formal harnesses | open |
+| FPGA-001 | The KC705 target shall declare the verified board pin facts, clock conversion, FPGA part and initialization image configuration. | boards/kc705/README.md; kc705.xdc; UG810 review | implemented |
+| FPGA-002 | The FPGA build shall preserve named replica groups and execution lanes and reject failed timing or error-level DRC before bitstream generation. | Vivado build.tcl; redundancy.rpt; timing.rpt; drc.rpt | implemented |
+| FPGA-003 | Clock/reset and every board diagnostic controller shall be included in the protection inventory with their laboratory-only unprotected scope. | STATE_MACHINE_AUDIT.md; board README | implemented |
+| FPGA-004 | The KC705 target shall complete synthesis, implementation, timing closure and on-board bring-up before operational FPGA support is claimed. | Vivado and KC705 hardware validation | open |

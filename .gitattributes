@@ -3,3 +3,5 @@
 *.elf binary
 *.png binary
 *.zip binary
+*.bit binary
+*.dcp binary

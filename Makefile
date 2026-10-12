@@ -83,3 +83,20 @@ formal-ecc formal-ram formal-monitor formal-fault formal-isa formal-execute: for
 .PHONY: formal-model-tests
 formal-model-tests: formal-fetch formal-tools
 	$(PYTHON) tools/test_formal_models.py
+
+# Board builds are explicit and never run simulation or formal verification.
+VIVADO ?= vivado
+KC705_FI ?= 0
+KC705_WORDS ?= 1024
+KC705_CLK_DIV ?= 100
+KC705_IMAGE ?= firmware/kc705/demo.hex
+KC705_BUILD = build/kc705-$(RF_MODE)-fi$(KC705_FI)-d$(KC705_CLK_DIV)
+.PHONY: kc705-image kc705 kc705-synth kc705-program
+kc705-image:
+	$(PYTHON) tools/prepare_fpga_image.py "$(KC705_IMAGE)" "$(KC705_BUILD)/firmware.hex" --words $(KC705_WORDS)
+kc705: kc705-image
+	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) bit
+kc705-synth: kc705-image
+	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/vivado.log" -source boards/kc705/build.tcl -tclargs "$(KC705_BUILD)" $(if $(filter tmr,$(RF_MODE)),1,0) $(KC705_FI) $(KC705_WORDS) $(KC705_CLK_DIV) synth
+kc705-program:
+	$(VIVADO) -mode batch -nojournal -log "$(KC705_BUILD)/program.log" -source boards/kc705/program.tcl -tclargs "$(KC705_BUILD)/riscue_kc705.bit"

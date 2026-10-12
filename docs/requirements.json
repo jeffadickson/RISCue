@@ -334,5 +334,37 @@
     "verification": "additional formal harnesses",
     "status": "open",
     "priority": "must"
+  },
+  {
+    "id": "FPGA-001",
+    "category": "FPGA",
+    "requirement": "The KC705 target shall declare the verified board pin facts, clock conversion, FPGA part and initialization image configuration.",
+    "verification": "boards/kc705/README.md; kc705.xdc; UG810 review",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FPGA-002",
+    "category": "FPGA",
+    "requirement": "The FPGA build shall preserve named replica groups and execution lanes and reject failed timing or error-level DRC before bitstream generation.",
+    "verification": "Vivado build.tcl; redundancy.rpt; timing.rpt; drc.rpt",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FPGA-003",
+    "category": "FPGA",
+    "requirement": "Clock/reset and every board diagnostic controller shall be included in the protection inventory with their laboratory-only unprotected scope.",
+    "verification": "STATE_MACHINE_AUDIT.md; board README",
+    "status": "implemented",
+    "priority": "must"
+  },
+  {
+    "id": "FPGA-004",
+    "category": "FPGA",
+    "requirement": "The KC705 target shall complete synthesis, implementation, timing closure and on-board bring-up before operational FPGA support is claimed.",
+    "verification": "Vivado and KC705 hardware validation",
+    "status": "open",
+    "priority": "must"
   }
 ]

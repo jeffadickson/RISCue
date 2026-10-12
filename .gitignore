@@ -14,3 +14,12 @@ __pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Vendor implementation caches
+.Xil/
+*.bit
+*.dcp
+vivado*.jou
+vivado*.log
+webtalk*.jou
+webtalk*.log

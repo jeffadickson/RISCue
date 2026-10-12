@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0 — KC705 laboratory target
+
+- Vivado build/program targets, clock/reset wrapper and UG810 pin constraints.
+- On-chip ECC firmware image, LED status, periodic USB-UART snapshots and optional north-button injection.
+- Explicit replica/execution-lane preservation and structural audits.
+- Board infrastructure protection boundary and pending timing/hardware validation documented.
+
 ## 0.3.0 — RISCue formal setup
 
 - Optional RVFI retirement interface and pinned riscv-formal integration.

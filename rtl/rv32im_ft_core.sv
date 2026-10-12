@@ -28,11 +28,11 @@ module rv32im_ft_core #(
 );
  import ft_pkg::*;
  // Replica placement and independent voters must be enforced by target implementation.
- (* keep = "true" *) control_t c0,c1,c2;
+ (* keep = "true", DONT_TOUCH = "TRUE" *) control_t c0,c1,c2;
  control_t voted,next;
- (* keep = "true" *) logic [38:0] rf[0:31];
+ (* keep = "true", DONT_TOUCH = "TRUE" *) logic [38:0] rf[0:31];
  ecc_result_t ar,br,sr,mr;
- (* keep = "true" *) logic [31:0] tmr0[0:31],tmr1[0:31],tmr2[0:31];
+ (* keep = "true", DONT_TOUCH = "TRUE" *) logic [31:0] tmr0[0:31],tmr1[0:31],tmr2[0:31];
  function automatic ecc_result_t read_reg(input logic [4:0] idx);
   ecc_result_t r;
   begin
@@ -59,13 +59,13 @@ module rv32im_ft_core #(
    else rf[idx]<=ecc_encode(value);
   end
  endtask
- (* keep = "true" *) exec_t e0,e1;
+ (* keep = "true", DONT_TOUCH = "TRUE" *) exec_t e0,e1;
  exec_t pending;
  logic [31:0] load_word,load_result;
  logic [38:0] fi_rf_base;logic [31:0] fi_tmr_base0,fi_tmr_base1,fi_tmr_base2;
  integer i;
- rv32_execute lane0(voted.insn,voted.pc,ar.data,br.data,e0);
- (* keep_hierarchy = "yes" *) rv32_execute lane1(voted.insn,voted.pc,ar.data,br.data,e1);
+ (* keep_hierarchy = "yes", DONT_TOUCH = "TRUE" *) rv32_execute lane0(voted.insn,voted.pc,ar.data,br.data,e0);
+ (* keep_hierarchy = "yes", DONT_TOUCH = "TRUE" *) rv32_execute lane1(voted.insn,voted.pc,ar.data,br.data,e1);
  always @* begin
   voted=(c0&c1)|(c0&c2)|(c1&c2);
   pending=voted.pending;

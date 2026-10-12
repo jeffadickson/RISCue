@@ -14,7 +14,7 @@ module ft_ecc_ram #(
  output logic [7:0] event_flags,output logic [31:0] event_address);
  import ft_pkg::*;
  typedef struct packed {logic ready,error,fatal;logic [31:0] scrub;} ram_ctrl_t;
- (* keep = "true" *) ram_ctrl_t s0,s1,s2;
+ (* keep = "true", DONT_TOUCH = "TRUE" *) ram_ctrl_t s0,s1,s2;
  ram_ctrl_t voted,next;
  logic [38:0] mem[0:WORDS-1];
  logic [31:0] image[0:WORDS-1];

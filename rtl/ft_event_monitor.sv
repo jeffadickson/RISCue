@@ -16,7 +16,7 @@ module ft_event_monitor #(parameter bit FI_ENABLE=0)(
   logic [15:0] fflags,lflags;
   logic first_valid;
  } report_t;
- (* keep = "true" *) report_t report0,report1,report2;
+ (* keep = "true", DONT_TOUCH = "TRUE" *) report_t report0,report1,report2;
  report_t voted,next;logic [15:0] effective,new_flags;
  function automatic logic [31:0] increment(input logic [31:0] value);
   increment=(value==32'hffffffff)?value:value+1;

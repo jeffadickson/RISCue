@@ -23,3 +23,15 @@ Synthesis auditing checks separate storage cells/nets, not placement separation 
 ## v0.3 verification instrumentation
 
 `RISCV_FORMAL` adds RVFI order and captured operand registers solely for verification. These are not triplicated and do not feed functional control, register writes or bus requests. They are absent in production builds. No new production state machine is added by the formal integration.
+
+## KC705 laboratory wrapper
+
+| Added sequential state | Protection and scope |
+| --- | --- |
+| MMCM lock and reset release synchronizer | Common clock/reset infrastructure, unprotected; outside core single-upset model |
+| Fault-button synchronizer, debounce and edge pulse | Unprotected lab stimulus; can affect the core only in FI-enabled builds |
+| Heartbeat/activity counters | Unprotected display state; no architectural feedback |
+| UART transmitter busy, bit index, timer and shift register | Unprotected diagnostic FSM; no CPU bus connection |
+| Telemetry scheduler, retirement counter and packet snapshot | Unprotected diagnostic state; no CPU bus connection |
+
+KC705 state additions are not claimed as protected. The target documentation defines the boundary and the unfinished placement/voter obligations. Core/RAM/reporter state uses explicit Vivado preservation hints with a structural replica-count audit.
