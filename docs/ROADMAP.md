@@ -1,21 +1,12 @@
-# Remaining target and verification work
+# Remaining implementation and verification work
 
-Early direct-jump resolution and KV260 generic AXI host interaction now have short simulation evidence. Selected cocotb jump tests also pass. Full regression, standard debug implementation, C toolchain execution and physical KV260/KC705 bring-up remain open.
+The current five-stage core, M-mode platform, bit manipulation, AXI ECC RAM and KC705 UART monitor have directed simulation evidence, including compiled C. See [validation](VALIDATION.md) and [the manual](RISCUE_MANUAL.md).
 
-Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+1. Run the actual KC705 Vivado flow, inspect resource use, timing, CDC and replica preservation, then verify clock/reset, UART identity, ELF loading, execution and error recovery on the board.
+2. Complete the current-pipeline architectural/privileged and pinned upstream campaigns; broaden fault tests across timing phases and nonzero architectural states. Preserve failures and incomplete coverage explicitly.
+3. Run RV32IMC RVFI, CSR/interrupt, arithmetic and fault proofs/covers. Add formal AXI ownership, halt/drain and monitor containment contracts; simulation passes do not close these proof tasks.
+4. Validate the KV260 vendor IP, Linux UIO/clock/overlay and physical host-control path.
+5. Implement and validate standard RISC-V debug halt/resume/step/GPR access if required. The serial monitor currently resets on RUN and has no standard Debug Module.
+6. Engineer physical redundancy separation, memory interleaving, configuration scrubbing, protected clock/reset/boot/voters and target radiation qualification. The UART monitor and owner/boot controls remain outside the protected boundary.
 
-The five-stage machine pipeline, compressed decoder, multicycle arithmetic,
-CLINT, interrupts and instrumented KC705 integration are implemented in 0.5.
-They have compile-only evidence. Functional verification and target hardware
-qualification remain open:
-
-- Execute cocotb, arithmetic/injector regressions and pinned upstream programs.
-- Run RV32IMC RVFI and dedicated CSR/interrupt/fault properties; retain failures,
-  covers and timeouts explicitly. Compliance testing is not yet established.
-- Run real Vivado IP generation, synthesis, physical redundancy audits,
-  place/route, timing and board/debug campaigns.
-- Engineer physical replica separation, memory interleaving, configuration
-  scrubbing, voter/SET/common-mode coverage and radiation qualification.
-- Consider A/Zalrsc/Zaamo only if multihart/DMA/atomic software requires it.
-- Cache, predictor, higher-throughput dual-port memory and external IRQ board
-  wiring are future performance/platform options, not enabled features.
+Atomics, caches, prediction, dual-port memory, richer UART software I/O and external-memory controllers are future scope driven by workload/platform needs. A/Zalrsc/Zaamo remain conditional; no speculative performance or flight-readiness claim follows from adding features.

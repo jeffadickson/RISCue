@@ -1,12 +1,8 @@
 # Five-stage pipeline and machine platform
 
-Short SV simulations now pass for ECC/TMR pipeline smoke (20 retirements, 165 clocks), multicycle arithmetic (2,088 vectors plus cancellation/repair), and hardware injection scheduling. See verification/pipeline-smoke-results.json. Full cocotb/upstream/formal/Vivado/board validation remains pending. Older compile-only statements below describe the initial implementation checkpoint.
+Current RTL and directed simulation status are summarized in [the manual](RISCUE_MANUAL.md) and [validation index](VALIDATION.md). Pipeline smoke, early jumps, bit manipulation, compiled C, AXI/ECC and UART monitor tests have passed in the stated configurations. Full architectural compliance, new pipeline formal proofs, Vivado timing and physical board validation remain pending.
 
-`riscue_pipeline_core` and `riscue_pipeline_soc` implement the new target;
-`rv32im_ft_core` and `rv32im_ft_soc` preserve the legacy serialized target.
-KC705 now selects the pipeline. New RTL is implemented but functional
-verification, synthesis, timing closure, and board operation are pending.
-Historical results under `verification/evidence` apply to the legacy target.
+`riscue_pipeline_core` is the current five-stage CPU. `riscue_pipeline_soc` supplies its local ECC-memory fixture; the default KC705 target uses `riscue_monitor_soc` with AXI ECC memory. `rv32im_ft_core` and `rv32im_ft_soc` preserve the older serialized target. Historical results under `verification/evidence` apply to that legacy target.
 
 The pipeline target is RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only. IF fetches
 ECC-coded words, expands RV32C integer instructions and assembles straddling
@@ -102,9 +98,7 @@ reported as completed proofs.
 `make pipeline-upstream` fetches/builds pinned RV32I/M/C and FENCE.I test
 bodies and C workloads, then observes EBREAK pass/fail on the pipeline.
 Those bare-metal adapters do not establish privileged compliance.
-Legacy `make test`/`make formal` remain legacy targets. No new simulations or
-proofs were executed in this change; compile-only results are recorded
-separately. Neither compliance nor RTOS compatibility has been established.
+Legacy `make test`/`make formal` remain legacy targets. Directed pipeline simulation evidence is indexed in VALIDATION.md; configured formal jobs are not completed proofs. Neither compliance nor RTOS compatibility has been established.
 
 Normative references:
 - https://docs.riscv.org/reference/isa/unpriv/zicsr.html

@@ -1,6 +1,6 @@
 # Protection boundaries — v0.2
 
-The new pipeline/platform/arithmetic protection inventory and explicit common-mode limits are in PIPELINE_IMPLEMENTATION.md. The legacy inventory below does not establish verification of the new core.
+The current pipeline, AXI and monitor inventory is in [STATE_MACHINE_AUDIT.md](STATE_MACHINE_AUDIT.md). The common-mode limits below apply to the digital mitigation model; historical results do not establish new-core verification. In particular, the KC705 serial monitor, UART, ownership mux and boot/halt/reset controls are unprotected laboratory infrastructure.
 
 The RTL implements correction of single stored bits in SECDED memories and masking/repair of one replica error in TMR state. Duplicated execution decisions are compared. These mechanisms do not establish radiation hardness.
 

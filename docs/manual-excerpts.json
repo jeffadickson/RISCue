@@ -1,0 +1,170 @@
+[
+  {
+    "id": "state",
+    "path": "rtl/riscue_pipeline_pkg.sv",
+    "start": "  slot_t f,d,x,m,w;",
+    "lines": 14,
+    "language": "systemverilog"
+  },
+  {
+    "id": "vote",
+    "path": "rtl/riscue_pipeline_core.sv",
+    "start": "  s=(c0&c1)",
+    "lines": 5,
+    "language": "systemverilog"
+  },
+  {
+    "id": "forward",
+    "path": "rtl/riscue_pipeline_core.sv",
+    "start": " wire forward_m=",
+    "lines": 4,
+    "language": "systemverilog"
+  },
+  {
+    "id": "jump",
+    "path": "rtl/riscue_pipeline_core.sv",
+    "start": "      if(EARLY_JUMP&&!s.d.trap",
+    "lines": 4,
+    "language": "systemverilog"
+  },
+  {
+    "id": "commit",
+    "path": "rtl/riscue_pipeline_core.sv",
+    "start": "   // WB is the only",
+    "lines": 9,
+    "language": "systemverilog"
+  },
+  {
+    "id": "multiply",
+    "path": "rtl/riscue_muldiv.sv",
+    "start": "   if(!s.op[2])",
+    "lines": 8,
+    "language": "systemverilog"
+  },
+  {
+    "id": "divide_result",
+    "path": "rtl/riscue_muldiv.sv",
+    "start": "   end else if(s.count==32)",
+    "lines": 6,
+    "language": "systemverilog"
+  },
+  {
+    "id": "request",
+    "path": "rtl/riscue_axi_master_bridge.sv",
+    "start": "   IDLE:if(core_req)",
+    "lines": 10,
+    "language": "systemverilog"
+  },
+  {
+    "id": "axi_valid",
+    "path": "rtl/riscue_axi_master_bridge.sv",
+    "start": " assign m_axi_awvalid=",
+    "lines": 5,
+    "language": "systemverilog"
+  },
+  {
+    "id": "ecc_write",
+    "path": "rtl/riscue_axi_ecc_ram.sv",
+    "start": "    if(s.aw_hold&&s.w_hold)",
+    "lines": 5,
+    "language": "systemverilog"
+  },
+  {
+    "id": "ownership",
+    "path": "rtl/riscue_serial_monitor.sv",
+    "start": "    STOP_WAIT:begin",
+    "lines": 9,
+    "language": "systemverilog"
+  },
+  {
+    "id": "crc_gate",
+    "path": "rtl/riscue_serial_monitor.sv",
+    "start": "     if(packet[159:128]!=crc",
+    "lines": 5,
+    "language": "systemverilog"
+  },
+  {
+    "id": "crc_function",
+    "path": "rtl/riscue_serial_monitor.sv",
+    "start": " function automatic [31:0] crc",
+    "lines": 6,
+    "language": "systemverilog"
+  },
+  {
+    "id": "elf_loader",
+    "path": "tools/kc705_monitor.py",
+    "start": "    def load(self,path,size):",
+    "lines": 8,
+    "language": "python"
+  },
+  {
+    "id": "host_frame",
+    "path": "tools/kc705_monitor.py",
+    "start": "def frame(",
+    "lines": 3,
+    "language": "python"
+  },
+  {
+    "id": "c_example",
+    "path": "firmware/smoke/main.c",
+    "start": "int main(void)",
+    "lines": 15,
+    "language": "c"
+  },
+  {
+    "id": "startup",
+    "path": "firmware/smoke/start.S",
+    "start": "_start:",
+    "lines": 14,
+    "language": "asm"
+  },
+  {
+    "id": "linker",
+    "path": "firmware/smoke/link.ld",
+    "start": "OUTPUT_ARCH",
+    "lines": 13,
+    "language": "ld"
+  },
+  {
+    "id": "uart_driver",
+    "path": "tests/tb_serial_monitor.sv",
+    "start": " task byte_tx",
+    "lines": 5,
+    "language": "systemverilog"
+  },
+  {
+    "id": "uart_c_test",
+    "path": "tests/tb_serial_monitor.sv",
+    "start": "   for(i=0;i<count;",
+    "lines": 9,
+    "language": "systemverilog"
+  },
+  {
+    "id": "fi_test",
+    "path": "tests/tb_serial_monitor.sv",
+    "start": "  command(6,256,1",
+    "lines": 3,
+    "language": "systemverilog"
+  },
+  {
+    "id": "runner",
+    "path": "tools/run_monitor_tests.py",
+    "start": "    (vectors/'load.hex')",
+    "lines": 3,
+    "language": "python"
+  },
+  {
+    "id": "source_list",
+    "path": "tools/run_monitor_tests.py",
+    "start": "        args=[os.environ.get",
+    "lines": 2,
+    "language": "python"
+  },
+  {
+    "id": "ecc_decode",
+    "path": "rtl/ft_pkg.sv",
+    "start": "      if(overall)begin",
+    "lines": 7,
+    "language": "systemverilog"
+  }
+]

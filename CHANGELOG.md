@@ -1,5 +1,7 @@
 ## 0.7.6 — KC705 serial development monitor
 
+- Consolidate current architecture, protection, software, FPGA and test-rig documentation into a developer manual with 24 source-synchronized excerpts. Refresh README/status/inventory and preserve historical descriptions separately.
+
 - Default KC705 target now uses the AXI CPU and ECC RAM with independent UART load/run/status control; original VIO/ILA target remains selectable.
 - Add CRC-framed stop-and-wait commands, duplicate replay, bounded waits, stopped-only memory ownership, memory recovery and optional codeword injection.
 - Add optional pipeline drain control and programmable reset PC; defaults preserve existing wrappers.

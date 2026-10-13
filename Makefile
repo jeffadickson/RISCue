@@ -323,3 +323,9 @@ monitor-tools:
 .PHONY: check-kc705
 check-kc705:
 	$(PYTHON) tools/check_kc705.py
+
+.PHONY: docs docs-check
+docs:
+	$(PYTHON) tools/build_manual.py
+docs-check:
+	$(PYTHON) tools/build_manual.py --check

@@ -99,7 +99,7 @@
     "full cocotb ECC/TMR architectural, CSR/interrupt and fault regressions",
     "pinned upstream programs",
     "formal RV32IMC, redirect, arithmetic and fault proofs/cover witnesses",
-    "cross-compiler build and C demo execution",
+    "full platform firmware/RTOS execution and compiler-library coverage",
     "real Vivado, board preset, synthesis/physical redundancy, timing and debug-IP builds",
     "KV260 Linux UIO/clock/overlay/physical hardware validation",
     "standard RISC-V Debug 1.0 DM/hart integration",

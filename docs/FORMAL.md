@@ -1,4 +1,6 @@
-# Formal verification — RV32IM-FT v0.3
+# Formal verification — current setup and legacy contracts
+
+For the current pipeline, the configured jobs are `formal-pipeline`, `formal-muldiv`, `formal-injector`, and `formal-bitmanip`; no completed current-pipeline proof is claimed. The detailed RV32IM v0.3 contracts below concern the legacy target. `formal-monitor` means the **error recorder**, not the KC705 serial command monitor. Current pipeline RVFI fields are part of the triplicated retirement state; the legacy verification-only register comments below do not describe that pipeline state.
 
 Early direct-jump target lanes are included in the pipeline conversion/RVFI inputs. Added local assertions cover redirect acceptance and killed pending fetches. The RVFI format is unchanged; new timing/redirect proof jobs and cover witnesses remain unexecuted.
 

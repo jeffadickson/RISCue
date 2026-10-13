@@ -1,5 +1,7 @@
 # C toolchain and implementation contract
 
+The platform-specific RAM, entry-zero loader and reset-on-STOP details below describe **KV260**. The shared ISA/ABI applies to the current pipeline. The KC705 UART monitor supports a validated nonzero entry and a draining STOP; see [its contract](KC705_MONITOR.md). The `host_stop` field in the original software profile describes the KV260 host behavior.
+
 RISCue uses the standard RV32 ILP32 ABI, not a custom calling convention.
 `software-profile.json` declares the exact ISA, compiler flags, alignment,
 memory and timing contract. Use a bare-metal RISC-V GCC/binutils toolchain;
