@@ -35,7 +35,7 @@ Test memory correction by injecting one bit in a codeword, then observing
 repair/reporting before applying a separate two-bit fault to the clean word.
 Scrub traversal depends on foreground bus load; wait for repair rather than
 assuming one word per clock. A two-bit read/partial-write error fail stops the
-pipeline SRAM endpoint; a full-word overwrite can replace a bad codeword.
+pipeline SRAM endpoint. A full-word overwrite can replace a bad codeword only while the controller accepts requests; a latched-fatal controller requires the wrapper-specific reset/recovery sequence first. Pause background scrub where the loader contract requires it, reload/verify the image, then resume. Reset alone does not repair RAM contents.
 Three-or-more-bit ECC patterns can alias and are outside the SECDED guarantee.
 
 Campaign sequencing and JTAG commands are in boards/kc705/lab/README.md.

@@ -1,5 +1,7 @@
 # RISCue documentation index
 
+See the [programmer and microarchitecture reference](PROGRAMMER_REFERENCE.md) for the instruction set, register tables, pipeline redirects and protection semantics.
+
 Read the **[developer and verification manual](RISCUE_MANUAL.md)** first. It describes implementation baseline 0.7.7 with source-synchronized code excerpts and links to the contracts below.
 
 | Topic | Reference |
@@ -15,6 +17,7 @@ Read the **[developer and verification manual](RISCUE_MANUAL.md)** first. It des
 | Packet application | [UART packet processor](PACKET_PROCESSOR.md), [C firmware](../firmware/packet/main.c) |
 | Formal | [Setup and contracts](FORMAL.md); distinguish legacy jobs and current pending proofs |
 | Requirements and trust | [Requirements](REQUIREMENTS.md), [editable JSON](requirements.json), [CSV](requirements.csv), [STRIDE](STRIDE.md) |
+| Documentation review | [Five independent review/revision rounds](reviews/DOCUMENTATION_REVIEW.md) |
 | Planned work | [Roadmap](ROADMAP.md), [debug and mission features](DEBUG_AND_MISSION_FEATURES.md) |
 
 The historical [architecture](LEGACY_ARCHITECTURE.md), [validation](LEGACY_VALIDATION.md), [state inventory](LEGACY_STATE_MACHINE_AUDIT.md), [README](LEGACY_README.md) and [FI ABI 1](LEGACY_FAULT_INJECTION.md) describe earlier configurations. The [legacy KC705 board guide](../boards/kc705/README_LEGACY.md) describes the original VIO/ASCII wrapper, which uses the current five-stage CPU.

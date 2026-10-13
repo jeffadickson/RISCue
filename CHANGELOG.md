@@ -1,5 +1,7 @@
 ## 0.7.7 — UART packet-processing application
 
+- Add conventional programmer/ISA/GPR/CSR reference, worked pipeline/early-jump explanations and precise register-protection semantics after five sequential independent documentation review rounds; correct stale cross-guide integration/recovery claims.
+
 - Add a standalone native-bus application SoC with 8 KiB ECC SRAM and CPU UART MMIO; existing FPGA targets remain unchanged.
 - Protect RX/TX byte queues with SECDED and FIFO/response/CRC/watchdog state with TMR, plus lab-only fault injection.
 - Add compiled C bounded echo/sum packet firmware, alternating buffers, descriptor checks, CRC/timeout/duplicate rejection and mailbox telemetry.

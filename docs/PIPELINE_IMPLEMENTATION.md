@@ -7,7 +7,7 @@ Current RTL and directed simulation status are summarized in [the manual](RISCUE
 The pipeline target is RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only. IF fetches
 ECC-coded words, expands RV32C integer instructions and assembles straddling
 32-bit instructions. ID obtains register operands. EX forwards older results
-and runs either of two compared integer lanes or two compared multicycle
+and runs two integer lanes in parallel and compares their results, or two compared multicycle
 arithmetic lanes. MEM performs checked loads/stores or CLINT accesses. WB
 retires and commits registers/CSRs, precise traps, MRET, and FENCE.I. Stage
 valid bits and backpressure permit overlap; a unified port limits throughput.
@@ -58,7 +58,7 @@ CLINT accepts naturally aligned byte/half/word transfers and byte enables.
 Use standard RV32 high/low update sequences to avoid transient comparator
 interrupts. mtime runs at core-clock frequency, not a fixed real-time rate.
 The core/SoC exposes external_irq; the current KC705 wrapper ties it inactive.
-Data outside reference SRAM and these registers receives an access fault.
+In the local pipeline reference SoC, data outside its SRAM and these registers receives an access fault. Packet UART and external AXI wrappers supply different address maps.
 
 ## Protection and injection
 
@@ -72,7 +72,7 @@ single-replica upset model, not radiation qualification of an FPGA.
 
 Shared decode, CSR/CLINT combinational logic, majority voters, bus pins,
 clock/reset, configuration SRAM, routing and diagnostics are not covered by
-the state TMR guarantee. Synthesis attributes and structural audits do not
+the single-replica stored-state fault model. Synthesis attributes and structural audits do not
 prove physical separation or common-mode tolerance. Placement/interleaving,
 configuration scrubbing, SET coverage and radiation testing remain target
 engineering obligations. The board UART/button/reset state machines remain

@@ -87,6 +87,7 @@ Firmware and stack occupy shared RAM below `0x1f00`; a 1 KiB stack is reserved b
 the linker. Mailbox at `0x1fc0`: ready magic `0x5041434b`, accepted packets,
 CRC rejects, length rejects, timeouts, descriptor rejects, duplicates, unknown
 operations, then reserved words. `stats[1]` counts successful echo/sum requests.
+A missing length byte after the sync byte is counted in `stats[3]` (length rejects), because the firmware combines failure to receive length with its length-range check. Partial-frame failures after a valid length increment `stats[4]` (timeouts). Neither case sends a reply.
 
 Sources: [firmware](../firmware/packet/main.c),
 [startup](../firmware/packet/start.S), [linker](../firmware/packet/link.ld),

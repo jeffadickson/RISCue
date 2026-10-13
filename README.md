@@ -4,6 +4,8 @@ A five-stage, machine-mode RV32 processor prototype with SECDED memory, optional
 
 **Start with the [RISCue developer and verification manual](docs/RISCUE_MANUAL.md).** It covers architecture, code excerpts, software, fault protection, AXI, FPGA targets, the UART test rig and reproducible validation. The [documentation index](docs/README.md) links the detailed reference guides.
 
+The [programmer reference](docs/PROGRAMMER_REFERENCE.md) provides instruction semantics, GPR/CSR tables, pipeline examples and precise ECC/TMR behavior. The [five-round independent review record](docs/reviews/DOCUMENTATION_REVIEW.md) tracks documentation findings and corrections.
+
 ## Current implementation
 
 - RV32IMC + Zicsr + Zifencei + Zicntr + Zbb/Zbc/Zbs, standard ILP32 ABI.

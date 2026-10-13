@@ -1,6 +1,6 @@
 # Current state and protection inventory
 
-Implementation baseline 0.7.6. This inventory describes stored-state mechanisms, not completed physical hardening or exhaustive fault coverage. The earlier serialized-core inventory is retained in [LEGACY_STATE_MACHINE_AUDIT.md](LEGACY_STATE_MACHINE_AUDIT.md).
+Implementation baseline 0.7.7. This inventory describes stored-state mechanisms, not completed physical hardening or exhaustive fault coverage. The earlier serialized-core inventory is retained in [LEGACY_STATE_MACHINE_AUDIT.md](LEGACY_STATE_MACHINE_AUDIT.md).
 
 | Block / state | Protection | Detection and repair | Qualification boundary |
 | --- | --- | --- | --- |

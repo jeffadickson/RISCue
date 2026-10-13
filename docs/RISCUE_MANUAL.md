@@ -1,5 +1,7 @@
 # RISCue developer and verification manual
 
+See the [programmer and microarchitecture reference](PROGRAMMER_REFERENCE.md) for the instruction set, register tables, pipeline redirects and protection semantics.
+
 **Implementation baseline: 0.7.7.** This manual describes the five-stage core, its fault-mitigation mechanisms, software contract, AXI interfaces, FPGA targets and executable test rigs. It also identifies the preserved legacy implementation so evidence is not attributed to the wrong core.
 
 RISCue is an original RV32 processor prototype with ECC/TMR protection and digital fault-injection facilities. Compiled C and directed fault tests have passed in simulation. FPGA resource usage, achieved clock frequency, physical redundancy and radiation performance have not been established.
@@ -318,6 +320,8 @@ Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
 <!-- /excerpt:vote -->
 
 The bitwise vote repairs a single affected replica. If all three complete records differ, the controller conservatively fails stop even if some individual bits still have a majority. Matching corruption in two replicas can defeat the vote; shared logic can also feed the same wrong next state to every replica.
+
+The packet UART has ECC FIFO words and triplicated queue, response, CRC and watchdog state. Its serial RX/TX engines remain unprotected; see [the packet guide](PACKET_PROCESSOR.md) and [the complete state inventory](STATE_MACHINE_AUDIT.md).
 
 ### Memory codewords
 

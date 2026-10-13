@@ -1,4 +1,4 @@
-# Protection boundaries — v0.2
+# Protection boundaries
 
 The current pipeline, AXI and monitor inventory is in [STATE_MACHINE_AUDIT.md](STATE_MACHINE_AUDIT.md). The common-mode limits below apply to the digital mitigation model; historical results do not establish new-core verification. In particular, the KC705 serial monitor, UART, ownership mux and boot/halt/reset controls are unprotected laboratory infrastructure.
 
@@ -15,7 +15,7 @@ Remaining gates are captured as open/partial requirements, not claimed as comple
 7. FPGA configuration scrubbing/reconfiguration, SEL/SEFI response, TID/displacement-damage assessment, protected golden boot images and independent system supervision are external.
 8. SRAM scrub is opportunistic, not bounded under all traffic. Hardware ECC initialization/boot validation remains target-dependent.
 9. Error counters and first/last records are protected stored state, but the recorder's combinational update/voter remains shared. Source masks preserve simultaneous source identity; one address/PC metadata slot can lose individual event detail. No FIFO/backpressure/complete event history is implemented.
-10. No privileged runtime, interrupts, checkpoints, retry, memory-bank retirement, timing closure, formal proof or radiation qualification is claimed.
+10. Minimal machine-mode traps and interrupts are implemented and exercised by directed tests. Full privileged compliance/RTOS qualification, checkpoints, automatic retry, memory-bank retirement, timing closure, completed current-pipeline formal proof and radiation qualification remain unestablished.
 
 **All state machines in the implemented core/subsystem are inventoried in STATE_MACHINE_AUDIT.md; external peripherals/controllers are outside that claim.**
 
