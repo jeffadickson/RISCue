@@ -281,3 +281,22 @@ test-axi-core-errors: test-axi-core
 	$(VVP) build/tb_axi_core_store
 	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_store_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
 	$(VVP) build/tb_axi_core_store_tmr
+
+.PHONY: test-axi-ecc-ram
+test-axi-ecc-ram: | build
+	$(IVERILOG) -g2012 -s tb_axi_ecc_ram -o build/tb_axi_ecc_ram rtl/ft_pkg.sv rtl/ft_ecc_ram.sv rtl/riscue_axi_ecc_ram.sv tests/tb_axi_ecc_ram.sv
+	$(VVP) build/tb_axi_ecc_ram
+
+AXI_ECC_RTL = $(AXI_CORE_RTL) rtl/ft_ecc_ram.sv rtl/riscue_axi_ecc_ram.sv
+.PHONY: axi-c-images test-axi-ecc-c
+axi-c-images: c-smoke-build c-workload-build c-fir-build
+	$(PYTHON) tools/prepare_axi_c.py
+test-axi-ecc-c: axi-c-images
+	$(PYTHON) tools/run_axi_c.py
+
+.PHONY: test-axi-ecc-fatal
+test-axi-ecc-fatal: axi-c-images
+	$(IVERILOG) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -o build/axi-c/fatal $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
+	$(VVP) build/axi-c/fatal +finish_pc=52
+	$(IVERILOG) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -Ptb_axi_ecc_system.RF_TMR=1 -o build/axi-c/fatal-tmr $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
+	$(VVP) build/axi-c/fatal-tmr +finish_pc=52

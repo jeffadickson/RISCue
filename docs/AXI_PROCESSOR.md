@@ -67,3 +67,5 @@ physical synthesis or radiation qualification. The generic master is not yet
 selected by the KC705/KV260 board builds; those retain their documented local
 RAM architecture. Connect the new top to the desired memory/interconnect and
 validate its map, clock/reset and memory protection before board use.
+
+The optional `MEMORY_FAULT_INPUT=1` parameter enables `external_memory_fault` as a fatal input. Connect an ECC RAM endpoint’s `fatal` signal here to stop the hart on an uncorrectable storage fault; the default is disabled for compatibility. AXI response errors still produce architectural access-fault traps. See [AXI ECC memory](AXI_ECC_MEMORY.md) for recovery and test coverage.

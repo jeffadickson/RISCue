@@ -1,0 +1,103 @@
+{
+  "version": "0.7.5",
+  "recorded_utc": "2026-10-13T01:11:59.554800+00:00",
+  "unit_status": "pass",
+  "unit_scope": [
+    "both AW/W orders",
+    "B/R response backpressure",
+    "partial and no-op writes",
+    "39 single-bit repairs",
+    "scrub correction and DED",
+    "foreground DED read/partial-write containment",
+    "quiescent reset and full-word recovery",
+    "address/syndrome/counters",
+    "AXI TMR response repair",
+    "RAM lost-majority fail stop"
+  ],
+  "C_runs": [
+    {
+      "name": "smoke",
+      "RF_TMR": 0,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=0 RF_TMR=0 cycles=3237 retirements=269 IRQ=0",
+      "seconds": 35.173645128001226,
+      "cycles": 3237,
+      "retirements": 269,
+      "interrupts": 0
+    },
+    {
+      "name": "smoke",
+      "RF_TMR": 1,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=0 RF_TMR=1 cycles=3237 retirements=269 IRQ=0",
+      "seconds": 35.92536475399902,
+      "cycles": 3237,
+      "retirements": 269,
+      "interrupts": 0
+    },
+    {
+      "name": "workload",
+      "RF_TMR": 0,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=1 RF_TMR=0 cycles=40432 retirements=3340 IRQ=1",
+      "seconds": 420.6915869939985,
+      "cycles": 40432,
+      "retirements": 3340,
+      "interrupts": 1
+    },
+    {
+      "name": "workload",
+      "RF_TMR": 1,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=1 RF_TMR=1 cycles=40432 retirements=3340 IRQ=1",
+      "seconds": 432.17633105500136,
+      "cycles": 40432,
+      "retirements": 3340,
+      "interrupts": 1
+    },
+    {
+      "name": "fir",
+      "RF_TMR": 0,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=2 RF_TMR=0 cycles=33954 retirements=2853 IRQ=0",
+      "seconds": 362.08735167600025,
+      "cycles": 33954,
+      "retirements": 2853,
+      "interrupts": 0
+    },
+    {
+      "name": "fir",
+      "RF_TMR": 1,
+      "status": "pass",
+      "result": "PASS CPU-AXI-ECC C CASE=2 RF_TMR=1 cycles=33954 retirements=2853 IRQ=0",
+      "seconds": 372.1150986879984,
+      "cycles": 33954,
+      "retirements": 2853,
+      "interrupts": 0
+    }
+  ],
+  "instruction_DED_fail_stop": {
+    "status": "pass",
+    "configurations": 2,
+    "retirements": 0
+  },
+  "legacy_regressions": {
+    "AXI_core_error_cases": 4,
+    "ram": "pass",
+    "ECC_injections": 9360,
+    "ECC_status": "pass"
+  },
+  "sv2v_conversion": "pass",
+  "source_sha256": {
+    "rtl/riscue_axi_core.sv": "4a64f517775cd214eb7f0b3aeff54da83a4360afc254e1feaa1327601ef9c03d",
+    "tests/tb_axi_core.sv": "0d5fb29efab98787e687dc0cd87e3fd059ed5a36a95041c54eebf240313e6978",
+    "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+    "rtl/ft_ecc_ram.sv": "c4fd6fb344992e9c58fa31e261aee86278abf4208f005e53364b60cce7b498ae",
+    "rtl/riscue_axi_ecc_ram.sv": "f33fad14895ced91d0cd55159c573749ea695a4431e86bc96bdc9304c92e2f48",
+    "tests/tb_axi_ecc_ram.sv": "8c2961a267c196ca69cd4a9751f9e261b5020aaf5b4c10ab92937e21f491028f",
+    "tests/tb_axi_ecc_system.sv": "7fdd9bc4a26184e3c3d98f47ccdfbe38bad86db07af0103fea0310183891eb39",
+    "tools/prepare_axi_c.py": "60e8b49df7cff0eab3f1e7201df762bd23b23da8277c51d6c8cce9ed1882b0ae",
+    "tools/run_axi_c.py": "4d76fea6e6e7d2f362419e844af7d89b0368b8af6b77d919a13e1a5440a186a1"
+  },
+  "scope": "Directed AXI/storage ECC and actual compiled C integration. Full AXI formal/compliance, physical BRAM inference/board integration and radiation qualification pending; transport payload/address integrity is separate."
+}

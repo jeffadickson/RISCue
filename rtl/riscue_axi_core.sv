@@ -2,11 +2,11 @@
 // Separate from the KV260 ARM-control AXI slave and its local ECC SRAM.
 module riscue_axi_core #(
  parameter logic [31:0] RESET_PC=0,parameter integer BUS_TIMEOUT=1024,
- parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1
+ parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MEMORY_FAULT_INPUT=0
 )(
  (* X_INTERFACE_INFO="xilinx.com:signal:clock:1.0 CLK CLK", X_INTERFACE_PARAMETER="ASSOCIATED_BUSIF M_AXI, ASSOCIATED_RESET aresetn" *) input logic aclk,
  (* X_INTERFACE_INFO="xilinx.com:signal:reset:1.0 RESET RST", X_INTERFACE_PARAMETER="POLARITY ACTIVE_LOW" *) input logic aresetn,
- input logic external_irq,
+ input logic external_irq,external_memory_fault,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI AWADDR", X_INTERFACE_PARAMETER="PROTOCOL AXI4LITE, DATA_WIDTH 32, ADDR_WIDTH 32, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1" *) output logic [31:0] m_axi_awaddr,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI AWPROT" *) output logic [2:0] m_axi_awprot,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI AWVALID" *) output logic m_axi_awvalid,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI AWREADY" *) input logic m_axi_awready,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI WDATA" *) output logic [31:0] m_axi_wdata,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 M_AXI WSTRB" *) output logic [3:0] m_axi_wstrb,
@@ -28,7 +28,7 @@ module riscue_axi_core #(
  logic [38:0] addr_code,wdata_code,ctrl_code,rdata_code;
  riscue_pipeline_core #(.RESET_PC(RESET_PC),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
   .clk(aclk),.rst_n(aresetn),.external_irq(external_irq),.req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
-  .ready(ready),.bus_error(bus_error),.external_fault(bridge_fatal),.rdata_code(rdata_code),
+  .ready(ready),.bus_error(bus_error),.external_fault(bridge_fatal||(MEMORY_FAULT_INPUT&&external_memory_fault)),.rdata_code(rdata_code),
   .halted(halted),.fatal(core_fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),
   .corrected_event(core_ce),.disagreement_event(core_dis),.retire_valid(retire_valid),.retire_pc(retire_pc),.retire_insn(retire_insn),.retire_result(retire_result),.retire_rd(retire_rd),
   .fi_valid(fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask),.fi_ack(fi_ack),

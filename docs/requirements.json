@@ -614,5 +614,13 @@
     "verification": "test-axi-core-errors ECC/TMR; test-axi-master-bridge; sv2v; verification/axi-master-results.json",
     "status": "implemented; directed simulations and conversion passed; board/full compliance pending",
     "priority": "must"
+  },
+  {
+    "id": "AXI-ECC-001",
+    "category": "Protection",
+    "requirement": "Provide a protected AXI4-Lite SECDED RAM endpoint with independent write channels, stable responses, range/alignment checks, byte RMW containment, foreground correction and background scrub, fatal DED handling, validated fault injection and address/syndrome/counter diagnostics. Define quiescent reset/full-word recovery, storage-vs-transport integrity limits and validate the complete CPU/AXI/ECC path with existing compiled C examples in ECC/TMR modes.",
+    "verification": "test-axi-ecc-ram; test-axi-ecc-c; legacy RAM/ECC tests; sv2v; verification/axi-ecc-memory-results.json",
+    "status": "implemented; directed unit, legacy, instruction fault and six compiled C integration tests passed",
+    "priority": "must"
   }
 ]

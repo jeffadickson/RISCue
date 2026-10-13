@@ -1,3 +1,11 @@
+# 0.7.5 — AXI ECC memory endpoint
+
+- Add protected AXI4-Lite SECDED RAM slave with byte RMW, scrub, DED containment, diagnostic counters/syndromes and validated fault injection.
+- Add quiescent memory-control reset/full-word recovery and independent channel/response tests.
+- Expose RAM syndrome, preserve foreground fault address and fail stop on loss of RAM control-state majority.
+- Run existing compiled C examples through CPU -> AXI -> ECC RAM in ECC/TMR register modes.
+- Physical BRAM inference, board integration and full protocol/formal validation remain pending.
+
 # 0.7.4 — generic processor AXI master
 
 - Add 32-bit single-outstanding AXI4-Lite master wrapper and triplicated bridge.

@@ -1,5 +1,15 @@
 package ft_pkg;
   typedef struct packed { logic [31:0] data; logic [38:0] repaired; logic corrected; logic uncorrectable; } ecc_result_t;
+  // SECDED diagnostic syndrome (position 1..38; overall parity is separate).
+  function automatic logic [5:0] ecc_syndrome(input logic [38:0] code);
+    logic [5:0] value;integer k,pos;
+    begin
+      value=0;
+      for(k=0;k<6;k=k+1)for(pos=1;pos<=38;pos=pos+1)
+        if((pos&(1<<k))!=0)value[k]=value[k]^code[pos-1];
+      ecc_syndrome=value;
+    end
+  endfunction
   // Fixed XOR trees implement the same shortened extended-Hamming 39/32 code.
   function automatic logic [38:0] ecc_encode(input logic [31:0] data);
     logic [38:0] c;

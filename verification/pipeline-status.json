@@ -1,8 +1,8 @@
 {
-  "version": "0.7.3",
-  "recorded_utc": "2026-10-12T22:06:57.283008+00:00",
+  "version": "0.7.5",
+  "recorded_utc": "2026-10-13T01:11:59.578420+00:00",
   "implemented_profile": "RV32IMC_Zicsr_Zifencei_Zicntr_Zbb_Zbc_Zbs, M-mode only",
-  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending. A small GCC-compiled C workload passes in ECC/TMR simulation; platform firmware builds and audits, but its execution remains pending. Larger compiled C workload with one-shot timer IRQ passes in ECC/TMR (3340 retirements, 20232 cycles each). Multiply units pass 264448 bounded/reference vectors; ECC/TMR FIR, full-core multiply dependencies and busy-time interrupt tests pass.",
+  "validation_scope": "Directed 29-instruction bitmanip tests and ECC/TMR integration, short smoke/jump/AXI/M regressions and sv2v conversions pass. Full compliance/formal, cross-compiled firmware and Vivado/Linux/physical board/radiation validation remain pending. A small GCC-compiled C workload passes in ECC/TMR simulation; platform firmware builds and audits, but its execution remains pending. Larger compiled C workload with one-shot timer IRQ passes in ECC/TMR (3340 retirements, 20232 cycles each). Multiply units pass 264448 bounded/reference vectors; ECC/TMR FIR, full-core multiply dependencies and busy-time interrupt tests pass. CPU AXI4-Lite ECC RAM passes directed fault/handshake tests and six compiled C runs across ECC/TMR modes. First-instruction DED halts before retirement in both modes.",
   "compile_results": [
     {
       "name": "pipeline-ecc",
@@ -117,5 +117,6 @@
   "bitmanip_evidence": "verification/bitmanip-results.json",
   "compiled_c_evidence": "verification/c-smoke-results.json",
   "c_workload_evidence": "verification/c-workload-results.json",
-  "multiplier_evidence": "verification/multiplier-results.json"
+  "multiplier_evidence": "verification/multiplier-results.json",
+  "axi_ecc_memory_evidence": "verification/axi-ecc-memory-results.json"
 }

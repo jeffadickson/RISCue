@@ -11,11 +11,12 @@ module ft_ecc_ram #(
  output logic corrected_event,fatal,disagreement_event,
  input logic fi_valid,input logic [3:0] fi_target,input logic [31:0] fi_index,
  input logic [511:0] fi_mask,output logic fi_ack,
- output logic [7:0] event_flags,output logic [31:0] event_address);
+ output logic [7:0] event_flags,output logic [31:0] event_address,output logic [5:0] event_syndrome);
  import ft_pkg::*;
  typedef struct packed {logic ready,error,fatal;logic [31:0] scrub;} ram_ctrl_t;
  (* keep = "true", DONT_TOUCH = "TRUE" *) ram_ctrl_t s0,s1,s2;
  ram_ctrl_t voted,next;
+ wire control_bad=(s0!=s1)&&(s0!=s2)&&(s1!=s2);
  logic [38:0] mem[0:WORDS-1];
  logic [31:0] image[0:WORDS-1];
  ecc_result_t ac,wc,cc,dc,sc;
@@ -27,14 +28,14 @@ module ft_ecc_ram #(
  end
  always @* begin
   voted=(s0&s1)|(s0&s2)|(s1&s2);next=voted;next.ready=0;next.error=0;
-  ready=voted.ready;error=voted.error;fatal=voted.fatal;
+  ready=voted.ready;error=voted.error;fatal=voted.fatal||control_bad;
   disagreement_event=(s0!=s1)||(s0!=s2)||(s1!=s2);
   ac=ecc_decode(addr_code);wc=ecc_decode(wdata_code);cc=ecc_decode(ctrl_code);
   ctrl_bits=cc.data;data_bits=wc.data;
-  event_flags=0;event_address=0;
+  event_flags=0;event_address=0;event_syndrome=0;
   fi_ack=FI_ENABLE&&fi_valid&&((fi_target==8&&fi_index<WORDS)||(fi_target>=9&&fi_target<=11));
   index=0;dc='0;sc='0;merged=0;write_mem=0;write_code=ecc_encode(0);corrected_event=0;
-  if(!voted.fatal)begin
+  if(!voted.fatal&&!control_bad)begin
    if(req&&!voted.ready)begin
     next.ready=1;
     if(ac.uncorrectable||cc.uncorrectable||ac.data[1:0]!=0||ac.data[31:2]>=WORDS||cc.data[31:5]!=0)next.error=1;
@@ -65,13 +66,20 @@ module ft_ecc_ram #(
    end
   end
   if(FAIL_STOP_DED&&req&&!voted.ready&&(ac.uncorrectable||cc.uncorrectable||(cc.data[4]&&wc.uncorrectable)||(!cc.data[4]&&dc.uncorrectable)||(cc.data[4]&&cc.data[3:0]!=15&&dc.uncorrectable)))begin next.fatal=1;write_mem=0;end
+  if(control_bad)begin next.fatal=1;next.ready=0;write_mem=0;end
   if(corrected_event)begin event_flags[0]=1;event_address=index*4;end
   if(next.error&&!voted.error)begin
    if(FAIL_STOP_DED&&!ac.uncorrectable&&!cc.uncorrectable&&!wc.uncorrectable&&!dc.uncorrectable)event_flags[4]=1;
    else event_flags[1]=1;event_address=ac.data;
   end
   if(disagreement_event)begin event_flags[2]=1;event_address=voted.scrub*4;end
-  if(next.fatal&&!voted.fatal)begin event_flags[3]=1;event_address=voted.scrub*4;end
+  if(next.fatal&&!voted.fatal)begin event_flags[3]=1;event_address=(req&&!voted.ready)?ac.data:voted.scrub*4;end
+  if(event_flags[0]||event_flags[1]||event_flags[3])begin
+   if(ac.uncorrectable&&req)event_syndrome=ecc_syndrome(addr_code);
+   else if(cc.uncorrectable&&req)event_syndrome=ecc_syndrome(ctrl_code);
+   else if(wc.uncorrectable&&req&&cc.data[4])event_syndrome=ecc_syndrome(wdata_code);
+   else if(index>=0&&index<WORDS)event_syndrome=ecc_syndrome(mem[index]);
+  end
  end
  always @(posedge clk or negedge rst_n)begin
   if(!rst_n)begin s0<='0;s1<='0;s2<='0;rdata_code<=ecc_encode(0);end

@@ -193,3 +193,11 @@ and data accesses, separate from the existing ARM host-control slave. Run
 `make test-axi-core-errors test-axi-master-bridge`; see
 [the interface and integrity contract](docs/AXI_PROCESSOR.md). Generic tests
 pass; board builds still select their existing local ECC RAM configurations.
+
+## AXI ECC RAM
+
+`riscue_axi_ecc_ram` provides an AXI4-Lite RAM slave with SECDED, checked byte
+writes, scrub, protected control, diagnostic counters/syndromes and optional
+fault injection. `make test-axi-ecc-ram test-axi-ecc-c` tests the memory and
+the complete processor/AXI/ECC path with the existing C examples. See
+[the memory contract](docs/AXI_ECC_MEMORY.md).
