@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "runs": [
+    {
+      "name": "tb_debug",
+      "passed": true,
+      "output": "PASS debug directed: command errors, x0, ECC write, TMR repair, SBA alignment, reset halt, step trap/IRQ, fatal containment, sticky DM majority loss\n- /workspace/scratch/c59c397b704c/RISCue/tests/debug/tb_debug.sv:64: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_smoke-RF_TMR0",
+      "passed": true,
+      "output": "PASS pipeline smoke RF_TMR=0:          20 retirements in         165 clocks\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_smoke.sv:46: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_jump-RF_TMR0-EARLY_JUMP0",
+      "passed": true,
+      "output": "PASS direct jump RF_TMR=0 EARLY_JUMP=0 retirements=         30 clocks=        172\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_jump.sv:51: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_jump-RF_TMR0-EARLY_JUMP1",
+      "passed": true,
+      "output": "PASS direct jump RF_TMR=0 EARLY_JUMP=1 retirements=         30 clocks=        144\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_jump.sv:51: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_smoke-RF_TMR1",
+      "passed": true,
+      "output": "PASS pipeline smoke RF_TMR=1:          20 retirements in         165 clocks\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_smoke.sv:46: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_jump-RF_TMR1-EARLY_JUMP0",
+      "passed": true,
+      "output": "PASS direct jump RF_TMR=1 EARLY_JUMP=0 retirements=         30 clocks=        172\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_jump.sv:51: Verilog $finish\n"
+    },
+    {
+      "name": "tb_pipeline_jump-RF_TMR1-EARLY_JUMP1",
+      "passed": true,
+      "output": "PASS direct jump RF_TMR=1 EARLY_JUMP=1 retirements=         30 clocks=        144\n- /workspace/scratch/c59c397b704c/RISCue/tests/tb_pipeline_jump.sv:51: Verilog $finish\n"
+    }
+  ],
+  "core_sha256": "bf85022715bfa9677dc647a7244ddccfa73233228ff6f016b3691ad25e5880bc"
+}

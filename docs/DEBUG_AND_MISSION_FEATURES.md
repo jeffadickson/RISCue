@@ -1,9 +1,11 @@
 # Standard debug and mission-specific instruction priorities
 
-## Debug module recommendation
+## Implemented debug and next steps
 
-Target the ratified RISC-V Debug Specification 1.0 with one hart, a Debug Module
-(DM) and Debug Module Interface (DMI). An ARM AXI-to-DMI transport can serve the
+The dedicated 0.8 target implements a minimal Debug 0.13-compatible profile, tested
+with OpenOCD 0.12 and GDB 15.1; see [hardware debug](HARDWARE_DEBUG.md).
+Full ratified Debug 1.0 conformance remains future work. The Debug Module (DM)
+uses the Debug Module Interface (DMI). An ARM AXI-to-DMI transport could serve the
 KV260 wrapper; a JTAG DTM can serve independent lab tools. A transport alone
 is not a conforming DM/hart implementation. Compatibility with an actual
 OpenOCD/GDB release must be demonstrated, not inferred from a register map.
@@ -30,7 +32,7 @@ must be explicitly disabled or otherwise governed by the target.
 
 The current ARM wrapper implements reset/run, loading, telemetry, IRQ and
 fault campaigns. It does not implement dcsr/dpc, standard debug mode, DMI,
-GDB breakpoints or single-stepping. Those are open requirements.
+GDB breakpoints or single-stepping. Those remain open for the ARM wrapper; the separate JTAG debug target now implements them.
 
 ## Useful mission additions
 

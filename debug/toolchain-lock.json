@@ -1,0 +1,87 @@
+[
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/e/elfutils/libdebuginfod-common_0.190-1.1ubuntu0.1_all.deb",
+    "name": "libdebuginfod-common_0.190-1.1ubuntu0.1_all.deb",
+    "sha256": "aa25e83c64fdb547d923ea1aaaa8fb8c1cdca2db69a5f0b560f90c5b832e4a85"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/e/elfutils/libdw1t64_0.190-1.1ubuntu0.1_amd64.deb",
+    "name": "libdw1t64_0.190-1.1ubuntu0.1_amd64.deb",
+    "sha256": "edaa9ce4221d95f4bd72a9805100902e313092a2f31a7a51e7186be97734714d"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/b/babeltrace/libbabeltrace1_1.5.11-3build3_amd64.deb",
+    "name": "libbabeltrace1_1.5.11-3build3_amd64.deb",
+    "sha256": "30f0b9fbe68115d7b50d478458e4d830695bce579529b52c7827720da9c0c2df"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/e/elfutils/libdebuginfod1t64_0.190-1.1ubuntu0.1_amd64.deb",
+    "name": "libdebuginfod1t64_0.190-1.1ubuntu0.1_amd64.deb",
+    "sha256": "7ff18c57198200f4af7e50e0dce29366dc832c10d8c475ca7e0403083e042ea7"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/i/intel-processor-trace/libipt2_2.0.6-1build1_amd64.deb",
+    "name": "libipt2_2.0.6-1build1_amd64.deb",
+    "sha256": "c14702719d594c1ca099e2cd9ff0e9bbd0215c9bb6bebb4a0d7651f984600995"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/p/python3.12/libpython3.12t64_3.12.3-1ubuntu0.16_amd64.deb",
+    "name": "libpython3.12t64_3.12.3-1ubuntu0.16_amd64.deb",
+    "sha256": "848e28356b9cc0eb58a1c186e692f1775cb3183d047ed09e07edc8c31c14f46b"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/s/source-highlight/libsource-highlight-common_3.1.9-4.3build1_all.deb",
+    "name": "libsource-highlight-common_3.1.9-4.3build1_all.deb",
+    "sha256": "3f331e390caadcff33f42f56acad1a8c7e8a1f282eb31316f489c38f6c2460a5"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/s/source-highlight/libsource-highlight4t64_3.1.9-4.3build1_amd64.deb",
+    "name": "libsource-highlight4t64_3.1.9-4.3build1_amd64.deb",
+    "sha256": "e0ef35d9b76669f22c2ad4ab3b9141ac46d3662823c5bbea248c21db53879470"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/g/gdb/gdb_15.1-1ubuntu1%7e24.04.1_amd64.deb",
+    "name": "gdb_15.1-1ubuntu1~24.04.1_amd64.deb",
+    "sha256": "7069c23ce3bc350646498e6607749c568f5c403b0db2204310a94baff3d85745"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/g/gdb/gdb-multiarch_15.1-1ubuntu1%7e24.04.1_amd64.deb",
+    "name": "gdb-multiarch_15.1-1ubuntu1~24.04.1_amd64.deb",
+    "sha256": "40d0579432589631c8a59f9d6dcba737a15b2d6c72263650d06c9c646e9e3e06"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/c/capstone/libcapstone4_4.0.2-5.1build1_amd64.deb",
+    "name": "libcapstone4_4.0.2-5.1build1_amd64.deb",
+    "sha256": "c2b92fa793412f00fe14f3a8e30bb73b1138d237bafda520f291db33ed475e0c"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/main/libf/libftdi1/libftdi1-2_1.5-6build5_amd64.deb",
+    "name": "libftdi1-2_1.5-6build5_amd64.deb",
+    "sha256": "e29ff4596879ee6e9a35151bde97e51d1da673a1323ac58358242836d42e1044"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/libg/libgpiod/libgpiod2t64_1.6.3-1.1build1_amd64.deb",
+    "name": "libgpiod2t64_1.6.3-1.1build1_amd64.deb",
+    "sha256": "2f983a0e18b595ea191ea8f295c7f925df17b010b8538a2a66653cfb2c0b4282"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/libj/libjaylink/libjaylink0_0.3.1-1_amd64.deb",
+    "name": "libjaylink0_0.3.1-1_amd64.deb",
+    "sha256": "dff01cb0bb6b12eb0ca6fe678f4bd7c513b2cc15a24bcc73fda3cc79b2dd0ba4"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/j/jimtcl/libjim0.82t64_0.82-4.1build2_amd64.deb",
+    "name": "libjim0.82t64_0.82-4.1build2_amd64.deb",
+    "sha256": "427b5eccde654063e5961eb6ffd4716cc8410f5662a4764e23ec4c6082a65589"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/h/hidapi/libhidapi-hidraw0_0.14.0-1build1_amd64.deb",
+    "name": "libhidapi-hidraw0_0.14.0-1build1_amd64.deb",
+    "sha256": "940d2f097676c795fb94d61070a7e63547c76d9ba6ea81b87b5cf43f7458032c"
+  },
+  {
+    "url": "https://snapshot.ubuntu.com/ubuntu/20260828T000000Z/pool/universe/o/openocd/openocd_0.12.0-1build2_amd64.deb",
+    "name": "openocd_0.12.0-1build2_amd64.deb",
+    "sha256": "a4af4cfc6f280c508d3053141f2cb5fdf05e0f06e3158fade4e1612bf260c317"
+  }
+]

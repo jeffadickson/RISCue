@@ -1,3 +1,12 @@
+## 0.8.0 — Hardware debug and GDB integration
+
+- Add opt-in resumable core debug, exact instruction stepping, dcsr/dpc and abstract register access, plus EBREAK/C.EBREAK debug entry.
+- Add a minimal Debug 0.13-compatible DMI module, JTAG DTM with toggle CDC, and halted-only 8/16/32-bit SBA through ECC SRAM.
+- Protect architectural debug state and DM commands with TMR; explicitly bound unprotected TAP/CDC and fatal recovery behavior.
+- Add pinned local OpenOCD/GDB setup, actual JTAG-to-RTL GDB acceptance tests, C ELF fixture, and VS Code launch configuration.
+- Add a separate KC705 FMC-LPC debug target and timing/CDC constraints; physical Vivado/board validation remains pending.
+- Preserve existing FI bit offsets while extending the pipeline record to 4,038 bits. Default monitor/AXI/packet debug remains disabled.
+
 ## 0.7.7 — UART packet-processing application
 
 - Add conventional programmer/ISA/GPR/CSR reference, worked pipeline/early-jump explanations and precise register-protection semantics after five sequential independent documentation review rounds; correct stale cross-guide integration/recovery claims.

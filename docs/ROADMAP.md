@@ -6,7 +6,7 @@ The current five-stage core, M-mode platform, bit manipulation, AXI ECC RAM and 
 2. Complete the current-pipeline architectural/privileged and pinned upstream campaigns; broaden fault tests across timing phases and nonzero architectural states. Preserve failures and incomplete coverage explicitly.
 3. Run RV32IMC RVFI, CSR/interrupt, arithmetic and fault proofs/covers. Add formal AXI ownership, halt/drain and monitor containment contracts; simulation passes do not close these proof tasks.
 4. Validate the KV260 vendor IP, Linux UIO/clock/overlay and physical host-control path.
-5. Implement and validate standard RISC-V debug halt/resume/step/GPR access if required. The serial monitor currently resets on RUN and has no standard Debug Module.
+5. Extend the implemented minimal JTAG/DMI debug target with broader compliance, hardware triggers/watchpoints and physical validation. The separate serial monitor still resets on RUN. See HARDWARE_DEBUG.md.
 6. Engineer physical redundancy separation, memory interleaving, configuration scrubbing, protected clock/reset/boot/voters and target radiation qualification. The UART monitor and owner/boot controls remain outside the protected boundary.
 
 Atomics, caches, prediction, dual-port memory, packet DMA, additional stream sources, hardened serial engines, continuous-rate packet validation and board application UART integration and external-memory controllers are future scope driven by workload/platform needs. A/Zalrsc/Zaamo remain conditional; no speculative performance or flight-readiness claim follows from adding features.

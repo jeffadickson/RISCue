@@ -1,10 +1,10 @@
 # Current state and protection inventory
 
-Implementation baseline 0.7.7. This inventory describes stored-state mechanisms, not completed physical hardening or exhaustive fault coverage. The earlier serialized-core inventory is retained in [LEGACY_STATE_MACHINE_AUDIT.md](LEGACY_STATE_MACHINE_AUDIT.md).
+Implementation baseline 0.8.0. This inventory describes stored-state mechanisms, not completed physical hardening or exhaustive fault coverage. The earlier serialized-core inventory is retained in [LEGACY_STATE_MACHINE_AUDIT.md](LEGACY_STATE_MACHINE_AUDIT.md).
 
 | Block / state | Protection | Detection and repair | Qualification boundary |
 | --- | --- | --- | --- |
-| Pipeline/platform `c0/c1/c2` | Three 4,031-bit records | Bitwise voting/feedback; loss of complete-record majority is fatal | Shared voters, next-state, CSR decode and commit logic |
+| Pipeline/platform `c0/c1/c2` | Three 4,038-bit records | Bitwise voting/feedback; loss of complete-record majority is fatal | Shared voters, next-state, CSR decode and commit logic |
 | Stages, PC, pending bus request, timeout, CSRs, timer, IRQ sampling, retirement | Included in pipeline record | Same TMR mechanism | Shared inputs/clock/reset, external IRQ synchronizer behavior |
 | RF | 39-bit SECDED or three 32-bit words | Decode/vote, repair and scrub; DED/no-majority detection | Selection paths and matching multi-replica corruption |
 | Each M arithmetic lane | Three 307-bit records | Repair, state/iteration validation; cross-lane completion/result comparison | Shared inputs and execution authorization |
@@ -24,3 +24,8 @@ Implementation baseline 0.7.7. This inventory describes stored-state mechanisms,
 “All state machines are protected” is not a valid whole-system claim. The protected CPU/memory/controller subset coexists with unprotected laboratory infrastructure. Synthesis preservation attributes and replica-count checks do not demonstrate placement separation, configuration-upset tolerance or analog radiation behavior.
 
 The current pipeline retirement fields reside in its TMR record. Earlier comments describing unprotected verification-only RVFI capture registers apply to the legacy core. Public FI ABI 2 exposes selected local-SoC state; the UART monitor exposes RAM codeword injection only. See [the manual](RISCUE_MANUAL.md#ecc-tmr-and-failure-containment), [FI mapping](FAULT_INJECTION.md) and [protection boundaries](PROTECTION.md).
+
+The dedicated debug target adds a triplicated DM command/run-control/SBA record,
+with sticky majority-loss failure. The seven architectural debug bits are part
+of the pipeline record. TAP/CDC state remains outside this protection claim.
+See [hardware debug](HARDWARE_DEBUG.md).

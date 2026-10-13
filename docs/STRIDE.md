@@ -74,3 +74,15 @@ line-rate service and configured rate limiting are unverified. Error/mailbox
 counters are diagnostic, not a tamper-proof log. Packet SRAM and FIFOs use ECC;
 metadata/CRC/watchdog use TMR. Serial engines and shared combinational logic
 remain unprotected. See [packet contract](PACKET_PROCESSOR.md).
+
+## Dedicated JTAG debug target (0.8)
+
+DBG-001..009 define the opt-in debug build. Physical JTAG access is trusted and
+can read/write architectural state and SRAM; there is no authentication or
+security privilege boundary. OpenOCD and simulation sockets bind to loopback.
+Default monitor/packet/AXI targets keep DEBUG_ENABLE=0. Debug commands update
+RF protection codes, and memory access passes through ECC with halted ownership.
+DM and architectural debug state use TMR; TAP/CDC, transport and common-mode
+logic remain explicit unprotected boundaries. Sticky DM majority loss and core
+fatal states cannot be cleared by resume. External reset can destroy diagnostic
+state, so it is an explicit recovery action, not an acknowledgement of repair.

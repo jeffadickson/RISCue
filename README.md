@@ -14,6 +14,7 @@ The [programmer reference](docs/PROGRAMMER_REFERENCE.md) provides instruction se
 - AXI4-Lite CPU master and ECC RAM slave with error counters, address/syndrome reporting and optional stored-bit fault injection.
 - KC705 UART monitor for ELF loading/readback, run, draining stop, status and memory recovery; original VIO/ILA target remains selectable.
 - Standalone [UART packet processor](docs/PACKET_PROCESSOR.md): ECC byte FIFOs, protected CRC/watchdog control, bounded C echo/sum firmware and real serial-bit tests.
+- Dedicated [hardware debug target](docs/HARDWARE_DEBUG.md): JTAG/DMI, OpenOCD/GDB, source breakpoints, single-step, ECC-aware memory access and a VS Code launch configuration.
 - Separate KV260 ARM host-control AXI slave, loader/dashboard and campaign controls.
 
 This is a digitally tested prototype, not a radiation-qualified or flight-ready processor. Shared logic, AXI transport, clock/reset/configuration and the laboratory monitor remain outside the stored-state protection guarantees. See [protection boundaries](docs/PROTECTION.md).

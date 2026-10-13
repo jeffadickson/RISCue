@@ -133,6 +133,13 @@ retirement order/links rather than EX-stage timing. Use --late-jump with
 run_pipeline.py for the baseline; do not assert the old cycle count globally.
 
 No protected packed fields changed, so the injection map remains ABI 2 with
-4031 core bits (8 windows) and 307 bits per arithmetic replica. The two new
+4038 core bits (8 windows) and 307 bits per arithmetic replica. The two new
 jump target lanes are combinational and report disagreement through the
 existing execution-integrity flag. There is no predictor state to protect.
+
+## Optional hardware debug (0.8)
+
+The dedicated JTAG target enables resumable halt, exact one-instruction stepping,
+abstract register access and EBREAK debug entry. Default wrappers leave
+DEBUG_ENABLE=0. See [hardware debug](HARDWARE_DEBUG.md) for ordering, counter
+behavior, protected state and the real OpenOCD/GDB test results.

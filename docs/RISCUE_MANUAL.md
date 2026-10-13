@@ -186,12 +186,12 @@ Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
    // WB is the only architectural register/CSR commit point.
    if(s.w.valid)begin
     n.w.valid=0;n.retire=1;n.retired=s.w;n.order=s.order+1;n.retire_intr=s.interrupt_next;n.interrupt_next=0;
-    if(s.w.trap)begin
+    if(DEBUG_ENABLE&&s.w.trap&&s.w.cause==3&&s.debug_ebreakm)begin
+     n.debug_halted=1;n.debug_cause=1;n.arch_pc=s.w.pc;n.fetch_pc=s.w.pc;
+     n.retire=0;n.order=s.order;n.interrupt_next=s.interrupt_next;flush=1;
+    end else if(s.w.trap)begin
      n.mepc=s.w.pc&32'hfffffffe;n.mcause=s.w.cause;n.mtval=s.w.tval;
      n.mpie=s.mie_global;n.mie_global=0;n.trap_pulse=1;n.retire_trap=1;
-     n.fetch_pc=s.mtvec;n.arch_pc=s.mtvec;n.retired.e.next_pc=s.mtvec;flush=1;
-    end else begin
-     n.minstret=s.minstret+1;n.arch_pc=s.w.e.next_pc;
 ```
 <!-- /excerpt:commit -->
 
@@ -269,7 +269,7 @@ The multiplier campaign covers 264,448 reference vectors across four variants, c
 | instret / instreth | 0xc02 / 0xc82 | Read-only minstret aliases |
 | mvendorid, marchid, mimpid, mhartid | 0xf11..0xf14 | Read-only zero |
 
-Unknown CSRs, unsupported SYSTEM operations and prohibited writes to read-only aliases raise illegal-instruction traps. Zicsr zero-source suppression rules apply. MRET restores MIE from MPIE and sets MPIE. No vectored mtvec, user mode or standard debug CSRs are supplied.
+Unknown CSRs, unsupported SYSTEM operations and prohibited writes to read-only aliases raise illegal-instruction traps. Zicsr zero-source suppression rules apply. MRET restores MIE from MPIE and sets MPIE. No vectored mtvec or user mode is supplied. The optional dedicated debug target exposes dcsr/dpc through abstract debug commands, not ordinary program CSR instructions.
 
 ### CLINT-style registers
 
@@ -305,7 +305,7 @@ External, software and timer interrupts have priority in that order. Interrupt h
 
 `RF_TMR=0` stores each RF word as a 39-bit SECDED codeword. Operand reads decode/correct before use, and repair writes and background scrub restore storage. Uncorrectable RF data is fatal. `RF_TMR=1` stores three 32-bit replicas and votes/repairs the registers. The storage ratio is 96/39 before voter/control overhead; it is not an FPGA area ratio.
 
-The pipeline/platform record is 4,031 bits per replica, and each arithmetic record is 307 bits per replica in FI ABI 2. State voting and record-consistency checking are separate operations:
+The pipeline/platform record is 4,038 bits per replica, and each arithmetic record is 307 bits per replica in FI ABI 2. State voting and record-consistency checking are separate operations:
 
 <!-- excerpt:vote -->
 Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
@@ -490,7 +490,7 @@ The default FPGA top powers up stopped with the CPU held in reset. The monitor a
 | `inject ADDRESS MASK` | Codeword-bit XOR, only in FI-enabled builds while stopped |
 | `recover` | Reset quiescent memory controller; preserve data and telemetry |
 
-`run` is a fresh architectural start, not resume. `stop` preserves architectural state but is not a standard debug halt: timers and scrubbing can continue. There is no GDB/OpenOCD Debug Module, single-step or breakpoint register interface yet.
+`run` is a fresh architectural start, not resume. `stop` preserves architectural state but is not a standard debug halt: timers and scrubbing can continue. The separate [hardware debug target](HARDWARE_DEBUG.md) supplies GDB/OpenOCD halt/resume, single-step and software breakpoints; these are not monitor commands.
 
 ### Stop, run and ownership
 
@@ -923,7 +923,7 @@ Its default FI setting in the Makefile is enabled for laboratory use; do not ass
 | A formal job timed out | Inconclusive; retain its status/log rather than interpreting absence of a counterexample as proof |
 | A vendor-stub compile passed | Port/elaboration check only; MMCM behavior, real IP and physical constraints remain untested |
 
-The monitor's STOP/RUN mechanism is sufficient for load-and-execute experiments but does not substitute for the planned standard RISC-V Debug Module. See [debug and mission priorities](DEBUG_AND_MISSION_FEATURES.md).
+The monitor's STOP/RUN mechanism is sufficient for load-and-execute experiments but does not substitute for the separate standard JTAG/DMI debug target. See [debug and mission priorities](DEBUG_AND_MISSION_FEATURES.md).
 
 ## Requirements, maintenance and open work
 
@@ -939,7 +939,7 @@ python tools/write_requirements.py
 
 When modifying packed state, regenerate the FI map and revise its ABI when bit positions change. When modifying ISA behavior, update the software profile and ELF audit as appropriate. When changing timing, prefer architectural/reference comparisons and keep configuration-specific cycle measurements explicitly labeled. A documentation update does not retroactively revalidate RTL evidence from an earlier source revision.
 
-Remaining gates include complete current-pipeline architectural/privileged testing, full upstream campaigns, formal proofs/cover witnesses, physical FPGA implementation, protected placement/configuration recovery, and radiation qualification. Standard debug, caches/prediction, stronger/interleaved memory codes and atomics remain separate design choices. The current UART/owner/boot controls are laboratory infrastructure and require a separate protection design before inclusion in a radiation-tolerant deployment boundary.
+Remaining gates include complete current-pipeline architectural/privileged testing, full upstream campaigns, formal proofs/cover witnesses, physical FPGA implementation, protected placement/configuration recovery, and radiation qualification. Broader debug compliance/physical validation, caches/prediction, stronger/interleaved memory codes and atomics remain separate design choices. The current UART/owner/boot controls are laboratory infrastructure and require a separate protection design before inclusion in a radiation-tolerant deployment boundary.
 
 See [the roadmap](ROADMAP.md), [validation index](VALIDATION.md), [requirements](REQUIREMENTS.md) and [documentation index](README.md).
 

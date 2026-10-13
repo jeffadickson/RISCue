@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "rf_tmr": 0,
+  "gdb_returncode": 0,
+  "checks": [
+    "PASS source breakpoint and C result",
+    "PASS exact single-step, compressed and split fetch",
+    "PASS EBREAK debug entry",
+    "PASS ECC-memory byte/halfword/word writes",
+    "PASS reset-halt",
+    "PASS RIScue GDB end-to-end"
+  ],
+  "gdb": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1",
+  "openocd": "Open On-Chip Debugger 0.12.0",
+  "elf_sha256": "db1e66b1b6bbe7db7cfd5f37dac9e448c27dbc056287a4e9c08bf5cfd9635b1d",
+  "rtl_sha256": {
+    "rtl/riscue_debug_module.sv": "049109a1367138bbf397554cc1fdc4ed01c2eae5e51c475db522259215dcc545",
+    "rtl/riscue_debug_soc.sv": "32169f2055e6ee62f87d75ab80c2a002df0656f70fdc394f40a32ba38053ad05",
+    "rtl/riscue_jtag_dtm.sv": "2c0b993cd4899f31d72a344407f0d18606516651d582eade63d56cf42b80740c",
+    "rtl/riscue_pipeline_core.sv": "bf85022715bfa9677dc647a7244ddccfa73233228ff6f016b3691ad25e5880bc",
+    "rtl/riscue_pipeline_pkg.sv": "2204cbee184caa17ef963cd0c988b5901503bef99e3efd097db15ee6987de34d",
+    "rtl/riscue_pipeline_soc.sv": "e237524d9998c7bad1d5cf45a20d43e985982d3eb320d1dae42326a212c5e8e7"
+  }
+}

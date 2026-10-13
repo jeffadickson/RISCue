@@ -9,6 +9,9 @@ package riscue_pipeline_pkg;
   exec_t e;
  } slot_t;
  typedef struct packed {
+  // Architectural debug state participates in the pipeline TMR record.
+  logic debug_halted,debug_step,debug_step_issued,debug_ebreakm;
+  logic [2:0] debug_cause;
   slot_t f,d,x,m,w;
   logic [31:0] fetch_pc,arch_pc,half_word;
   logic half_valid,bus_active,bus_data,bus_half,bus_kill,bus_cooldown;

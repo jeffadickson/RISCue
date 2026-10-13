@@ -337,3 +337,27 @@ test-packet: packet-build
 	$(PYTHON) tools/run_packet_tests.py
 test-packet-local: c-tools monitor-tools
 	PATH="$(CURDIR)/.tools/riscv/root/usr/bin:$$PATH" $(MAKE) test-packet VERILATOR="$(CURDIR)/.tools/monitor-verilator/verilator"
+
+# Standard JTAG/DMI debug, real OpenOCD/GDB and IDE integration.
+.PHONY: debug-tools debug-sim debug-sim-tmr test-debug test-debug-gdb
+debug-tools:
+	$(PYTHON) tools/setup_debug_tools.py
+debug-sim:
+	$(PYTHON) tools/build_debug_sim.py
+debug-sim-tmr:
+	$(PYTHON) tools/build_debug_sim.py --rf-tmr 1
+test-debug-gdb: debug-sim debug-sim-tmr
+	$(PYTHON) tools/run_debug_gdb.py
+	$(PYTHON) tools/run_debug_gdb.py --rf-tmr 1
+test-debug: test-debug-gdb
+.PHONY: kc705-debug
+kc705-debug:
+	vivado -mode batch -source boards/kc705/debug/build.tcl -tclargs $(CURDIR)/build/kc705-debug $(if $(filter tmr,$(RF_MODE)),1,0) $(or $(STAGE),synth)
+.PHONY: test-debug-directed
+test-debug-directed:
+	$(PYTHON) tools/run_debug_directed.py
+test-debug: test-debug-directed
+.PHONY: check-debug-board
+check-debug-board:
+	$(PYTHON) tools/check_debug_board.py
+test-debug: check-debug-board

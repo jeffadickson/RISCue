@@ -546,17 +546,17 @@
   {
     "id": "DBG-001",
     "category": "Debug",
-    "requirement": "A future standard single-hart RISC-V Debug Specification 1.0 implementation shall supply precise halt/resume, reset-halt, dcsr/dpc, single-step and abstract GPR/debug CSR access through DMI. Optional trigger/SBA/progbuf scope shall be explicitly declared and validated with debugger tools. Lab reset/run controls shall not be advertised as this debug module.",
-    "verification": "future Debug 1.0 compliance tests and OpenOCD/GDB integration",
-    "status": "open; requirements only",
+    "requirement": "The single-hart standard debug target shall implement a declared minimal RISC-V Debug 0.13-compatible DMI profile: resumable halt, reset-halt, dcsr/dpc, exact single-step, abstract GPR/debug CSR access and halted ECC-aware SBA. Debug 1.0 conformance is a separate future gate.",
+    "verification": "test-debug-gdb; debug-gdb-ecc.json; debug-gdb-tmr.json",
+    "status": "implemented; real OpenOCD 0.12/GDB 15.1 simulation passed; full compliance and board validation pending",
     "priority": "should"
   },
   {
     "id": "DBG-002",
     "category": "Protection",
-    "requirement": "Debug state and command/trigger FSMs shall be protected; define exception/interrupt/step priority, counter/timer behavior, bus/ECC arbitration and fail-stop inspection/recovery before enabling resumable debug.",
-    "verification": "future debug fault campaigns/formal properties",
-    "status": "open; requirements only",
+    "requirement": "Architectural debug state and captured debug-module command/run-control state shall vote/repair in triplicate. Debug shall preserve precise exception/store ordering, define step/IRQ and counter behavior, arbitrate ECC memory only after quiescence, and reject resume of integrity-fatal state. TAP/CDC and shared-logic protection limits shall be explicit.",
+    "verification": "test-debug-directed; HARDWARE_DEBUG.md; focused fault tests; broader formal/fault coverage pending",
+    "status": "implemented with explicit TAP/CDC boundary; directed validation, not exhaustive fault qualification",
     "priority": "must"
   },
   {
@@ -717,6 +717,62 @@
     "requirement": "The packet target shall document lab-only FI gating, shared-logic/serial-engine boundaries, timing/rate assumptions and pending board/formal/security work.",
     "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
     "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-003",
+    "category": "Hardware",
+    "requirement": "A 5-bit JTAG TAP shall expose IDCODE, DTMCS and 7-bit-address DMI, with sticky busy/error handling and one outstanding bundled-data CDC transaction.",
+    "verification": "JTAG/OpenOCD integration; CDC implementation review; physical CDC sign-off pending",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-004",
+    "category": "Hardware",
+    "requirement": "Abstract commands shall reject unsupported size/type/postexec and unknown or illegal registers using sticky cmderr. x0 writes shall be discarded and RF writes shall regenerate ECC or update all TMR replicas.",
+    "verification": "test-debug-directed; test-debug-gdb",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-005",
+    "category": "Hardware",
+    "requirement": "SBA shall support aligned byte/halfword/word ECC-memory accesses, sticky errors and timeout, prohibit running-hart access, and defer resume until debug transactions finish.",
+    "verification": "test-debug-directed; test-debug-gdb",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-006",
+    "category": "Software",
+    "requirement": "Pinned downloadable OpenOCD/GDB tools, remote_bitbang RTL server and GDB acceptance scripts shall fail on missing tools, tool errors, unexpected results or timeout.",
+    "verification": "debug-tools; test-debug",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-007",
+    "category": "Software",
+    "requirement": "A VS Code cppdbg configuration shall attach to OpenOCD using the matching ELF/DWARF image; binary/HEX-only Zeal input shall not be described as source-debug capable.",
+    "verification": "launch configuration review; real GDB source breakpoint/variable test; GUI interaction pending",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-008",
+    "category": "Hardware",
+    "requirement": "A separate opt-in KC705 debug target shall document JTAG pinout/voltage, clock/reset/CDC constraints, build commands and unexecuted physical implementation gates. Default monitor and production wrappers shall not expose this debug port.",
+    "verification": "kc705-debug; vendor-stub elaboration; physical board validation pending",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "DBG-009",
+    "category": "Verification",
+    "requirement": "Debug-disabled pipeline smoke and jump/trap tests shall pass in ECC/TMR and early/late-jump configurations after core changes.",
+    "verification": "test-debug-directed",
+    "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
     "priority": "must"
   }
 ]

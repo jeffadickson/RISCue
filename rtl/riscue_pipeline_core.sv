@@ -3,9 +3,14 @@
 // one cycle. Stores issue only from MEM after older WB traps are resolved.
 module riscue_pipeline_core #(
  parameter logic [31:0] RESET_PC=0,
- parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MONITOR_CONTROL=0
+ parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MONITOR_CONTROL=0,DEBUG_ENABLE=0
 )(
  input logic clk,rst_n,external_irq,
+ input logic debug_haltreq,debug_resumereq,
+ output logic debug_halted,debug_resumeack,
+ input logic debug_reg_valid,debug_reg_write,input logic [15:0] debug_regno,
+ input logic [31:0] debug_wdata,output logic [31:0] debug_rdata,
+ output logic debug_reg_ready,debug_reg_error,
  input logic halt_request,input logic [31:0] boot_pc,output wire quiescent,
  output logic req,output logic [38:0] addr_code,wdata_code,ctrl_code,
  input logic ready,bus_error,external_fault,input logic [38:0] rdata_code,
@@ -20,7 +25,7 @@ module riscue_pipeline_core #(
  output logic [3:0] rvfi_mem_rmask,rvfi_mem_wmask,
  output logic rvfi_trap,rvfi_intr,output logic [63:0] rvfi_order
 );
- wire monitor_stop=MONITOR_CONTROL&&halt_request;
+ wire monitor_stop=(MONITOR_CONTROL&&halt_request)||(DEBUG_ENABLE&&(debug_haltreq||s.debug_halted||(s.debug_step&&s.debug_step_issued)));
  assign quiescent=!s.half_valid&&!s.bus_active&&!s.f.valid&&!s.d.valid&&!s.x.valid&&!s.m.valid&&!s.w.valid;
  import ft_pkg::*;
  import riscue_pipeline_pkg::*;
@@ -29,7 +34,7 @@ module riscue_pipeline_core #(
  state_t s,n;
  (* keep="true",DONT_TOUCH="TRUE" *) logic [38:0] rf[0:31];
  (* keep="true",DONT_TOUCH="TRUE" *) logic [31:0] tmr0[0:31],tmr1[0:31],tmr2[0:31];
- ecc_result_t ra,rb,scrubbed,response;
+ ecc_result_t ra,rb,scrubbed,response,debug_rf;
  exec_t e0,e1,executed;
  wire [31:0] d_insn=s.d.insn,d_pc=s.d.pc;
  wire [31:0] jump_target0,jump_target1;
@@ -178,11 +183,14 @@ module riscue_pipeline_core #(
   id_jump_redirect=0;write_rf=0;write_rd=0;write_value=0;flush=0;m_block=0;x_block=0;load_data=0;
   md_start=0;md_cancel=0;
   serial_pending=(s.x.valid&&s.x.serial)||(s.m.valid&&s.m.serial)||(s.w.valid&&s.w.serial);
-  if(!fatal)begin
+  if(!fatal&&!(DEBUG_ENABLE&&s.debug_halted))begin
    // WB is the only architectural register/CSR commit point.
    if(s.w.valid)begin
     n.w.valid=0;n.retire=1;n.retired=s.w;n.order=s.order+1;n.retire_intr=s.interrupt_next;n.interrupt_next=0;
-    if(s.w.trap)begin
+    if(DEBUG_ENABLE&&s.w.trap&&s.w.cause==3&&s.debug_ebreakm)begin
+     n.debug_halted=1;n.debug_cause=1;n.arch_pc=s.w.pc;n.fetch_pc=s.w.pc;
+     n.retire=0;n.order=s.order;n.interrupt_next=s.interrupt_next;flush=1;
+    end else if(s.w.trap)begin
      n.mepc=s.w.pc&32'hfffffffe;n.mcause=s.w.cause;n.mtval=s.w.tval;
      n.mpie=s.mie_global;n.mie_global=0;n.trap_pulse=1;n.retire_trap=1;
      n.fetch_pc=s.mtvec;n.arch_pc=s.mtvec;n.retired.e.next_pc=s.mtvec;flush=1;
@@ -203,6 +211,9 @@ module riscue_pipeline_core #(
      if(s.w.mret)begin n.mie_global=s.mpie;n.mpie=1;n.fetch_pc=s.mepc;flush=1;end
      if(s.w.fencei)begin n.fetch_pc=s.w.e.next_pc;flush=1;end
     end
+   end
+   if(DEBUG_ENABLE&&s.debug_step&&s.w.valid&&!n.debug_halted)begin
+    n.debug_halted=1;n.debug_cause=4;n.fetch_pc=n.arch_pc;flush=1;
    end
    if(!flush)begin
     // MEM progresses independently of stalled EX and instruction fetch.
@@ -267,7 +278,7 @@ module riscue_pipeline_core #(
     // Drain accepted instructions before taking an interrupt; fetch is squashed.
     pending_irq=n.mie&((n.msip?32'h8:0)|(n.mtime>=n.mtimecmp?32'h80:0)|(n.irq_sync?32'h800:0));
     irq_code=pending_irq[11]?32'h8000000b:pending_irq[3]?32'h80000003:32'h80000007;
-    if(!s.irq_drain&&n.mie_global&&pending_irq!=0&&!serial_pending)begin
+    if(!(DEBUG_ENABLE&&(s.debug_step||debug_haltreq))&&!s.irq_drain&&n.mie_global&&pending_irq!=0&&!serial_pending)begin
      n.irq_drain=1;n.irq_cause=irq_code;n.f.valid=0;n.d.valid=0;n.half_valid=0;
      if(n.bus_active&&!n.bus_data)n.bus_kill=1;
     end
@@ -300,7 +311,8 @@ module riscue_pipeline_core #(
      end else if((!monitor_stop||n.half_valid)&&!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
       if(n.fetch_pc[0])begin n.f='0;n.f.valid=1;n.f.pc=n.fetch_pc;n.f.trap=1;n.f.serial=1;n.f.cause=0;n.f.tval=n.fetch_pc;n.f.bytes=2;end
       else begin
-       n.bus_active=1;n.bus_data=0;n.bus_kill=0;n.bus_half=n.half_valid;n.bus_pc=n.fetch_pc;
+       n.bus_active=1;n.bus_data=0;n.bus_kill=0;n.bus_half=n.half_valid;
+       if(DEBUG_ENABLE&&s.debug_step)n.debug_step_issued=1;n.bus_pc=n.fetch_pc;
        n.bus_addr=n.half_valid?((n.fetch_pc&32'hfffffffc)+4):(n.fetch_pc&32'hfffffffc);n.bus_ctrl=0;n.bus_wdata=0;n.bus_wait=0;
       end
      end
@@ -314,7 +326,58 @@ module riscue_pipeline_core #(
     end
     md_cancel=1;
    end
-  end else begin n.fatal=1;n.bus_active=0;n.retire=0;md_cancel=1;end
+  end else if(fatal)begin n.fatal=1;n.bus_active=0;n.retire=0;md_cancel=1;end
+  debug_halted=DEBUG_ENABLE&&s.debug_halted&&!fatal;
+  debug_resumeack=DEBUG_ENABLE&&s.debug_halted&&debug_resumereq&&!debug_haltreq&&!fatal;
+  debug_reg_ready=DEBUG_ENABLE&&debug_reg_valid;
+  debug_reg_error=!debug_halted;
+  debug_rdata=0;debug_rf=ecc_decode(rf[debug_regno[4:0]]);
+  if(DEBUG_ENABLE)begin
+   if(s.debug_halted)begin
+    n.mcycle=s.mcycle;n.mtime=s.mtime;
+    // A flushed speculative fetch still completes before SBA takes ownership.
+    if(s.bus_active&&!s.bus_data&&ready)begin n.bus_active=0;n.bus_cooldown=1;n.bus_wait=0;end
+   end
+   if(debug_haltreq&&!n.bus_active&&!n.half_valid&&!n.f.valid&&!n.d.valid&&!n.x.valid&&!n.m.valid&&!n.w.valid&&!fatal&&!s.debug_halted)begin
+    n.debug_halted=1;n.debug_cause=3;n.fetch_pc=n.arch_pc;
+   end
+   if(debug_resumeack)begin
+    n.debug_halted=0;n.debug_step_issued=0;n.fetch_pc=s.arch_pc;n.half_valid=0;
+   end
+   if(debug_regno>=16'h1000&&debug_regno<=16'h101f)begin
+    debug_rdata=debug_regno[4:0]==0?0:RF_TMR?
+     ((tmr0[debug_regno[4:0]]&tmr1[debug_regno[4:0]])|(tmr0[debug_regno[4:0]]&tmr2[debug_regno[4:0]])|(tmr1[debug_regno[4:0]]&tmr2[debug_regno[4:0]])):debug_rf.data;
+    if(!RF_TMR&&debug_rf.uncorrectable)debug_reg_error=1;
+    if(debug_reg_valid&&debug_reg_write&&!debug_reg_error&&debug_regno[4:0]!=0)begin
+     write_rf=1;write_rd=debug_regno[4:0];write_value=debug_wdata;
+    end
+   end else case(debug_regno)
+    16'h7b0:begin
+     debug_rdata=32'h40000603|({29'b0,s.debug_cause}<<6)|(s.debug_step?32'h4:0)|(s.debug_ebreakm?32'h8000:0);
+     if(debug_reg_valid&&debug_reg_write&&!debug_reg_error)begin n.debug_step=debug_wdata[2];n.debug_ebreakm=debug_wdata[15];end
+    end
+    16'h7b1:begin debug_rdata=s.arch_pc;if(debug_reg_valid&&debug_reg_write&&!debug_reg_error)begin n.arch_pc=debug_wdata&32'hfffffffe;n.fetch_pc=n.arch_pc;end end
+    16'h301:debug_rdata=32'h40001104;
+    16'hf11,16'hf12,16'hf13,16'hf14:debug_rdata=0;
+    16'h300:debug_rdata=32'h1800|(s.mie_global?32'h8:0)|(s.mpie?32'h80:0);
+    16'h304:debug_rdata=s.mie;16'h305:debug_rdata=s.mtvec;
+    16'h340:debug_rdata=s.mscratch;16'h341:debug_rdata=s.mepc;16'h342:debug_rdata=s.mcause;16'h343:debug_rdata=s.mtval;
+    16'h344:debug_rdata=(s.msip?32'h8:0)|(s.mtime>=s.mtimecmp?32'h80:0)|(s.irq_sync?32'h800:0);
+    16'hb00,16'hc00:debug_rdata=s.mcycle[31:0];16'hb80,16'hc80:debug_rdata=s.mcycle[63:32];
+    16'hb02,16'hc02:debug_rdata=s.minstret[31:0];16'hb82,16'hc82:debug_rdata=s.minstret[63:32];
+    16'hc01:debug_rdata=s.mtime[31:0];16'hc81:debug_rdata=s.mtime[63:32];
+    default:debug_reg_error=1;
+   endcase
+   if(debug_reg_valid&&debug_reg_write&&!debug_reg_error&&debug_regno<16'h1000&&debug_regno!=16'h7b0&&debug_regno!=16'h7b1)case(debug_regno)
+    16'h300:begin n.mie_global=debug_wdata[3];n.mpie=debug_wdata[7];end
+    16'h304:n.mie=debug_wdata&32'h888;16'h305:n.mtvec=debug_wdata&32'hfffffffc;
+    16'h340:n.mscratch=debug_wdata;16'h341:n.mepc=debug_wdata&32'hfffffffe;
+    16'h342:n.mcause=debug_wdata;16'h343:n.mtval=debug_wdata;
+    16'hb00:n.mcycle[31:0]=debug_wdata;16'hb80:n.mcycle[63:32]=debug_wdata;
+    16'hb02:n.minstret[31:0]=debug_wdata;16'hb82:n.minstret[63:32]=debug_wdata;
+    default:debug_reg_error=1;
+   endcase
+  end
   pending_irq=0;irq_code=0; // temporaries have no architectural storage
   if(n.fatal)begin n.retire=0;write_rf=0;md_cancel=1;end
   injection='0;

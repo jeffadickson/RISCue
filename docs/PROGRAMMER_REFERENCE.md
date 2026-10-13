@@ -80,7 +80,7 @@ All operations below use 32-bit values. Signed comparisons interpret two's-compl
 | JALR | rd, offset(rs1) | Save following address; PC = (rs1+sx(offset)) & ~1 |
 | FENCE | pred, succ | No additional action in this ordered, single-outstanding implementation |
 | ECALL | — | Machine environment-call exception, cause 11 |
-| EBREAK | — | Breakpoint exception, cause 3; no hardware debug module entry |
+| EBREAK | — | Breakpoint exception, cause 3 by default; optional debug target enters debug when dcsr.ebreakm=1 |
 
 A load into x0 still performs the memory access and can trap or trigger a device side effect. Register writes to x0 are discarded. Common assembler aliases are `nop = addi x0,x0,0`, `mv = addi rd,rs,0`, `j = jal x0,label`, `ret = jalr x0,0(ra)`; `li`, `la` and `call` can expand into multiple instructions and relaxation may change their encodings.
 
@@ -163,7 +163,7 @@ MRET returns to mepc, restores MIE from MPIE and sets MPIE. WFI executes as a NO
 
 On core reset, writable CSR storage, mcycle, minstret, mtime and msip are zero; mstatus reads 0x1800 because MPP is fixed to M. mtvec, mepc, mcause, mtval, mscratch and mie are zero. misa and identity CSRs retain the constants above, and mtimecmp resets to all ones. mip is derived from current sources, including the synchronized external interrupt, so it is not an independently reset software register.
 
-For a consistent 64-bit counter read on RV32, read high, low, high and retry if the high values differ. mcycle and mtime advance on every non-reset core clock, including stalls, monitor halt and fatal halt; minstret counts non-trapping retired instructions. Software writes to a machine counter half override that half's increment at the same edge. There is no mcountinhibit CSR.
+For a consistent 64-bit counter read on RV32, read high, low, high and retry if the high values differ. mcycle and mtime advance on every non-reset core clock, including stalls, monitor halt and fatal halt; minstret counts non-trapping retired instructions. Software writes to a machine counter half override that half's increment at the same edge. There is no mcountinhibit CSR. The optional standard debug target freezes mcycle/mtime while in debug halt; its stopcount/stoptime fields read one. See [hardware debug](HARDWARE_DEBUG.md).
 
 ## Traps and interrupts
 
@@ -219,7 +219,7 @@ GPR x5 is one software-visible 32-bit register. In ECC mode its storage is a 39-
 | State or path | Mechanism | Covered failure behavior |
 | --- | --- | --- |
 | 32-bit RAM/RF word in ECC mode | 39-bit SECDED | One codeword bit corrected; two detected; larger errors not guaranteed |
-| Pipeline, CSRs, timers, bus bookkeeping | Three complete 4,031-bit records | One replica corruption can be voted out and repaired |
+| Pipeline, CSRs, timers, bus bookkeeping | Three complete 4,038-bit records | One replica corruption can be voted out and repaired |
 | Each of two M lanes | Three 307-bit records per lane, plus cross-lane comparison | State repair; disagreement in results/completion detected |
 | RF in TMR mode | Three copies per word | Vote/repair; no complete-word majority treated as failure |
 | ALU and early-jump combinational lanes | Duplicate and compare | Detect disagreement; cannot decide which disagreeing result is correct |

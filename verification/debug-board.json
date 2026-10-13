@@ -1,0 +1,10 @@
+{
+  "elaboration_passed": true,
+  "modes": [
+    0,
+    1
+  ],
+  "vendor_primitives": "nonphysical stubs",
+  "vivado_implementation_run": false,
+  "physical_board_run": false
+}

@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "RISCue: GDB via OpenOCD",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/build/debug/example.elf",
+    "cwd": "${workspaceFolder}",
+    "MIMode": "gdb",
+    "miDebuggerPath": "${workspaceFolder}/.tools/debug/gdb-multiarch",
+    "miDebuggerServerAddress": "localhost:3333",
+    "stopAtEntry": true,
+    "launchCompleteCommand": "None",
+    "setupCommands": [
+      {"text": "set remotetimeout 10"},
+      {"text": "set pagination off"}
+    ],
+    "postRemoteConnectCommands": [
+      {"text": "monitor reset halt"},
+      {"text": "load"},
+      {"text": "set $pc = _start"}
+    ]
+  }]
+}
