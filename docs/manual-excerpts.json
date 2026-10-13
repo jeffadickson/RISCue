@@ -166,5 +166,26 @@
     "start": "      if(overall)begin",
     "lines": 7,
     "language": "systemverilog"
+  },
+  {
+    "id": "packet_state",
+    "path": "rtl/riscue_packet_uart.sv",
+    "start": " typedef struct packed {",
+    "lines": 11,
+    "language": "systemverilog"
+  },
+  {
+    "id": "packet_policy",
+    "path": "firmware/packet/main.c",
+    "start": "  if((owner^owner_inv)",
+    "lines": 12,
+    "language": "c"
+  },
+  {
+    "id": "packet_golden",
+    "path": "tools/run_packet_tests.py",
+    "start": "def frame(seq,op,data):",
+    "lines": 3,
+    "language": "python"
   }
 ]

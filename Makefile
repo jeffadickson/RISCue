@@ -329,3 +329,11 @@ docs:
 	$(PYTHON) tools/build_manual.py
 docs-check:
 	$(PYTHON) tools/build_manual.py --check
+
+.PHONY: packet-build test-packet test-packet-local
+packet-build:
+	$(PYTHON) tools/build_packet.py
+test-packet: packet-build
+	$(PYTHON) tools/run_packet_tests.py
+test-packet-local: c-tools monitor-tools
+	PATH="$(CURDIR)/.tools/riscv/root/usr/bin:$$PATH" $(MAKE) test-packet VERILATOR="$(CURDIR)/.tools/monitor-verilator/verilator"

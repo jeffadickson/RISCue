@@ -1,6 +1,6 @@
 # RISCue documentation index
 
-Read the **[developer and verification manual](RISCUE_MANUAL.md)** first. It describes implementation baseline 0.7.6 with source-synchronized code excerpts and links to the contracts below.
+Read the **[developer and verification manual](RISCUE_MANUAL.md)** first. It describes implementation baseline 0.7.7 with source-synchronized code excerpts and links to the contracts below.
 
 | Topic | Reference |
 | --- | --- |
@@ -12,6 +12,7 @@ Read the **[developer and verification manual](RISCUE_MANUAL.md)** first. It des
 | KC705 operation | [Board guide](../boards/kc705/README.md), [UART monitor](KC705_MONITOR.md) |
 | KV260 operation | [ARM/AXI/Linux guide](../boards/kv260/README.md) |
 | Tests and results | [Validation index](VALIDATION.md), [larger C report](C_WORKLOAD_SIMULATION.md), [multiplier/FIR report](MULTIPLIER_VERIFICATION.md) |
+| Packet application | [UART packet processor](PACKET_PROCESSOR.md), [C firmware](../firmware/packet/main.c) |
 | Formal | [Setup and contracts](FORMAL.md); distinguish legacy jobs and current pending proofs |
 | Requirements and trust | [Requirements](REQUIREMENTS.md), [editable JSON](requirements.json), [CSV](requirements.csv), [STRIDE](STRIDE.md) |
 | Planned work | [Roadmap](ROADMAP.md), [debug and mission features](DEBUG_AND_MISSION_FEATURES.md) |

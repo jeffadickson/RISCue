@@ -670,5 +670,53 @@
     "verification": "test-monitor; test-monitor-host",
     "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
     "priority": "must"
+  },
+  {
+    "id": "PKT-001",
+    "category": "Packet application",
+    "requirement": "The standalone packet target shall provide ECC-coded native UART MMIO, bounded RX/TX queues and a level interrupt without changing existing board defaults.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "PKT-002",
+    "category": "Packet application",
+    "requirement": "UART queue entries shall use SECDED; complete metadata, response, CRC and watchdog records shall vote/repair in triplicate and fail stop on majority loss or consumed codeword DED.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "PKT-003",
+    "category": "Packet application",
+    "requirement": "Firmware shall bound payloads to 32 bytes, verify CRC before processing, check ownership/length complements and reject immediate duplicate sequences, unknown operations and incomplete frames.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "PKT-004",
+    "category": "Packet application",
+    "requirement": "Packet firmware shall provide only echo and unsigned-byte sum operations, alternating ECC SRAM buffers, a fail-stop service watchdog and mailbox rejection counters.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "PKT-005",
+    "category": "Packet application",
+    "requirement": "Packet simulation shall run compiled audited C over physical serial bits, compare independent Python CRC replies/counters in ECC and TMR register modes and inject queue, SRAM and descriptor faults.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "PKT-006",
+    "category": "Packet application",
+    "requirement": "The packet target shall document lab-only FI gating, shared-logic/serial-engine boundaries, timing/rate assumptions and pending board/formal/security work.",
+    "verification": "test-packet; PACKET_PROCESSOR.md; packet-results.json",
+    "status": "implemented; directed simulations passed; board/formal/continuous-rate validation pending",
+    "priority": "must"
   }
 ]

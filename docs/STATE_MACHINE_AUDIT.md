@@ -15,6 +15,7 @@ Implementation baseline 0.7.6. This inventory describes stored-state mechanisms,
 | RAM codewords / response codeword | SECDED | Single-error correction and double-error detection where decoded | Higher multiplicity and wrong valid-word selection |
 | Local-SoC event recorder | Three 321-bit records | Repair and disagreement reporting | Shared update/voter; not a lossless FIFO |
 | FI campaign controller | Triplicated descriptor/control with distance-four state encodings | Qualification, invalid/no-majority rejection, acknowledgments | Lab stimulus and shared command/trigger logic |
+| Packet UART FIFO/control/CRC/watchdog | Three complete state records (266 bits at depth 64); 39-bit FIFO codewords | TMR repair/majority-loss fail stop; SECDED on dequeue | Shared decode/voters; serial RX/TX engines remain unprotected |
 | UART command monitor and replay cache | Unprotected | CRC/length/timeout/ownership protocol checks | Protocol checks do not protect internal stored-state faults |
 | Monitor run/boot/halt/reset controls and ownership selection | Unprotected | Nominal transaction-drain interlocks | Architectural influence; outside fault-tolerant deployment boundary |
 | UART RX/TX, LEDs, host retirement count | Unprotected | RX synchronizer/framing and normal serial protocol | Lab/diagnostic infrastructure |

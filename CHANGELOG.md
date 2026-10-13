@@ -1,3 +1,11 @@
+## 0.7.7 — UART packet-processing application
+
+- Add a standalone native-bus application SoC with 8 KiB ECC SRAM and CPU UART MMIO; existing FPGA targets remain unchanged.
+- Protect RX/TX byte queues with SECDED and FIFO/response/CRC/watchdog state with TMR, plus lab-only fault injection.
+- Add compiled C bounded echo/sum packet firmware, alternating buffers, descriptor checks, CRC/timeout/duplicate rejection and mailbox telemetry.
+- Add Python golden vectors and bit-level UART simulations in ECC/TMR register modes, including SRAM and descriptor fault cases.
+- Document requirements, MMIO/protocol, protection boundaries and pending board/rate/formal work. Serial engines remain unprotected lab infrastructure.
+
 ## 0.7.6 — KC705 serial development monitor
 
 - Consolidate current architecture, protection, software, FPGA and test-rig documentation into a developer manual with 24 source-synchronized excerpts. Refresh README/status/inventory and preserve historical descriptions separately.

@@ -11,6 +11,7 @@ A five-stage, machine-mode RV32 processor prototype with SECDED memory, optional
 - SECDED or TMR register file, triplicated pipeline/arithmetic control, compared execution lanes and ECC RAM with scrub.
 - AXI4-Lite CPU master and ECC RAM slave with error counters, address/syndrome reporting and optional stored-bit fault injection.
 - KC705 UART monitor for ELF loading/readback, run, draining stop, status and memory recovery; original VIO/ILA target remains selectable.
+- Standalone [UART packet processor](docs/PACKET_PROCESSOR.md): ECC byte FIFOs, protected CRC/watchdog control, bounded C echo/sum firmware and real serial-bit tests.
 - Separate KV260 ARM host-control AXI slave, loader/dashboard and campaign controls.
 
 This is a digitally tested prototype, not a radiation-qualified or flight-ready processor. Shared logic, AXI transport, clock/reset/configuration and the laboratory monitor remain outside the stored-state protection guarantees. See [protection boundaries](docs/PROTECTION.md).
@@ -20,6 +21,8 @@ This is a digitally tested prototype, not a radiation-qualified or flight-ready 
 Compiled C smoke, sorting/matrix/CRC/Fibonacci/interrupt workloads and signed FIR pass in ECC/TMR simulations. The CPU–AXI–ECC path passes all three programs in both modes. The UART rig loads and runs a compiled C ELF using serial bits, then stops and reads its results. Protocol, error injection, recovery and timeout tests pass.
 
 [Versioned validation](docs/VALIDATION.md) distinguishes each configuration and source revision. Current-pipeline formal completion, full compliance, Vivado implementation/timing and physical KC705/KV260 operation remain pending. No FPGA area, achieved clock-rate or radiation-performance rating is claimed.
+
+Packet application: `make test-packet` (cross compiler and Verilator) or `make test-packet-local` (existing pinned tool setup). This is a simulated target; the KC705 monitor remains the board default.
 
 ## Quick start
 

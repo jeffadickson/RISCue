@@ -1,0 +1,102 @@
+{
+  "version": "0.7.7",
+  "date_utc": "2026-10-13",
+  "scope": "Standalone native ECC SRAM/UART application; physical UART bits and compiled C; not a board or continuous-rate test",
+  "command": "make test-packet VERILATOR=.tools/monitor-verilator/verilator (local RISC-V compiler on PATH)",
+  "firmware_bytes": 1248,
+  "firmware_sha256": "c245923069302544abf8885eb980e0428931d3b018a257f2b7e1874737b007d0",
+  "isa_audit": {
+    "file": "/workspace/scratch/c59c397b704c/RISCue/build/packet/packet.elf",
+    "entry": 0,
+    "architecture_attributes": [
+      "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+    ],
+    "instructions_checked": 401,
+    "status": "pass",
+    "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+  },
+  "results": [
+    {
+      "test": "tb_packet_uart-0-unit",
+      "status": "pass",
+      "result": "PASS packet UART CRC, RX IRQ, held MMIO, SEC, DED, TMR, overflow, watchdog, majority loss",
+      "seconds": 8.618544979995931
+    },
+    {
+      "test": "tb_packet-0-normal",
+      "status": "pass",
+      "result": "PASS packet C UART RF_TMR=0 cycles=878034 retired=138706 reply_bytes=79",
+      "seconds": 15.63598706900666
+    },
+    {
+      "test": "tb_packet-0-ram_sec",
+      "status": "pass",
+      "result": "PASS packet C UART RF_TMR=0 cycles=878035 retired=138706 reply_bytes=79",
+      "seconds": 22.067825141006324
+    },
+    {
+      "test": "tb_packet-0-ram_ded",
+      "status": "pass",
+      "result": "PASS packet CPU RAM DED containment RF_TMR=0",
+      "seconds": 22.18225564900058
+    },
+    {
+      "test": "tb_packet-0-descriptor_fault",
+      "status": "pass",
+      "result": "PASS packet C corrupted descriptor rejected RF_TMR=0",
+      "seconds": 22.4973981860021
+    },
+    {
+      "test": "tb_packet-1-normal",
+      "status": "pass",
+      "result": "PASS packet C UART RF_TMR=1 cycles=878034 retired=138706 reply_bytes=79",
+      "seconds": 17.305668785003945
+    },
+    {
+      "test": "tb_packet-1-ram_sec",
+      "status": "pass",
+      "result": "PASS packet C UART RF_TMR=1 cycles=878035 retired=138706 reply_bytes=79",
+      "seconds": 25.812977818000945
+    },
+    {
+      "test": "tb_packet-1-ram_ded",
+      "status": "pass",
+      "result": "PASS packet CPU RAM DED containment RF_TMR=1",
+      "seconds": 25.97844880699995
+    },
+    {
+      "test": "tb_packet-1-descriptor_fault",
+      "status": "pass",
+      "result": "PASS packet C corrupted descriptor rejected RF_TMR=1",
+      "seconds": 26.39407425399986
+    }
+  ],
+  "source_sha256": {
+    "rtl/riscue_packet_uart.sv": "0230dbd310c31f3b7bd7195e3f916099d90cc0a65da39c178c67a79b36c18333",
+    "rtl/riscue_packet_soc.sv": "281a0adbb9be2d64c56060f0236fe287830831b8b3649a0261f69e79330658dd",
+    "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+    "rtl/riscue_pipeline_pkg.sv": "1fe2ce0b627e57c6ac571afadb591d3d575625e8378d0c1341c1f51891514966",
+    "rtl/riscue_pipeline_core.sv": "0f63c505ad4fea418dbe1f2390cb1fff8ad68a72c6f59d367a054f0cb77d9f97",
+    "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+    "rtl/riscue_muldiv.sv": "88d10b93349881d2df12dcdb8698a9446942d30f6134df6ecd3ae90195f99793",
+    "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+    "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+    "rtl/ft_ecc_ram.sv": "c4fd6fb344992e9c58fa31e261aee86278abf4208f005e53364b60cce7b498ae",
+    "rtl/ft_event_monitor.sv": "8185db879b0025bba95c6e0c50f4094b0d0e6580354279669369735c23f51449",
+    "boards/kc705/uart_rx.sv": "9edc6d8589ebe0fe540ea9ca74f14737c8698d7ceddab8f7eac53847798f0138",
+    "boards/kc705/uart_tx.sv": "a5103542c85995bef1f74a839290ec15e9bfc780e857896d4c6e246023609684",
+    "firmware/packet/main.c": "19670c206d21a65de8d8fe55aae975cfb3abeebdce015d2d351dba4816e557e5",
+    "firmware/packet/start.S": "7aeb57d94309910444d0d67fe3ef362ba3161b425aeeb2e50e18ea85452eb150",
+    "firmware/packet/link.ld": "ca6a3fa5d906fd5f4467866cae46d2d3a5aeaa15762278fd1873bf25bb7c7d6e",
+    "tools/build_packet.py": "e1b98bbd02427be3572e94317cbff00ac1b8c1799fcbe07c9f9e0a4954eb8dbc",
+    "tools/run_packet_tests.py": "33ab5083f286cae91637a9f8174c1d7e6f7d5efb41fd9c490b97f0a886bb7b66",
+    "tests/tb_packet.sv": "085cf0e99be289138b7e005dd6d2b03694c5edfc010dcbb4c8da0cd11810dfcb",
+    "tests/tb_packet_uart.sv": "6af1bdade1c58ade57b262ee26953f69c55f82d37bb911dc63cf074c6d5c0a5f"
+  },
+  "limitations": [
+    "Unprotected serial engines and shared combinational decode/voters",
+    "Paced accelerated serial test, no continuous-rate guarantee",
+    "No physical board, Vivado resource/timing, packet formal or radiation validation",
+    "Sequential alternating buffers; no DMA, cryptographic authentication or general anti-replay"
+  ]
+}

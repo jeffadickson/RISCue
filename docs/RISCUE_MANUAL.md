@@ -1,6 +1,6 @@
 # RISCue developer and verification manual
 
-**Implementation baseline: 0.7.6.** This manual describes the five-stage core, its fault-mitigation mechanisms, software contract, AXI interfaces, FPGA targets and executable test rigs. It also identifies the preserved legacy implementation so evidence is not attributed to the wrong core.
+**Implementation baseline: 0.7.7.** This manual describes the five-stage core, its fault-mitigation mechanisms, software contract, AXI interfaces, FPGA targets and executable test rigs. It also identifies the preserved legacy implementation so evidence is not attributed to the wrong core.
 
 RISCue is an original RV32 processor prototype with ECC/TMR protection and digital fault-injection facilities. Compiled C and directed fault tests have passed in simulation. FPGA resource usage, achieved clock frequency, physical redundancy and radiation performance have not been established.
 
@@ -24,6 +24,7 @@ Code excerpts below are exact slices of repository files. Some are intentionally
 14. [FPGA implementation and bring-up](#fpga-implementation-and-bring-up)
 15. [Debugging and troubleshooting](#debugging-and-troubleshooting)
 16. [Requirements, maintenance and open work](#requirements-maintenance-and-open-work)
+17. [Packet-processing application](#packet-processing-application)
 
 ## System configurations and source map
 
@@ -33,6 +34,7 @@ The repository contains several integrations of related RTL. In particular, the 
 | --- | --- | --- |
 | Current CPU | `riscue_pipeline_core` | Five-stage machine-mode CPU with an internal ECC-coded request interface |
 | Local-memory pipeline SoC | `riscue_pipeline_soc` | CPU, local ECC SRAM and aggregated error recorder; many cocotb tests |
+| Packet-processing application | `riscue_packet_soc` + `riscue_packet_uart` | Native ECC SRAM/MMIO, compiled C packet filtering and real UART-bit tests; separately simulated |
 | Generic AXI processor | `riscue_axi_core` + `riscue_axi_master_bridge` | CPU instruction/data requests become AXI4-Lite master transactions |
 | AXI ECC memory | `riscue_axi_ecc_ram` + `ft_ecc_ram` | AXI4-Lite slave, storage ECC, scrub and endpoint telemetry |
 | KC705 serial development system | `riscue_monitor_soc`, board top `riscue_kc705` in `monitor_top.sv` | UART monitor and CPU share AXI ECC RAM; default KC705 build |
@@ -913,7 +915,7 @@ Its default FI setting in the Makefile is enabled for laboratory use; do not ass
 | RUN immediately faults again | Recovery did not repair stored data, another word remains bad, or the program entered bad code |
 | ELF rejected | ELF32/ILP32, load bounds, entry/alignment, static executable, matching physical/virtual addresses; then check instruction audit |
 | Correct program with different cycle counts | Compare identical bus path, RF mode, memory size, compiler options and early-jump setting |
-| Expected console text never appears | No general CPU printf/UART MMIO peripheral is provided; examples report through RAM mailboxes |
+| Expected console text never appears | The default KC705 monitor has no CPU printf peripheral; its examples report through mailboxes. The separate packet target has application UART MMIO |
 | A formal job timed out | Inconclusive; retain its status/log rather than interpreting absence of a counterexample as proof |
 | A vendor-stub compile passed | Port/elaboration check only; MMCM behavior, real IP and physical constraints remain untested |
 
@@ -936,3 +938,74 @@ When modifying packed state, regenerate the FI map and revise its ABI when bit p
 Remaining gates include complete current-pipeline architectural/privileged testing, full upstream campaigns, formal proofs/cover witnesses, physical FPGA implementation, protected placement/configuration recovery, and radiation qualification. Standard debug, caches/prediction, stronger/interleaved memory codes and atomics remain separate design choices. The current UART/owner/boot controls are laboratory infrastructure and require a separate protection design before inclusion in a radiation-tolerant deployment boundary.
 
 See [the roadmap](ROADMAP.md), [validation index](VALIDATION.md), [requirements](REQUIREMENTS.md) and [documentation index](README.md).
+
+
+## Packet-processing application
+
+The standalone 0.7.7 packet target uses 8 KiB shared ECC SRAM, two bounded
+32-byte firmware buffers, 64-entry SECDED RX/TX queues and TMR peripheral state.
+C firmware validates CRC and descriptors before echo/sum processing. The native
+ECC-coded bus protects requests; the existing serial engines remain unprotected.
+Buffers alternate sequentially; concurrent DMA ping-pong is not implemented.
+
+<!-- excerpt:packet_state -->
+Source: [rtl/riscue_packet_uart.sv](../rtl/riscue_packet_uart.sv)
+
+```systemverilog
+ typedef struct packed {
+  logic ready,error,dead,irq_enable;
+  logic [31:0] response,crc,corrected,framing,overflow,watchdog_reload,watchdog;
+  logic [P-1:0] rp,wp,tp,tq;
+  logic [P:0] rc,tc;
+ } state_t;
+ (* keep="true",DONT_TOUCH="TRUE" *) state_t s0,s1,s2;
+ state_t s,n;
+ (* keep="true" *) logic [38:0] rx_fifo[0:DEPTH-1],tx_fifo[0:DEPTH-1];
+ wire bad=(s0!=s1)&&(s0!=s2)&&(s1!=s2);
+ assign s=(s0&s1)|(s0&s2)|(s1&s2);
+```
+<!-- /excerpt:packet_state -->
+
+The firmware checks lengths before filling a buffer, validates CRC before use,
+and rejects inconsistent ownership. CRC computation is byte-fed hardware;
+packet policy remains readable C. Descriptor complements supplement ECC,
+without creating an M-mode software security boundary.
+
+<!-- excerpt:packet_policy -->
+Source: [firmware/packet/main.c](../firmware/packet/main.c)
+
+```c
+  if((owner^owner_inv)!=~0u||owner>1){stats[5]++;return 1;}
+  uint32_t slot=owner;lengths[slot]=n;lengths_inv[slot]=~(uint32_t)n;
+  crc_start();crc_add(n);crc_add(seq);crc_add(op);uint32_t complete=1;
+  for(uint32_t i=0;i<n;i++){if(!get(&b)){complete=0;break;}buffers[slot][i]=b;crc_add(b);}
+  uint32_t expected=crc_end(),received=0;
+  if(complete)for(uint32_t i=0;i<4;i++){if(!get(&b)){complete=0;break;}received|=(uint32_t)b<<(8*i);}
+  if(!complete){stats[4]++;continue;}
+  if(received!=expected){stats[2]++;continue;}
+  if((lengths[slot]^lengths_inv[slot])!=~0u||lengths[slot]>MAX_PAYLOAD){stats[5]++;return 1;}
+  if(have_seq&&seq==last_seq){stats[6]++;reply(seq,3,0,buffers[slot]);continue;}
+  if(op==1){reply(seq,0,n,buffers[slot]);stats[1]++;}
+  else if(op==2){uint32_t sum=0;for(uint32_t i=0;i<lengths[slot];i++)sum+=buffers[slot][i];
+```
+<!-- /excerpt:packet_policy -->
+
+`make test-packet` compiles/audits C, generates independent Python CRC vectors,
+and drives UART bits through the complete SoC in ECC/TMR register modes. Tests
+check exact reply bytes and rejection counters, queue correction/containment,
+RAM SEC/DED and a valid-ECC but inconsistent ownership descriptor.
+
+<!-- excerpt:packet_golden -->
+Source: [tools/run_packet_tests.py](../tools/run_packet_tests.py)
+
+```python
+def frame(seq,op,data):
+ b=bytes([len(data),seq,op])+bytes(data);return b'\xa5'+b+zlib.crc32(b).to_bytes(4,'little')
+# Byte pacing allows CPU service; the partial request is placed exactly at midpoint.
+```
+<!-- /excerpt:packet_golden -->
+
+The [packet reference](PACKET_PROCESSOR.md) contains MMIO offsets, framing,
+watchdog/IRQ semantics, local FI ABI, commands and remaining work. The
+[recorded results](../verification/packet-results.json) apply to simulation,
+not line-rate performance, physical boards, formal proof or radiation behavior.

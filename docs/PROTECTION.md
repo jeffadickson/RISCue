@@ -20,3 +20,5 @@ Remaining gates are captured as open/partial requirements, not claimed as comple
 **All state machines in the implemented core/subsystem are inventoried in STATE_MACHINE_AUDIT.md; external peripherals/controllers are outside that claim.**
 
 Primary reference specifications remain RV32I/M from https://docs.riscv.org/reference/isa/ and NASA FSM/memory radiation guidance referenced in the v0.1 package. The pinned upstream code and licenses are separately identified in upstream.lock.json and licenses/.
+
+The standalone packet UART adds SECDED queues and triplicated descriptor/response/CRC/watchdog state. Its existing serial RX/TX engines remain unprotected. See [packet protection boundaries](PACKET_PROCESSOR.md#architecture-and-protection).

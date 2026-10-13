@@ -20,3 +20,7 @@ Current open gates: full current-pipeline architectural/privileged compliance, c
 The original 100 adapted upstream program runs, 5,901 stored-memory/RF faults, 4,440 control/reporter injections and small generic synthesis audits concern the **legacy serialized CPU**. Their retained historical explanation is [LEGACY_VALIDATION.md](LEGACY_VALIDATION.md); they must not be quoted as coverage of the newer pipeline or serial monitor.
 
 No test result here establishes an achieved FPGA clock rate, DMIPS/CoreMark score, analog SET sensitivity, configuration upset immunity, SEL/TID rating or mission residual-error rate. Reports preserve those distinctions rather than assigning a generic “fully verified” label.
+
+## Packet application (0.7.7)
+
+`make test-packet` passed nine directed Verilator simulations: one peripheral suite and four whole-core cases in each ECC/TMR register mode. Normal runs executed 138,706 retirements in 878,034 clocks and checked 79 physical UART reply bytes plus exact rejection counters. RAM SEC added one clock; RAM DED and inconsistent ownership were contained. Firmware is 1,248 bytes. See [evidence and source hashes](../verification/packet-results.json) and [test timing/coverage limits](PACKET_PROCESSOR.md#build-and-verification). Existing board targets were not rerun or modified.

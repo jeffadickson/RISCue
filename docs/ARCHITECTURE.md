@@ -11,3 +11,5 @@ The default KC705 system adds an independent UART command monitor with its own A
 The local-memory `riscue_pipeline_soc` remains the fixture for many pipeline tests and the original VIO/ILA board target. KV260 provides a separate ARM host-control slave and local memory path. The preserved `rv32im_ft_*` modules are an older serialized CPU; see [historical architecture](LEGACY_ARCHITECTURE.md).
 
 References: [pipeline detail](PIPELINE_IMPLEMENTATION.md), [AXI master](AXI_PROCESSOR.md), [ECC slave](AXI_ECC_MEMORY.md), [monitor](KC705_MONITOR.md), [state inventory](STATE_MACHINE_AUDIT.md), [validation](VALIDATION.md).
+
+The standalone [packet-processing target](PACKET_PROCESSOR.md) connects the native ECC-coded CPU interface to shared ECC SRAM and a protected UART MMIO endpoint. It is separately simulated; the board default is unchanged.

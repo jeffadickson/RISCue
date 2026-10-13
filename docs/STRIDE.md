@@ -62,3 +62,15 @@ The physical UART is a trusted laboratory control interface, not a secure boot i
 | Repeated side effects | Cache the last completed command/reply; identical retries replay; same sequence with changed payload is rejected | Duplicate write/injection/run tests |
 
 MON-001: Power up stopped; load and read RAM through AXI and normal ECC encoding. MON-002: Stop must drain accepted instructions, split fetches and AXI transactions before memory ownership changes. MON-003: Run resets architectural state at a validated halfword-aligned RAM entry. MON-004: CRC validation and cached duplicate replies prevent damaged or repeated commands from causing new effects. MON-005: Recovery and injection require stopped, idle ownership; status remains available during execution/fatal state. MON-006: Validate ELF segments, initialize BSS, verify loaded memory, and support the complete host command workflow. Verify real serial framing and compiled-C upload/run/readback in both register protection modes. Monitor/UART/mux/boot controls are explicitly outside the protected flight core boundary.
+
+## Packet application boundary (PKT-001..006)
+
+Packet CRC detects accidental corruption, not sender identity. Opcode policy is
+limited to bounded echo/sum; no arbitrary memory read/write or actuator command
+is exposed. Length and descriptor checks precede processing. Immediate duplicate
+rejection is not cryptographic replay protection. RX overflow, partial-frame
+expiry and fail-stop watchdog bound selected denial-of-service effects; continuous
+line-rate service and configured rate limiting are unverified. Error/mailbox
+counters are diagnostic, not a tamper-proof log. Packet SRAM and FIFOs use ECC;
+metadata/CRC/watchdog use TMR. Serial engines and shared combinational logic
+remain unprotected. See [packet contract](PACKET_PROCESSOR.md).

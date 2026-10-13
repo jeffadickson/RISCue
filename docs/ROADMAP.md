@@ -9,4 +9,4 @@ The current five-stage core, M-mode platform, bit manipulation, AXI ECC RAM and 
 5. Implement and validate standard RISC-V debug halt/resume/step/GPR access if required. The serial monitor currently resets on RUN and has no standard Debug Module.
 6. Engineer physical redundancy separation, memory interleaving, configuration scrubbing, protected clock/reset/boot/voters and target radiation qualification. The UART monitor and owner/boot controls remain outside the protected boundary.
 
-Atomics, caches, prediction, dual-port memory, richer UART software I/O and external-memory controllers are future scope driven by workload/platform needs. A/Zalrsc/Zaamo remain conditional; no speculative performance or flight-readiness claim follows from adding features.
+Atomics, caches, prediction, dual-port memory, packet DMA, additional stream sources, hardened serial engines, continuous-rate packet validation and board application UART integration and external-memory controllers are future scope driven by workload/platform needs. A/Zalrsc/Zaamo remain conditional; no speculative performance or flight-readiness claim follows from adding features.
