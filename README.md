@@ -185,3 +185,11 @@ two arithmetic lanes. `make c-fir` runs a compiled 32-tap signed FIR with
 four multiply variants, dependencies, x0, memory consumers and interrupt/MRET
 behavior. See [the verification report](docs/MULTIPLIER_VERIFICATION.md) and
 [the FIR source](firmware/fir/main.c).
+
+## Generic AXI processor master
+
+`riscue_axi_core` supplies a 32-bit AXI4-Lite **master** for processor fetches
+and data accesses, separate from the existing ARM host-control slave. Run
+`make test-axi-core-errors test-axi-master-bridge`; see
+[the interface and integrity contract](docs/AXI_PROCESSOR.md). Generic tests
+pass; board builds still select their existing local ECC RAM configurations.

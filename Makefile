@@ -261,3 +261,23 @@ c-fir: c-fir-build
 pipeline-multiplier:
 	TEST_FILTER=multiplier_full_core $(PIPELINE_PYTHON) tools/run_pipeline.py ecc
 	TEST_FILTER=multiplier_full_core $(PIPELINE_PYTHON) tools/run_pipeline.py tmr
+
+AXI_CORE_RTL = $(filter-out rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/riscue_axi_master_bridge.sv rtl/riscue_axi_core.sv
+.PHONY: test-axi-core
+test-axi-core: | build
+	$(IVERILOG) -g2012 -s tb_axi_core -o build/tb_axi_core $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(VVP) build/tb_axi_core
+	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(VVP) build/tb_axi_core_tmr
+
+.PHONY: test-axi-master-bridge
+test-axi-master-bridge: | build
+	$(IVERILOG) -g2012 -s tb_axi_master_bridge -o build/tb_axi_master_bridge rtl/ft_pkg.sv rtl/riscue_axi_master_bridge.sv tests/tb_axi_master_bridge.sv
+	$(VVP) build/tb_axi_master_bridge
+
+.PHONY: test-axi-core-errors
+test-axi-core-errors: test-axi-core
+	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -o build/tb_axi_core_store $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(VVP) build/tb_axi_core_store
+	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_store_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(VVP) build/tb_axi_core_store_tmr

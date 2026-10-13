@@ -1,3 +1,10 @@
+# 0.7.4 — generic processor AXI master
+
+- Add 32-bit single-outstanding AXI4-Lite master wrapper and triplicated bridge.
+- Handle independent AW/W backpressure, latched request ownership and precise bus-error traps.
+- Add ECC/TMR processor read/write-error tests and bridge correction/repair/drain tests.
+- Document external-memory integrity boundary, reset/CDC and pending board integration.
+
 # 0.7.3 — multiplier stress and signed FIR
 
 - Add exhaustive bounded arithmetic-unit vectors for all four multiply variants with independent Python golden products.

@@ -606,5 +606,13 @@
     "verification": "test-multiplier-exhaustive; pipeline-multiplier; c-fir; verification/multiplier-results.json",
     "status": "implemented; exhaustive bounded unit, FIR and full-core ECC/TMR tests passed; full32 formal/physical validation pending",
     "priority": "must"
+  },
+  {
+    "id": "AXI-MASTER-001",
+    "category": "Platform",
+    "requirement": "Provide a generic 32-bit single-outstanding AXI4-Lite processor master with captured ownership, independent AW/W acceptance, stable VALID payloads under backpressure, aligned addresses/byte strobes, precise response-error traps, protected bridge state and telemetry. Document outstanding-transaction reset/drain, CDC, external memory integrity and board integration limits.",
+    "verification": "test-axi-core-errors ECC/TMR; test-axi-master-bridge; sv2v; verification/axi-master-results.json",
+    "status": "implemented; directed simulations and conversion passed; board/full compliance pending",
+    "priority": "must"
   }
 ]

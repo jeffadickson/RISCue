@@ -1,0 +1,24 @@
+{
+  "version": "0.7.4",
+  "recorded_utc": "2026-10-13T00:19:27.122791+00:00",
+  "status": "pass",
+  "tools": {
+    "iverilog": "12.0",
+    "sv2v": "local converter"
+  },
+  "checks": [
+    "PASS AXI processor RF_TMR=0 STORE_ERROR=0 cycles=189 retirements=9 reads=13 writes=3 access-fault precise",
+    "PASS AXI processor RF_TMR=1 STORE_ERROR=0 cycles=189 retirements=9 reads=13 writes=3 access-fault precise",
+    "PASS AXI processor RF_TMR=0 STORE_ERROR=1 cycles=189 retirements=9 reads=12 writes=4 access-fault precise",
+    "PASS AXI processor RF_TMR=1 STORE_ERROR=1 cycles=189 retirements=9 reads=12 writes=4 access-fault precise",
+    "PASS AXI bridge ownership/drain, W-before-AW, response error, TMR repair, held request, ECC correction/DED",
+    "sv2v generic AXI core conversion passed"
+  ],
+  "source_sha256": {
+    "rtl/riscue_axi_master_bridge.sv": "821c1a4927866c6e2599444de2a4e9a797bf7a49e4e966bea472b1742d1d35de",
+    "rtl/riscue_axi_core.sv": "da3bcc361951c119db3abf4e2095feed0e52ebea08bf479ba0f607a3b976ed15",
+    "tests/tb_axi_core.sv": "fa0c09ab7959b0657ba70583b1d35932c366b5c13d3b524a8bdf65a3e575790d",
+    "tests/tb_axi_master_bridge.sv": "adbc4848a83fb3c2ef6133ee1410bfabe37fd3f4a4251002fa02ac949c8d1097"
+  },
+  "scope": "Directed processor/master protocol tests and conversion; board synthesis, complete AXI formal/compliance and external-memory ECC validation pending"
+}
