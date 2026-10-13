@@ -1,0 +1,94 @@
+{
+  "version": "0.7.6",
+  "recorded_utc": "2026-10-13T01:43:59.871472+00:00",
+  "simulator": "Verilator 5.020, timing enabled, bit-level UART at accelerated baud",
+  "runs": [
+    {
+      "name": "protocol-0",
+      "status": "pass",
+      "result": "PASS serial monitor RF_TMR=0: UART CRC replay timeout ECC DED recovery nonzero straddled entry run-stop-read",
+      "seconds": 6.789158862000477
+    },
+    {
+      "name": "c-smoke-0",
+      "status": "pass",
+      "result": "PASS serial ELF C smoke RF_TMR=0 loaded_words=84",
+      "seconds": 17.71718393700212
+    },
+    {
+      "name": "protocol-1",
+      "status": "pass",
+      "result": "PASS serial monitor RF_TMR=1: UART CRC replay timeout ECC DED recovery nonzero straddled entry run-stop-read",
+      "seconds": 8.239032614997996
+    },
+    {
+      "name": "c-smoke-1",
+      "status": "pass",
+      "result": "PASS serial ELF C smoke RF_TMR=1 loaded_words=84",
+      "seconds": 21.081032072997914
+    }
+  ],
+  "elf": {
+    "source": "firmware/smoke",
+    "loaded_words": 84,
+    "loaded_bytes_including_BSS_and_padding": 336,
+    "elf_sha256": "90c21d667b56584d930ddd530ee2e5f04d1eb5f8d2fc4b8ff89af8d43159e993"
+  },
+  "host_unit_tests": {
+    "count": 5,
+    "status": "pass"
+  },
+  "Icarus_regressions": [
+    "PASS monitor injection disabled",
+    "PASS AXI bridge ownership/drain, W-before-AW, response error, TMR repair, held request, ECC correction/DED",
+    "PASS AXI processor RF_TMR=0 STORE_ERROR=0 cycles=189 retirements=9 reads=13 writes=3 access-fault precise",
+    "PASS AXI processor RF_TMR=1 STORE_ERROR=0 cycles=189 retirements=9 reads=13 writes=3 access-fault precise",
+    "PASS AXI processor RF_TMR=0 STORE_ERROR=1 cycles=189 retirements=9 reads=12 writes=4 access-fault precise",
+    "PASS AXI processor RF_TMR=1 STORE_ERROR=1 cycles=189 retirements=9 reads=12 writes=4 access-fault precise",
+    "PASS AXI ECC RAM: AW/W order, B/R backpressure, masks, 39 single-bit repairs, scrub, DED read/partial-write suppression, recovery and syndrome telemetry"
+  ],
+  "board_compile": {
+    "default": "pass",
+    "legacy_instrumented": "pass",
+    "scope": "vendor stubs, not synthesis or physical validation"
+  },
+  "monitor_sv2v_conversion": "pass",
+  "coverage": [
+    "CRC failure has no memory effects",
+    "duplicate write/injection/run replay",
+    "sequence collision rejection",
+    "partial frame gap recovery",
+    "invalid command/alignment/range rejection",
+    "single-bit correction",
+    "DED response and controller recovery",
+    "nonzero halfword entry and straddled instruction execution",
+    "busy write rejection",
+    "stop timeout retains CPU ownership",
+    "host bus timeout locks memory commands while status remains available",
+    "UART-loaded compiled C mailbox readback in ECC and TMR modes"
+  ],
+  "source_sha256": {
+    "rtl/riscue_serial_monitor.sv": "1d4cb62157ecf7891f33f06bb8c432ee1c6623d793a654cd3852cf524634eca2",
+    "rtl/riscue_monitor_soc.sv": "99b2a703e3c6e2a58f1f6acc0f4279bb86ec0f83a142ea42cfa525ec03a29991",
+    "rtl/riscue_pipeline_core.sv": "0f63c505ad4fea418dbe1f2390cb1fff8ad68a72c6f59d367a054f0cb77d9f97",
+    "rtl/riscue_axi_core.sv": "380caf87466169aa43a6eedbd082b362704bb8b3e3e06f514dffcc29d36aa3e5",
+    "rtl/riscue_axi_master_bridge.sv": "2e40a1ecd8325229c6bb1641da5336e7f36e8c4f9ed5d74d471bc172a842cc45",
+    "rtl/riscue_axi_ecc_ram.sv": "7cf95b908500514b09efa5b09a77c4412bfd0a59bbedf1eb89dae852e2268873",
+    "boards/kc705/uart_rx.sv": "9edc6d8589ebe0fe540ea9ca74f14737c8698d7ceddab8f7eac53847798f0138",
+    "boards/kc705/monitor_top.sv": "85ee7184f74e981958ce6f3cc17052b6480f58d388defb30da96a96a76ac579c",
+    "boards/kc705/build.tcl": "c77c6d4ca0235052925448f897be89484e7ceea65d443ad38431ca70f4632f9d",
+    "boards/kc705/kc705.xdc": "ac9bade661fe4d855cca8ba72873b563fe004b10f45dcc307f65beff8c0b1769",
+    "boards/kc705/audit_redundancy.tcl": "ae692bf502061b7c725dd09c8f1f4ec87cbb2cc37d9f8e1f7f976bb5dc73a976",
+    "tools/kc705_monitor.py": "9d3e4ab5631fa355f818ba9e57eb8fa83e19ea161c8f5c825fd02db5408da749",
+    "tools/run_monitor_tests.py": "79899bbf5dcc0f42170758a1801a625e48665923790292925b97c3807644c494",
+    "tests/tb_serial_monitor.sv": "9792a095febeca7be5ff8369e1a762083b5a58f3c5384bb15fffbf80bd6c950c",
+    "tests/tb_monitor_disabled.sv": "dd543d0a444dfa032bd16463fc59eb2f4e52d4451440926c8ac267cd3d506169",
+    "tests/test_kc705_monitor.py": "bb7bbbb85a7119e6c66cd5259b86f48ff1226cd2a1186e89065f7eef95236b0d"
+  },
+  "pending": [
+    "Vivado synthesis, timing, CDC and physical KC705 operation",
+    "full formal proof of ownership and halt semantics",
+    "monitor/UART/mux fault tolerance or authenticated boot",
+    "general-purpose debugger, resume and single-step"
+  ]
+}

@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 module tb_axi_core #(parameter bit RF_TMR=0,STORE_ERROR=0);
+ logic halt_request=0;logic [31:0] boot_pc=0;wire quiescent,bridge_idle;
  logic aclk=0,aresetn=0,external_irq=0,external_memory_fault=0;
  wire [31:0] m_axi_awaddr,m_axi_wdata,m_axi_araddr;wire [2:0] m_axi_awprot,m_axi_arprot;
  wire [3:0] m_axi_wstrb;wire m_axi_awvalid,m_axi_wvalid,m_axi_bready,m_axi_arvalid,m_axi_rready;

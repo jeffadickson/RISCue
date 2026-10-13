@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 module tb_axi_ecc_ram;
+ wire idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
  logic [31:0] s_axi_awaddr=0,s_axi_wdata=0,s_axi_araddr=0;logic [2:0] s_axi_awprot=0,s_axi_arprot=0;

@@ -1,3 +1,11 @@
+## 0.7.6 — KC705 serial development monitor
+
+- Default KC705 target now uses the AXI CPU and ECC RAM with independent UART load/run/status control; original VIO/ILA target remains selectable.
+- Add CRC-framed stop-and-wait commands, duplicate replay, bounded waits, stopped-only memory ownership, memory recovery and optional codeword injection.
+- Add optional pipeline drain control and programmable reset PC; defaults preserve existing wrappers.
+- Add Python ELF loader with BSS initialization/readback and physical UART regression plus compiled C upload/run tests.
+- Update board RX constraints, redundancy audit hierarchy, requirements and laboratory trust boundary. Vivado/board validation remains pending.
+
 # 0.7.5 — AXI ECC memory endpoint
 
 - Add protected AXI4-Lite SECDED RAM slave with byte RMW, scrub, DED containment, diagnostic counters/syndromes and validated fault injection.

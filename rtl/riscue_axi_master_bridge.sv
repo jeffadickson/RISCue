@@ -4,7 +4,7 @@ module riscue_axi_master_bridge(
  input logic clk,rst_n,core_req,
  input logic [38:0] addr_code,wdata_code,ctrl_code,
  output logic core_ready,core_error,output logic [38:0] rdata_code,
- output logic corrected_event,disagreement_event,fatal,
+ output logic corrected_event,disagreement_event,fatal,output wire idle,
  output logic [31:0] m_axi_awaddr,output logic [2:0] m_axi_awprot,
  output logic m_axi_awvalid,input logic m_axi_awready,
  output logic [31:0] m_axi_wdata,output logic [3:0] m_axi_wstrb,
@@ -28,6 +28,7 @@ module riscue_axi_master_bridge(
  (* keep="true",DONT_TOUCH="TRUE" *) bridge_t s0,s1,s2;
  bridge_t s,n;ecc_result_t da,dw,dc;
  wire record_bad=(s0!=s1)&&(s0!=s2)&&(s1!=s2);
+ assign idle=(s.phase==IDLE)&&!fatal;
  assign s=(s0&s1)|(s0&s2)|(s1&s2);
  assign disagreement_event=(s0!=s1)||(s0!=s2);
  assign fatal=s.dead||record_bad;

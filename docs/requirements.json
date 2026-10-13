@@ -622,5 +622,53 @@
     "verification": "test-axi-ecc-ram; test-axi-ecc-c; legacy RAM/ECC tests; sv2v; verification/axi-ecc-memory-results.json",
     "status": "implemented; directed unit, legacy, instruction fault and six compiled C integration tests passed",
     "priority": "must"
+  },
+  {
+    "id": "MON-001",
+    "category": "KC705 monitor",
+    "requirement": "The KC705 monitor shall power up with CPU reset asserted and load/read memory through the AXI SECDED endpoint.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "MON-002",
+    "category": "KC705 monitor",
+    "requirement": "Stop shall inhibit fetch, complete split fetches, drain accepted instructions and AXI transactions before transferring ownership.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "MON-003",
+    "category": "KC705 monitor",
+    "requirement": "Run shall reset architectural state at a validated halfword-aligned RAM entry address.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "MON-004",
+    "category": "KC705 monitor",
+    "requirement": "CRC-protected serial packets shall reject corruption before side effects and replay only the last identical completed request.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "MON-005",
+    "category": "KC705 monitor",
+    "requirement": "Memory recovery and optional RAM fault injection shall require idle stopped ownership; status shall remain accessible during execution and faults.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
+  },
+  {
+    "id": "MON-006",
+    "category": "KC705 monitor",
+    "requirement": "A Python loader shall validate ELF load segments, initialize BSS, verify RAM by readback and support load/run/status/stop/read/write/recover/inject.",
+    "verification": "test-monitor; test-monitor-host",
+    "status": "implemented; Python tests, bit-level UART and compiled C ECC/TMR simulations passed; board validation pending",
+    "priority": "must"
   }
 ]

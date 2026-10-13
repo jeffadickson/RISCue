@@ -7,6 +7,12 @@ create_clock -name sys_clk -period 5.000 [get_ports sys_clk_p]
 set_property -dict {PACKAGE_PIN AB7 IOSTANDARD LVCMOS15} [get_ports cpu_reset]
 set_property -dict {PACKAGE_PIN AA12 IOSTANDARD LVCMOS15} [get_ports fault_button]
 set_property -dict {PACKAGE_PIN K24 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports uart_tx]
+set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS25} [get_ports uart_rx]
+if {!$instrumented} {
+ set rx_first [get_cells -hierarchical -regexp {.*rx/sync_rx_reg\[0\]}]
+ if {[llength $rx_first]!=1} {error "UART RX first synchronizer missing"}
+ set_false_path -from [get_ports uart_rx] -to $rx_first
+}
 set pins {AB8 AA8 AC9 AB9 AE26 G19 E18 F16}
 for {set i 0} {$i<8} {incr i} {
  set port [get_ports [format {led[%d]} $i]]

@@ -151,7 +151,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md), and the [r
 
 ## KC705 FPGA target
 
-See [boards/kc705/README.md](boards/kc705/README.md). `make kc705` prepares firmware and builds the XC7K325T target with Vivado; `RF_MODE=tmr` selects triplicated registers. The wrapper provides LEDs, periodic USB-UART status and optional button fault injection. No target bitstream or timing result is claimed yet.
+See [boards/kc705/README.md](boards/kc705/README.md). `make kc705` prepares firmware and builds the XC7K325T target with Vivado; `RF_MODE=tmr` selects triplicated registers. The default wrapper provides LEDs and a binary USB-UART ELF loader/monitor over the AXI ECC memory path; the original VIO/ILA target retains ASCII status and button injection. See [monitor guide](docs/KC705_MONITOR.md). No target bitstream or timing result is claimed yet.
 
 ## Zbb, Zbc and Zbs
 

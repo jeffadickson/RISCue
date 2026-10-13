@@ -69,3 +69,5 @@ RAM architecture. Connect the new top to the desired memory/interconnect and
 validate its map, clock/reset and memory protection before board use.
 
 The optional `MEMORY_FAULT_INPUT=1` parameter enables `external_memory_fault` as a fatal input. Connect an ECC RAM endpoint’s `fatal` signal here to stop the hart on an uncorrectable storage fault; the default is disabled for compatibility. AXI response errors still produce architectural access-fault traps. See [AXI ECC memory](AXI_ECC_MEMORY.md) for recovery and test coverage.
+
+`MONITOR_CONTROL=1` enables `halt_request` and the runtime `boot_pc` reset address. `quiescent` reports an empty pipeline/bus with no partial split fetch; `bridge_idle` separately reports drained AXI ownership. A monitor must wait for both plus the slave's idle indication before handing off memory. Stopping does not freeze timers or scrubbing. With `MONITOR_CONTROL=0` (default), the optional inputs have no effect and `RESET_PC` remains the reset address.

@@ -1,5 +1,5 @@
 // KC705 bring-up wrapper. Board diagnostics/clock/reset are outside the SEU guarantee.
-module riscue_kc705 #(
+module riscue_kc705_legacy #(
  parameter integer WORDS=1024, CLK_DIV=100,
  parameter bit RF_TMR=0,FI_ENABLE=0,INSTRUMENTED=0,
  parameter INIT_FILE="firmware.hex"

@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 module tb_axi_ecc_system #(parameter bit RF_TMR=0,parameter integer CASE=0,parameter bit INJECT_DED=0,parameter IMAGE="build/axi-c/smoke.hex",parameter GOLDEN="build/axi-c/smoke.expected");
+ logic halt_request=0;logic [31:0] boot_pc=0;wire quiescent,bridge_idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
  wire [31:0] m_axi_awaddr,m_axi_wdata,m_axi_araddr;wire [2:0] m_axi_awprot,m_axi_arprot;

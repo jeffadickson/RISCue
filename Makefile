@@ -300,3 +300,26 @@ test-axi-ecc-fatal: axi-c-images
 	$(VVP) build/axi-c/fatal +finish_pc=52
 	$(IVERILOG) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -Ptb_axi_ecc_system.RF_TMR=1 -o build/axi-c/fatal-tmr $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
 	$(VVP) build/axi-c/fatal-tmr +finish_pc=52
+
+# KC705 development monitor: serial loader and CPU/AXI/ECC ownership tests.
+MONITOR_RTL = $(AXI_ECC_RTL) boards/kc705/uart_rx.sv boards/kc705/uart_tx.sv rtl/riscue_serial_monitor.sv rtl/riscue_monitor_soc.sv
+.PHONY: test-monitor test-monitor-host test-monitor-icarus
+test-monitor-host:
+	$(PYTHON) -m unittest discover -s tests -p 'test_kc705_monitor.py' -v
+test-monitor-icarus: | build
+	$(IVERILOG) -g2012 -s tb_serial_monitor -o build/tb_serial_monitor $(MONITOR_RTL) tests/tb_serial_monitor.sv
+	$(VVP) build/tb_serial_monitor
+
+VERILATOR ?= verilator
+test-monitor: axi-c-images test-monitor-host test-monitor-disabled
+	VERILATOR="$(VERILATOR)" $(PYTHON) tools/run_monitor_tests.py
+.PHONY: test-monitor-disabled
+test-monitor-disabled: | build
+	$(IVERILOG) -g2012 -s tb_monitor_disabled -o build/tb_monitor_disabled rtl/ft_pkg.sv boards/kc705/uart_rx.sv boards/kc705/uart_tx.sv rtl/riscue_serial_monitor.sv tests/tb_monitor_disabled.sv
+	$(VVP) build/tb_monitor_disabled
+.PHONY: monitor-tools
+monitor-tools:
+	$(PYTHON) tools/setup_monitor_sim.py
+.PHONY: check-kc705
+check-kc705:
+	$(PYTHON) tools/check_kc705.py

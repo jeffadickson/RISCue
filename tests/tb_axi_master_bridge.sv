@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 module tb_axi_master_bridge;
+ wire idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
  wire [31:0] m_axi_awaddr,m_axi_wdata,m_axi_araddr;wire [2:0] m_axi_awprot,m_axi_arprot;

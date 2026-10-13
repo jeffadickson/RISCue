@@ -47,3 +47,18 @@ prove reachability, cover generated/mutable code or establish hardware
 compliance. Production loader/authentication and runtime recovery remain
 separate requirements. Conservative failures must be resolved explicitly,
 without silently disabling the audit.
+
+## KC705 serial development monitor (0.7.6)
+
+The physical UART is a trusted laboratory control interface, not a secure boot interface. CRC detects accidental packet corruption; it does not authenticate the sender. The loader can replace executable memory and start at a supplied entry address. Restrict physical access; exclude this control plane from a flight configuration until it has a separate fault-tolerance and access-control design.
+
+| STRIDE concern | Requirement / response | Verification |
+| --- | --- | --- |
+| Spoofing / elevation | Document physical access as authority; compile RAM injection off by default; no claim of authenticated boot | Disabled-injection command rejection; parameter review |
+| Tampering | Validate packet CRC and full ELF bounds before effects; generate ECC on full-word writes; verify loaded data by readback | CRC rejection, ELF negative cases, C mailbox checks |
+| Repudiation | Echo sequence/address and report explicit status; host logs can retain replies; no durable audit claim | Reply validation and replay checks |
+| Information disclosure | Memory/status reads intentionally expose laboratory state; no confidentiality claim | Stopped-only memory access tests |
+| Denial of service | Discard malformed/partial frames; bounded waits; preserve bus ownership on stop timeout; lock host path after bus timeout | Packet timeout, busy rejection, ownership assertions |
+| Repeated side effects | Cache the last completed command/reply; identical retries replay; same sequence with changed payload is rejected | Duplicate write/injection/run tests |
+
+MON-001: Power up stopped; load and read RAM through AXI and normal ECC encoding. MON-002: Stop must drain accepted instructions, split fetches and AXI transactions before memory ownership changes. MON-003: Run resets architectural state at a validated halfword-aligned RAM entry. MON-004: CRC validation and cached duplicate replies prevent damaged or repeated commands from causing new effects. MON-005: Recovery and injection require stopped, idle ownership; status remains available during execution/fatal state. MON-006: Validate ELF segments, initialize BSS, verify loaded memory, and support the complete host command workflow. Verify real serial framing and compiled-C upload/run/readback in both register protection modes. Monitor/UART/mux/boot controls are explicitly outside the protected flight core boundary.

@@ -3,9 +3,10 @@
 // one cycle. Stores issue only from MEM after older WB traps are resolved.
 module riscue_pipeline_core #(
  parameter logic [31:0] RESET_PC=0,
- parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1
+ parameter integer BUS_TIMEOUT=1024,parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MONITOR_CONTROL=0
 )(
  input logic clk,rst_n,external_irq,
+ input logic halt_request,input logic [31:0] boot_pc,output wire quiescent,
  output logic req,output logic [38:0] addr_code,wdata_code,ctrl_code,
  input logic ready,bus_error,external_fault,input logic [38:0] rdata_code,
  output logic halted,fatal,trap,output logic [31:0] trap_cause,trap_value,pc,
@@ -19,6 +20,8 @@ module riscue_pipeline_core #(
  output logic [3:0] rvfi_mem_rmask,rvfi_mem_wmask,
  output logic rvfi_trap,rvfi_intr,output logic [63:0] rvfi_order
 );
+ wire monitor_stop=MONITOR_CONTROL&&halt_request;
+ assign quiescent=!s.half_valid&&!s.bus_active&&!s.f.valid&&!s.d.valid&&!s.x.valid&&!s.m.valid&&!s.w.valid;
  import ft_pkg::*;
  import riscue_pipeline_pkg::*;
  localparam integer STATE_BITS=$bits(state_t),WINDOWS=(STATE_BITS+511)/512;
@@ -294,7 +297,7 @@ module riscue_pipeline_core #(
      if(n.m.valid&&n.m.e.mem&&!n.m.trap&&!(n.w.valid&&n.w.trap)&&!clint(n.m.e.addr))begin
       n.bus_active=1;n.bus_data=1;n.bus_kill=0;n.bus_pc=n.m.e.addr;
       n.bus_addr=n.m.e.addr&32'hfffffffc;n.bus_wdata=n.m.e.wdata;n.bus_ctrl=n.m.e.we?(32'h10|32'(n.m.e.mask)):32'b0;n.bus_wait=0;
-     end else if(!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
+     end else if((!monitor_stop||n.half_valid)&&!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
       if(n.fetch_pc[0])begin n.f='0;n.f.valid=1;n.f.pc=n.fetch_pc;n.f.trap=1;n.f.serial=1;n.f.cause=0;n.f.tval=n.fetch_pc;n.f.bytes=2;end
       else begin
        n.bus_active=1;n.bus_data=0;n.bus_kill=0;n.bus_half=n.half_valid;n.bus_pc=n.fetch_pc;
@@ -330,8 +333,8 @@ module riscue_pipeline_core #(
  always_ff @(posedge clk)begin
   if(!rst_n)begin
    c0<='0;c1<='0;c2<='0;
-   c0.fetch_pc<=RESET_PC;c1.fetch_pc<=RESET_PC;c2.fetch_pc<=RESET_PC;
-   c0.arch_pc<=RESET_PC;c1.arch_pc<=RESET_PC;c2.arch_pc<=RESET_PC;
+   c0.fetch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c1.fetch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c2.fetch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);
+   c0.arch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c1.arch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c2.arch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);
    c0.mtimecmp<='1;c1.mtimecmp<='1;c2.mtimecmp<='1;
    for(integer z=0;z<32;z=z+1)begin rf[z]<=ecc_encode(0);tmr0[z]<=0;tmr1[z]<=0;tmr2[z]<=0;end
   end else begin

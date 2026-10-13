@@ -2,7 +2,7 @@
 module riscue_axi_ecc_ram #(parameter integer WORDS=1024,parameter INIT_FILE="",parameter logic [31:0] BASE_ADDRESS=0,parameter bit FI_ENABLE=0)(
  (* X_INTERFACE_INFO="xilinx.com:signal:clock:1.0 CLK CLK", X_INTERFACE_PARAMETER="ASSOCIATED_BUSIF S_AXI, ASSOCIATED_RESET aresetn" *) input logic aclk,
  (* X_INTERFACE_INFO="xilinx.com:signal:reset:1.0 RESET RST", X_INTERFACE_PARAMETER="POLARITY ACTIVE_LOW" *) input logic aresetn,
- input logic memory_reset,scrub_enable,
+ input logic memory_reset,scrub_enable,output wire idle,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI AWADDR", X_INTERFACE_PARAMETER="PROTOCOL AXI4LITE, DATA_WIDTH 32, ADDR_WIDTH 32, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1" *) input logic [31:0] s_axi_awaddr,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI AWPROT" *) input logic [2:0] s_axi_awprot,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI AWVALID" *) input logic s_axi_awvalid,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI AWREADY" *) output logic s_axi_awready,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI WDATA" *) input logic [31:0] s_axi_wdata,(* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI WSTRB" *) input logic [3:0] s_axi_wstrb,
@@ -45,6 +45,7 @@ module riscue_axi_ecc_ram #(parameter integer WORDS=1024,parameter INIT_FILE="",
  wire [38:0] address_code=ecc_encode(s.address-BASE_ADDRESS);
  wire [38:0] data_code=ecc_encode(s.data);
  wire [38:0] control_code=ecc_encode(s.write?(32'h10|{28'b0,s.mask}):32'd0);
+ assign idle=s.phase==IDLE&&!s.aw_hold&&!s.w_hold&&!s.bvalid&&!s.rvalid&&!s.dead&&!state_bad;
  assign s=(s0&s1)|(s0&s2)|(s1&s2);
  assign s_axi_awready=aresetn&&!memory_reset&&!s.dead&&!state_bad&&s.phase==IDLE&&!s.aw_hold&&!s.bvalid&&!s.rvalid;
  assign s_axi_wready=aresetn&&!memory_reset&&!s.dead&&!state_bad&&s.phase==IDLE&&!s.w_hold&&!s.bvalid&&!s.rvalid;

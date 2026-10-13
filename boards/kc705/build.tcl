@@ -14,11 +14,11 @@ cd $outdir
 set part xc7k325tffg900-2
 if {[llength [get_parts $part]]!=1} {error "Install Kintex-7 device support for $part"}
 if {$instrumented} {source [file join $boarddir lab create_debug_ip.tcl]}
-foreach name {ft_pkg.sv riscue_pipeline_pkg.sv riscue_rvc.sv riscue_jump_target.sv riscue_execute.sv riscue_muldiv.sv riscue_pipeline_core.sv ft_ecc_ram.sv ft_event_monitor.sv riscue_pipeline_soc.sv fi_campaign_controller.sv} {
+foreach name {ft_pkg.sv riscue_pipeline_pkg.sv riscue_rvc.sv riscue_jump_target.sv riscue_execute.sv riscue_muldiv.sv riscue_pipeline_core.sv ft_ecc_ram.sv ft_event_monitor.sv riscue_pipeline_soc.sv fi_campaign_controller.sv riscue_axi_master_bridge.sv riscue_axi_core.sv riscue_axi_ecc_ram.sv riscue_serial_monitor.sv riscue_monitor_soc.sv} {
  read_verilog -sv [file join $root rtl $name]
 }
 if {$instrumented} {read_verilog -sv [file join $boarddir lab riscue_kc705_lab.sv]}
-foreach name {uart_tx.sv status_uart.sv riscue_kc705.sv} {read_verilog -sv [file join $boarddir $name]}
+foreach name {uart_tx.sv uart_rx.sv status_uart.sv riscue_kc705.sv monitor_top.sv} {read_verilog -sv [file join $boarddir $name]}
 synth_design -top riscue_kc705 -part $part -flatten_hierarchy none -generic [list RF_TMR=$rf_tmr FI_ENABLE=$fi WORDS=$words CLK_DIV=$clk_div INSTRUMENTED=$instrumented]
 read_xdc [file join $boarddir kc705.xdc]
 if {$instrumented} {
