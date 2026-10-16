@@ -2,13 +2,27 @@ name: SharpTestBench CPU integration
 on:
   workflow_dispatch:
   push:
-    branches: [feature/sharptestbench-riscue-verification]
-    paths: ['tests/sharptestbench/**', '.github/workflows/sharptestbench.yml']
+    branches:
+      - main
+      - feature/sharptestbench-riscue-verification
   pull_request:
-    paths: ['tests/sharptestbench/**', '.github/workflows/sharptestbench.yml']
+    branches:
+      - main
+    types: [opened, synchronize, reopened, ready_for_review]
 permissions:
   contents: read
 jobs:
+  runner-diagnostic:
+    name: Verify GitHub-hosted runner starts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Emit runner diagnostics
+        run: |
+          echo "RISCUE_ACTIONS_RUNNER_STARTED"
+          echo "event=$GITHUB_EVENT_NAME sha=$GITHUB_SHA"
+          uname -a
+          pwd
   icarus-managed:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
