@@ -1,14 +1,17 @@
 name: SharpTestBench CPU integration
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - feature/sharptestbench-riscue-verification
   pull_request:
-    branches:
-      - main
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'tests/sharptestbench/**'
+      - 'tests/tb_pipeline_smoke.sv'
+      - 'rtl/**'
+      - '.github/workflows/sharptestbench.yml'
+concurrency:
+  group: riscue-stb-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
