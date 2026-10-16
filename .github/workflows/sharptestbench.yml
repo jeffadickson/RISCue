@@ -36,6 +36,10 @@ jobs:
           mkdir -p build/stb
           set -o pipefail
           dotnet build tests/sharptestbench/Riscue.SharpTestBench.csproj -c Release -p:SharpTestBenchRoot="$GITHUB_WORKSPACE/vendor/SharpTestBench" 2>&1 | tee build/stb/managed-build.log
+      - name: Validate generated managed assembly
+        run: |
+          test -f tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.dll
+          test -f tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.runtimeconfig.json
       - name: Run original Icarus hardware test
         run: |
           set -o pipefail
@@ -49,7 +53,7 @@ jobs:
           python vendor/SharpTestBench/tools/run.py             --sim icarus --assembly "$GITHUB_WORKSPACE/tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.dll"             --top tb_sharptestbench_riscue --entry-type "Entry, Riscue.SharpTestBench" --label riscue             --source rtl/ft_pkg.sv --source rtl/riscue_pipeline_pkg.sv             --source rtl/riscue_rvc.sv --source rtl/riscue_jump_target.sv             --source rtl/riscue_execute.sv --source rtl/riscue_muldiv.sv             --source rtl/riscue_pipeline_core.sv --source rtl/ft_ecc_ram.sv             --source rtl/ft_event_monitor.sv --source rtl/riscue_pipeline_soc.sv             --source tests/sharptestbench/tb_sharptestbench_riscue.sv 2>&1 | tee build/stb/sharptestbench.log
         env:
           RISCUE_STB_TRACE: ${{ github.workspace }}/build/stb/retirements.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: riscue-managed-icarus
@@ -62,6 +66,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: sudo apt-get update && sudo apt-get install -y verilator g++ make
+      - name: Verilator version and lint stage
+        run: |
+          mkdir -p build/stb
+          verilator --version | tee build/stb/verilator-version.txt
+          verilator --lint-only --timing -Wno-fatal --top-module tb_pipeline_smoke \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv 2>&1 | tee build/stb/verilator-lint.log
       - name: Build existing self-checking native model
         run: |
           mkdir -p build/stb
@@ -79,3 +92,5 @@ jobs:
           path: |
             build/stb/verilator-native.log
             build/stb/verilator-build.log
+            build/stb/verilator-lint.log
+            build/stb/verilator-version.txt
