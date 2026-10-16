@@ -34,7 +34,7 @@ public static class RiscueTests
         var cause = dut.Child("trap_cause").Signal<W32>();
         var valid = dut.Child("retire_valid").Signal<W1>();
         var pc = dut.Child("retire_pc").Signal<W32>();
-        var rd = dut.Child("retire_rd").Signal<W5>();
+        var rd = dut.Child("retire_rd").Signal();
         var result = dut.Child("retire_result").Signal<W32>();
         var observed = new List<uint[]>();
         var sawTrap = false;
