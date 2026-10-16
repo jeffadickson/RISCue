@@ -15,18 +15,28 @@ concurrency:
 permissions:
   contents: read
 jobs:
-  runner-diagnostic:
-    name: Verify GitHub-hosted runner starts
+  pr-smoke:
+    name: Fast Icarus pipeline smoke
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
-    timeout-minutes: 3
+    timeout-minutes: 6
     steps:
-      - name: Emit runner diagnostics
+      - uses: actions/checkout@v5
+      - name: Compile and execute existing CPU retirement smoke test
         run: |
-          echo "RISCUE_ACTIONS_RUNNER_STARTED"
-          echo "event=$GITHUB_EVENT_NAME sha=$GITHUB_SHA"
-          uname -a
-          pwd
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq iverilog
+          mkdir -p build/stb
+          iverilog -g2012 -s tb_pipeline_smoke -o build/stb/original.vvp \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv
+          vvp build/stb/original.vvp | tee build/stb/original.log
+          grep -q 'PASS pipeline smoke' build/stb/original.log
   icarus-managed:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -78,6 +88,7 @@ jobs:
             build/stb/**
             vendor/SharpTestBench/build/riscue-*
   verilator-native:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
