@@ -6,11 +6,11 @@ proc replica_count {pattern} {
 }
 set out [open [file join $outdir redundancy.rpt] w]
 if {$instrumented} {
- set groups {core_control *soc/core/c {0 1 2} ram_control *soc/ram/s {0 1 2} reporter *soc/reporter/report {0 1 2}}
- set core_path *soc/core
+ set groups {core_control *soc/core/impl/c {0 1 2} ram_control *soc/ram/s {0 1 2} reporter *soc/reporter/report {0 1 2}}
+ set core_path *soc/core/impl
 } else {
- set groups {core_control *soc/cpu/core/c {0 1 2} ram_control *soc/memory/ram/s {0 1 2} axi_ram *soc/memory/s {0 1 2} cpu_bridge *soc/cpu/bridge/s {0 1 2} host_bridge *soc/host_bridge/s {0 1 2}}
- set core_path *soc/cpu/core
+ set groups {core_control *soc/cpu/core/impl/c {0 1 2} ram_control *soc/memory/ram/s {0 1 2} axi_ram *soc/memory/s {0 1 2} cpu_bridge *soc/cpu/bridge/s {0 1 2} host_bridge *soc/host_bridge/s {0 1 2}}
+ set core_path *soc/cpu/core/impl
 }
 foreach {name prefix replicas} $groups {
  set counts {}

@@ -2,10 +2,31 @@
 
 Implementation baseline 0.8.0. This inventory describes stored-state mechanisms, not completed physical hardening or exhaustive fault coverage. The earlier serialized-core inventory is retained in [LEGACY_STATE_MACHINE_AUDIT.md](LEGACY_STATE_MACHINE_AUDIT.md).
 
+## Experimental pipeline alternatives
+
+Requirements PIPE-005 through PIPE-014 and BUILD-004 introduce interchangeable
+PARITY_REPLAY and TMR pipeline implementations selected at build time, independently
+of RF_TMR. PARITY_REPLAY uses checked transient state, protected architectural
+storage/checkpoints and a selectively protected commit/recovery controller. TMR
+retains voted/repaired pipeline state. Both must satisfy the same external contract.
+The common boundary and experimental parity/replay engine now exist. TMR remains
+the default; whole-system distance-at-least-three migration and mapped audits are
+still open. Existing distance-four codes remain unchanged. See the
+[implementation and acceptance contract](PIPELINE_PROTECTION.md).
+
+PARITY_REPLAY stage records use five checked parity bits over `slot_t` fields;
+remaining pipeline state stays TMR. Its additional triplicated recovery record
+holds a five-bit distance-three phase, 32-bit attempt count and unsafe-memory flag.
+Unused phase values and record majority loss fail closed; counters and bus timeout
+retain the protections described in the recovery contract. There is no parity-only
+claim for architectural PC/CSRs, bus ownership or committed retirement state.
+
+## Implemented inventory
+
 | Block / state | Protection | Detection and repair | Qualification boundary |
 | --- | --- | --- | --- |
-| Pipeline/platform `c0/c1/c2` | Three 4,038-bit records | Bitwise voting/feedback; loss of complete-record majority is fatal | Shared voters, next-state, CSR decode and commit logic |
-| Stages, PC, pending bus request, timeout, CSRs, timer, IRQ sampling, retirement | Included in pipeline record | Same TMR mechanism | Shared inputs/clock/reset, external IRQ synchronizer behavior |
+| TMR-mode pipeline/platform `c0/c1/c2` | Three 4,038-bit records | Bitwise voting/feedback; loss of complete-record majority is fatal | Shared voters, next-state, CSR decode and commit logic |
+| TMR-mode stages, PC, pending bus request, timeout, CSRs, timer, IRQ sampling, retirement | Included in pipeline record | Same TMR mechanism | Shared inputs/clock/reset, external IRQ synchronizer behavior |
 | RF | 39-bit SECDED or three 32-bit words | Decode/vote, repair and scrub; DED/no-majority detection | Selection paths and matching multi-replica corruption |
 | Each M arithmetic lane | Three 307-bit records | Repair, state/iteration validation; cross-lane completion/result comparison | Shared inputs and execution authorization |
 | Integer/direct-jump lanes | Compared combinational outputs | Mismatch detected | No combinational fault correction; common-mode inputs/logic |

@@ -2,6 +2,12 @@
 
 The current pipeline, AXI and monitor inventory is in [STATE_MACHINE_AUDIT.md](STATE_MACHINE_AUDIT.md). The common-mode limits below apply to the digital mitigation model; historical results do not establish new-core verification. In particular, the KC705 serial monitor, UART, ownership mux and boot/halt/reset controls are unprotected laboratory infrastructure.
 
+The [experimental pipeline protection variants](PIPELINE_PROTECTION.md) provide
+opt-in parity/replay stage storage behind the same interface. Architectural and
+transaction state still use TMR; TMR remains the default build. Directed recovery
+tests do not establish exhaustive coverage or a smaller mapped implementation.
+Historical register-file-only evidence does not validate the new mode matrix.
+
 The RTL implements correction of single stored bits in SECDED memories and masking/repair of one replica error in TMR state. Duplicated execution decisions are compared. These mechanisms do not establish radiation hardness.
 
 Remaining gates are captured as open/partial requirements, not claimed as complete:
@@ -15,7 +21,7 @@ Remaining gates are captured as open/partial requirements, not claimed as comple
 7. FPGA configuration scrubbing/reconfiguration, SEL/SEFI response, TID/displacement-damage assessment, protected golden boot images and independent system supervision are external.
 8. SRAM scrub is opportunistic, not bounded under all traffic. Hardware ECC initialization/boot validation remains target-dependent.
 9. Error counters and first/last records are protected stored state, but the recorder's combinational update/voter remains shared. Source masks preserve simultaneous source identity; one address/PC metadata slot can lose individual event detail. No FIFO/backpressure/complete event history is implemented.
-10. Minimal machine-mode traps and interrupts are implemented and exercised by directed tests. Full privileged compliance/RTOS qualification, checkpoints, automatic retry, memory-bank retirement, timing closure, completed current-pipeline formal proof and radiation qualification remain unestablished.
+10. Minimal machine-mode traps and interrupts are implemented and exercised by directed tests. Full privileged compliance/RTOS qualification, fully qualified recovery, memory-bank retirement, timing closure, completed current-pipeline formal proof and radiation qualification remain unestablished.
 
 **All state machines in the implemented core/subsystem are inventoried in STATE_MACHINE_AUDIT.md; external peripherals/controllers are outside that claim.**
 

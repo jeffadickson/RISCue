@@ -1,3 +1,7 @@
+# Board release remains TMR until a parity mapped-netlist audit exists.
+if {[info exists ::env(PIPELINE_PROTECTION)] && $::env(PIPELINE_PROTECTION) ne "TMR"} {
+ error "This board flow supports PIPELINE_PROTECTION=TMR only; PARITY_REPLAY is simulation experimental"
+}
 # Explicit KV260/K26 block-design build. No programming or boot-image replacement.
 if {$argc!=5} {error "Expected OUTDIR RF_TMR FI CLOCK_HZ STAGE"}
 lassign $argv output rf_tmr fi clock_hz stage

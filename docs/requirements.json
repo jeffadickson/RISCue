@@ -83,7 +83,7 @@
     "id": "RF-002",
     "category": "Registers",
     "requirement": "ECC mode shall correct operands before use and repair every nonzero register within 31 background-scrub clocks.",
-    "verification": "stored_fault_campaign all x1\u2013x31/code bits; tb_fault",
+    "verification": "stored_fault_campaign all x1–x31/code bits; tb_fault",
     "status": "implemented",
     "priority": "must"
   },
@@ -91,7 +91,7 @@
     "id": "RF-003",
     "category": "Registers",
     "requirement": "TMR mode shall vote operands and repair all replicas after any one replica-bit upset, including x0 restoration.",
-    "verification": "stored_fault_campaign all x1\u2013x31/replicas/data bits",
+    "verification": "stored_fault_campaign all x1–x31/replicas/data bits",
     "status": "implemented",
     "priority": "must"
   },
@@ -106,15 +106,15 @@
   {
     "id": "CTL-001",
     "category": "Control",
-    "requirement": "PC, instruction, pending transaction, watchdog, halt/fault status and RF scrub pointer shall have triplicated voted state with repair feedback.",
+    "requirement": "The legacy serialized core and the TMR pipeline implementation shall triplicate PC, instruction, pending transaction, watchdog, halt/fault status and RF scrub pointer, with voting and repair feedback. The alternative parity/replay pipeline shall satisfy PIPE-005 through PIPE-014 instead of requiring whole-pipeline triplication.",
     "verification": "tb_fault; protected_state_and_reporting; synthesis audit",
-    "status": "implemented",
+    "status": "implemented for existing TMR; alternative requirements open",
     "priority": "must"
   },
   {
     "id": "CTL-002",
     "category": "Control",
-    "requirement": "The CPU FSM shall use explicit distance-four encodings and halt on an invalid voted state; correction shall be attributed to TMR, not to nonexistent Hamming decoding.",
+    "requirement": "The legacy serialized CPU FSM shall retain explicit distance-four encodings and halt on an invalid voted state; correction shall be attributed to TMR, not to nonexistent Hamming decoding. New and revised explicit FSMs shall also satisfy PIPE-011.",
     "verification": "tb_fault; FSM encoding review",
     "status": "implemented",
     "priority": "must"
@@ -250,9 +250,9 @@
   {
     "id": "BUILD-003",
     "category": "Build",
-    "requirement": "Synthesis shall preserve and audit separate sequential drivers for CPU/RAM/report TMR state and optional RF replicas, plus distinct execution instances.",
+    "requirement": "For the legacy serialized core and TMR pipeline builds, synthesis shall preserve and audit separate sequential drivers for CPU/RAM/report TMR state and optional RF replicas, plus distinct execution instances. Parity/replay pipeline builds shall additionally use the mode-specific audit required by BUILD-004; unrelated RAM/report protection shall not be silently removed.",
     "verification": "audit_netlist.py; make synth-ecc/synth-tmr",
-    "status": "implemented",
+    "status": "implemented legacy audit; pipeline-mode audits open",
     "priority": "must"
   },
   {
@@ -773,6 +773,94 @@
     "requirement": "Debug-disabled pipeline smoke and jump/trap tests shall pass in ECC/TMR and early/late-jump configurations after core changes.",
     "verification": "test-debug-directed",
     "status": "implemented; executed evidence and pending gates in HARDWARE_DEBUG.md",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-005",
+    "category": "Pipeline",
+    "requirement": "Provide build-time PIPELINE_PROTECTION choices PARITY_REPLAY and TMR behind a common pipeline boundary. PARITY_REPLAY is the intended area-oriented default after its acceptance gates pass; existing builds shall retain TMR until then. Reject unsupported selections, instantiate only the selected implementation, forbid runtime switching, and record the effective selection in build artifacts. Keep RF_TMR independent; never silently fall back to another protection mode.",
+    "verification": "Elaboration/build-manifest positive and negative tests; selected hierarchy/netlist audit; acceptance gates in PIPE-014",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-006",
+    "category": "Pipeline",
+    "requirement": "Both pipeline implementations shall be drop-in replacements behind the riscue_pipeline_core external interface: clock/reset, boot/halt/quiescence, ECC-coded bus and handshake/error behavior, interrupts, retirement/RVFI, debug and fault/event reporting. Preserve the declared ISA, ordering and architectural/debug semantics without mode-specific SoC rewiring. Cycle latency may differ; document timing-dependent interrupt/counter behavior and compare architectural traces under equivalent stimuli. Version any mode-dependent FI layout instead of reusing incompatible bit offsets.",
+    "verification": "Common-wrapper elaboration for both modes; ISA/retirement differential tests; halt/debug/bus conformance; versioned FI-map checks",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-007",
+    "category": "Protection",
+    "requirement": "The PARITY_REPLAY implementation shall protect transient pipeline payloads and metadata with checked parity before use or side effects, covering instruction/PC, operands/results, addresses/write data, valid/kill/exception tags and forwarding/control metadata. Inventory every sequential field and its checker/response. Protect architectural GPRs and memory with ECC or the separately selected RF TMR; protect restart PC, CSR/checkpoint state and transaction ownership with an explicitly justified scheme. Do not recompute parity over unchecked corrupted state and treat it as validated.",
+    "verification": "Per-field protection inventory; checker-bypass analysis; exhaustive single-bit transient-state injection; RF/memory/checkpoint fault tests",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-008",
+    "category": "Protection",
+    "requirement": "Both modes shall authorize architectural effects only after all applicable integrity and execution checks succeed. Gate GPR/CSR writes, retirement, stores and side-effecting MMIO requests at a protected commit boundary. A detected transient error shall cause no faulty commit. Accepted stores and side-effecting reads/writes shall occur at most once across recovery; an externally accepted operation with uncertain completion shall trigger contained fail-stop or a proven exactly-once protocol, never blind replay.",
+    "verification": "Fault injection at each commit/ready handshake; store/MMIO count oracle under backpressure; no-corrupt-commit and at-most-once assertions",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-009",
+    "category": "Protection",
+    "requirement": "PARITY_REPLAY recovery shall stop issue, squash uncommitted instructions, drain or account for accepted bus requests, reject stale responses using protected ownership/epoch state, and restart from a validated architectural boundary. Restore or retain a coherent protected PC/GPR/CSR state; do not roll back committed effects or externally advanced timers/devices. Checkpoint advancement and store completion bookkeeping shall be atomic with commit. Define precise interrupt, trap, debug/step and halt behavior during recovery, including split fetches and multicycle operations.",
+    "verification": "Recovery state/transaction contract; faults during stalls, redirects, split fetch, interrupts, debug and multicycle execution; checkpoint and stale-response assertions",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-010",
+    "category": "Protection",
+    "requirement": "Use selective TMR or an equivalently justified protected implementation for the small commit/recovery controller, integrity-error capture, checkpoint-valid/commit authorization, transaction ownership and retry/watchdog state. A fault in this trusted control shall not disable checking or authorize an unchecked effect. Identify shared voters, checkers, next-state logic and clock/reset common modes explicitly; stored-state redundancy alone shall not establish combinational or radiation fault coverage.",
+    "verification": "Trusted-control inventory; targeted controller/checker/commit-gate fault tests; synthesis preservation audit; explicit residual-fault-model review",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-011",
+    "category": "Control",
+    "requirement": "All explicit FSM state registers in supported RISCue core, bus, debug and monitor configurations shall use legal encodings with minimum pairwise Hamming distance at least three, including legal recovery states; retain existing stronger distance-four codes and migrate existing binary/distance-two controllers. Inventory counters and handshake flags separately with their protection strategy. Every unused encoding shall suppress new side effects and enter a defined recovery or fail-stop path. Recovery shall respect accepted transaction ownership rather than return blindly to idle. Preserve intended encodings through synthesis and check mapped behavior. Do not claim correction from encoding alone: without a verified decoder, one- and two-bit departures from a legal state are detected and routed to recovery.",
+    "verification": "Pairwise distance audit; all unused encodings and every single/double-bit state upset; safe-output and recovery assertions; mapped-netlist encoding checks",
+    "status": "partial; new recovery FSM distance-three; whole-system migration and mapped checks open",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-012",
+    "category": "Protection",
+    "requirement": "Bound recovery attempts and completion time with protected counters/watchdogs. Persistent, repeated, uncorrectable or unrecoverable transaction/checkpoint faults shall escalate to sticky fail-stop with a defined reset/reinitialization path. Expose detected, replayed, recovered and fatal events plus enough protected cause/context for diagnosis; define counter saturation and event-loss behavior. Recovery shall not silently loop or report a failed replay as successful execution.",
+    "verification": "Repeated/persistent faults; recovery-controller faults and timeouts; diagnostic/counter boundary tests; bounded-progress and escalation assertions",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-013",
+    "category": "Execution",
+    "requirement": "Pipeline protection selection shall not silently weaken existing compared execution, ECC memory or register-file guarantees. Preserve EXEC-001 and FT-BIT-001 for both pipeline variants. Any future arithmetic re-execution alternative shall have separate explicit requirements and evidence, including fault detection before commit; changing PIPELINE_PROTECTION alone shall not select it.",
+    "verification": "Both-mode execution comparison and fault tests; build-option independence checks; protection-inventory review",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "PIPE-014",
+    "category": "Verification",
+    "requirement": "Qualify each pipeline mode separately across both RF_TMR settings and supported debug/redirect options. Require common-interface builds, architectural trace/ISA regressions, mode-specific fault campaigns, no-fault equivalence, recovery progress and no-corrupt/duplicate-commit assertions. Exercise faults during recovery and side-effecting bus traffic. State fault multiplicity, locations, detection latency and residual limits; parity does not guarantee detection of arbitrary even-bit errors and TMR does not guarantee correction of matching multi-replica corruption. Keep historical TMR/RF-only evidence separate; unexecuted harnesses and requirements are not acceptance results.",
+    "verification": "Future pipeline-mode acceptance matrix and evidence manifests; simulation/assertion campaigns; scoped formal proofs with assumptions and incomplete results reported",
+    "status": "partial; experimental implementation and directed local evidence; acceptance gates open (PIPELINE_PROTECTION.md)",
+    "priority": "must"
+  },
+  {
+    "id": "BUILD-004",
+    "category": "Build",
+    "requirement": "Provide protection-mode-specific synthesis audits: TMR replica/repair and execution-lane preservation; PARITY_REPLAY parity/checker coverage, protected checkpoints and commit/recovery controls; and FSM encoding/safe-state preservation in both modes. Audit post-optimization mapped state and paths. Publish comparable mapped area, sequential-cell count, timing and recovery overhead for each mode on the same target and constraints before choosing an ASIC/Tiny Tapeout footprint; do not infer fit from RTL counts alone.",
+    "verification": "Local paired Series-7 quick mapping and scoped core/recovery replica audit in verification/local-toolchain-2026-10-16.json; full mode-specific mapped path/FSM audits and vendor place-and-route remain required",
+    "status": "partial; paired RF_TMR=0 core resource estimates and scoped replica audit passed; parity release, timing and full protection gates open",
     "priority": "must"
   }
 ]

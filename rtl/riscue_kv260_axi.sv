@@ -1,5 +1,7 @@
 // ARM lab control over AXI4-Lite. RUN=0 resets the hart, not a debug halt.
-module riscue_kv260_axi #(parameter integer WORDS=8192,CLOCK_HZ=10000000,parameter bit RF_TMR=0,FI_ENABLE=1)(
+module riscue_kv260_axi #(
+ parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,
+ parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,parameter integer WORDS=8192,CLOCK_HZ=10000000,parameter bit RF_TMR=0,FI_ENABLE=1)(
  (* X_INTERFACE_INFO="xilinx.com:signal:clock:1.0 CLK CLK", X_INTERFACE_PARAMETER="ASSOCIATED_BUSIF S_AXI, ASSOCIATED_RESET aresetn" *) input logic aclk,
  (* X_INTERFACE_INFO="xilinx.com:signal:reset:1.0 RESET RST", X_INTERFACE_PARAMETER="POLARITY ACTIVE_LOW" *) input logic aresetn,
  (* X_INTERFACE_INFO="xilinx.com:interface:aximm:1.0 S_AXI AWADDR", X_INTERFACE_PARAMETER="PROTOCOL AXI4LITE, DATA_WIDTH 32, ADDR_WIDTH 18, HAS_BURST 0, HAS_LOCK 0, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1" *) input logic [17:0] s_axi_awaddr,
@@ -59,7 +61,7 @@ module riscue_kv260_axi #(parameter integer WORDS=8192,CLOCK_HZ=10000000,paramet
   .fi_ack(fi_ack),.fi_valid(fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask),
   .busy(busy),.done_toggle(done_toggle),.controller_disagreement(controller_disagreement),.controller_error_sticky(controller_error_sticky),
   .status(status),.accepted(accepted),.attempted(attempted),.last_pc(last_pc),.last_cycle(last_cycle),.trigger_cycle(trigger_cycle));
- riscue_axi_soc #(.WORDS(WORDS),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE)) soc(
+ riscue_axi_soc #(.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.WORDS(WORDS),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE)) soc(
   .clk(aclk),.rst_n(aresetn),.core_run(core_run),.memory_reset(s.memory_reset),.external_irq(s.irq),
   .host_req(s.mem_wait&&!core_run&&!bridge_bad),.host_we(s.mem_we),.host_address(s.mem_addr),.host_wdata(s.mem_wdata),.host_mask(s.mem_mask),
   .host_ready(host_ready),.host_error(host_error),.host_rdata(host_rdata),

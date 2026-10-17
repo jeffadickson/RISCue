@@ -2,6 +2,11 @@
 
 The current five-stage core, M-mode platform, bit manipulation, AXI ECC RAM and KC705 UART monitor have directed simulation evidence, including compiled C. See [validation](VALIDATION.md) and [the manual](RISCUE_MANUAL.md).
 
+0. Complete and qualify the [interchangeable pipeline protection variants](PIPELINE_PROTECTION.md)
+   (PIPE-005 through PIPE-014, BUILD-004): parity/replay with protected commit/checkpoints
+   and optional pipeline TMR, independent of register-file mode; add distance-at-least-three
+   FSM encodings and safe recovery, mode-specific fault tests and comparable mapped area/timing.
+   The parity/replay prototype is opt-in; TMR remains the default until acceptance.
 1. Run the actual KC705 Vivado flow, inspect resource use, timing, CDC and replica preservation, then verify clock/reset, UART identity, ELF loading, execution and error recovery on the board.
 2. Complete the current-pipeline architectural/privileged and pinned upstream campaigns; broaden fault tests across timing phases and nonzero architectural states. Preserve failures and incomplete coverage explicitly.
 3. Run RV32IMC RVFI, CSR/interrupt, arithmetic and fault proofs/covers. Add formal AXI ownership, halt/drain and monitor containment contracts; simulation passes do not close these proof tasks.

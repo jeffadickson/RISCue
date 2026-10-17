@@ -25,14 +25,14 @@ module tb_debug;
   // Unsupported abstract size and postexec set sticky cmderr; no register write.
   wr('h17,32'h00331001);if(dut.dm.s.cmderr!=2)$fatal(1,"unsupported command accepted");
   wr('h16,32'h700);regwrite('h1001,32'h12345678);
-  if(dut.core.rf[1]!=ecc_encode(32'h12345678))$fatal(1,"ECC not regenerated");
+  if(dut.core.impl.rf[1]!=ecc_encode(32'h12345678))$fatal(1,"ECC not regenerated");
   // x0 remains hardwired zero.
-  regwrite('h1000,32'hffffffff);if(dut.core.rf[0]!=ecc_encode(0))$fatal(1,"x0 changed");
+  regwrite('h1000,32'hffffffff);if(dut.core.impl.rf[0]!=ecc_encode(0))$fatal(1,"x0 changed");
   // Single replica in architectural debug state is corrected, cannot resume.
-  @(negedge clk);force dut.core.c0.debug_halted=0;#1;
-  if(!dut.core.disagreement_event||!debug_halted)$fatal(1,"core injection/vote failed");
-  tick();release dut.core.c0.debug_halted;tick();
-  if(!debug_halted||dut.core.c0!=dut.core.c1)$fatal(1,"debug state not repaired");
+  @(negedge clk);force dut.core.impl.c0.debug_halted=0;#1;
+  if(!dut.core.impl.disagreement_event||!debug_halted)$fatal(1,"core injection/vote failed");
+  tick();release dut.core.impl.c0.debug_halted;tick();
+  if(!debug_halted||(dut.core.impl.PARITY_REPLAY?dut.core.impl.trusted(dut.core.impl.c0)!=dut.core.impl.c1:dut.core.impl.c0!=dut.core.impl.c1))$fatal(1,"debug state not repaired");
   // Single replica in DM run-control is corrected, cannot resume.
   @(negedge clk);force dut.dm.a='1;#1;
   if(!dut.dm.disagreement||!debug_halted)$fatal(1,"DM injection/vote failed");
@@ -44,16 +44,16 @@ module tb_debug;
   wr('h38,32'h00047000);
   // Reset preserves DM connectivity; halt before the first retirement.
   wr('h10,32'h80000003);wr('h10,32'h80000001);halted();
-  if(pc!=0||dut.core.s.minstret!=0)$fatal(1,"reset halt ran instructions");
+  if(pc!=0||dut.core.impl.s.minstret!=0)$fatal(1,"reset halt ran instructions");
   // Step an ECALL with a pending interrupt: trap first, stop at mtvec.
   @(negedge clk);dut.ram.mem[0]=ecc_encode(32'h00000073);
   regwrite('h305,32'h100);regwrite('h304,32'h800);regwrite('h300,32'h8);regwrite('h7b0,32'h8004);
   external_irq=1;repeat(4)tick();wr('h10,32'h40000001);halted();
-  if(pc!='h100||dut.core.s.mcause!=11||dut.core.s.debug_cause!=4)$fatal(1,"step trap priority wrong");
+  if(pc!='h100||dut.core.impl.s.mcause!=11||dut.core.impl.s.debug_cause!=4)$fatal(1,"step trap priority wrong");
   // A fatal integrity event remains unavailable, never becomes a resumable halt.
-  @(negedge clk);dut.core.c0.fatal=1;dut.core.c1.fatal=1;tick();
+  @(negedge clk);dut.core.impl.c0.fatal=1;dut.core.impl.c1.fatal=1;tick();
   wr('h10,32'h40000001);repeat(5)tick();
-  if(!fatal||debug_halted||dut.core.req)$fatal(1,"fatal resumed");
+  if(!fatal||debug_halted||dut.core.impl.req)$fatal(1,"fatal resumed");
   // No complete DM majority latches failure even after voted state is repaired.
   rst_n=0;repeat(3)tick();rst_n=1;wr('h10,32'h80000001);halted();
   @(negedge clk);force dut.dm.a='1;force dut.dm.b='0;force dut.dm.c=185'h12345;#1;

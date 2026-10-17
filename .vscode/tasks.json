@@ -1,0 +1,111 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "RISCue: pipeline smoke (WSL)",
+      "type": "process",
+      "command": "make",
+      "args": [
+        "pipeline-smoke",
+        "pipeline-jump"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PIPELINE_PROTECTION": "TMR",
+          "ALLOW_EXPERIMENTAL_PARITY": "0"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "detail": "Use a VS Code window connected to Ubuntu-24.04. Results stay local in build/."
+    },
+    {
+      "label": "RISCue: Kintex-7 synthesis - TMR (WSL)",
+      "type": "process",
+      "command": "make",
+      "args": [
+        "synth-pipeline-kintex7"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PIPELINE_PROTECTION": "TMR",
+          "ALLOW_EXPERIMENTAL_PARITY": "0"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "detail": "Use a VS Code window connected to Ubuntu-24.04. Results stay local in build/."
+    },
+    {
+      "label": "RISCue: Kintex-7 synthesis - experimental parity (WSL)",
+      "type": "process",
+      "command": "make",
+      "args": [
+        "synth-pipeline-kintex7"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PIPELINE_PROTECTION": "PARITY_REPLAY",
+          "ALLOW_EXPERIMENTAL_PARITY": "1"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "detail": "Use a VS Code window connected to Ubuntu-24.04. Results stay local in build/."
+    },
+    {
+      "label": "RISCue: formal SECDED check (WSL)",
+      "type": "process",
+      "command": "make",
+      "args": [
+        "formal-setup-check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PIPELINE_PROTECTION": "TMR",
+          "ALLOW_EXPERIMENTAL_PARITY": "0"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "detail": "Use a VS Code window connected to Ubuntu-24.04. Results stay local in build/."
+    },
+    {
+      "label": "RISCue: David HTML and CRC simulation (WSL)",
+      "type": "process",
+      "command": "make",
+      "args": [
+        "packet-demo"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PIPELINE_PROTECTION": "TMR",
+          "ALLOW_EXPERIMENTAL_PARITY": "0"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "detail": "Use a VS Code window connected to Ubuntu-24.04. Results stay local in build/."
+    }
+  ]
+}

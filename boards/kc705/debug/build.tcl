@@ -1,3 +1,7 @@
+# Board release remains TMR until a parity mapped-netlist audit exists.
+if {[info exists ::env(PIPELINE_PROTECTION)] && $::env(PIPELINE_PROTECTION) ne "TMR"} {
+ error "This board flow supports PIPELINE_PROTECTION=TMR only; PARITY_REPLAY is simulation experimental"
+}
 # vivado -mode batch -source boards/kc705/debug/build.tcl -tclargs OUTDIR RF_TMR synth|bit
 if {$argc!=3} {error "Expected OUTDIR RF_TMR synth|bit"}
 lassign $argv out rf stage

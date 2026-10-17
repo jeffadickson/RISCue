@@ -1,3 +1,19 @@
+# Pipeline architecture is independent of RF_MODE/RF_TMR. TMR remains default.
+PIPELINE_PROTECTION ?= TMR
+ALLOW_EXPERIMENTAL_PARITY ?= 0
+export PIPELINE_PROTECTION ALLOW_EXPERIMENTAL_PARITY
+ifeq ($(PIPELINE_PROTECTION),TMR)
+PIPELINE_MODE_ID = 0
+else ifeq ($(PIPELINE_PROTECTION),PARITY_REPLAY)
+PIPELINE_MODE_ID = 1
+ifneq ($(ALLOW_EXPERIMENTAL_PARITY),1)
+$(error PARITY_REPLAY requires ALLOW_EXPERIMENTAL_PARITY=1)
+endif
+else
+$(error Invalid PIPELINE_PROTECTION; use TMR or PARITY_REPLAY)
+endif
+PIPELINE_FLAGS = -DRISCUE_PIPELINE_PROTECTION=$(PIPELINE_MODE_ID) -DRISCUE_ALLOW_EXPERIMENTAL_PARITY=$(ALLOW_EXPERIMENTAL_PARITY)
+
 IVERILOG ?= iverilog
 VVP ?= vvp
 RTL = rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/rv32im_ft_soc.sv
@@ -5,17 +21,17 @@ RTL = rtl/ft_pkg.sv rtl/rv32_execute.sv rtl/rv32im_ft_core.sv rtl/ft_ecc_ram.sv 
 build:
 	mkdir -p build
 build/tb_ecc: $(RTL) tests/tb_ecc.sv | build
-	$(IVERILOG) -g2012 -s tb_ecc -o $@ $(RTL) tests/tb_ecc.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_ecc -o $@ $(RTL) tests/tb_ecc.sv
 build/tb_exec: $(RTL) tests/tb_exec.sv build/exec_vectors.txt | build
-	$(IVERILOG) -g2012 -s tb_exec -o $@ $(RTL) tests/tb_exec.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_exec -o $@ $(RTL) tests/tb_exec.sv
 build/exec_vectors.txt: tools/gen_vectors.py | build
 	python3 tools/gen_vectors.py
 build/tb_soc: $(RTL) tests/tb_soc.sv | build
-	$(IVERILOG) -g2012 -s tb_soc -o $@ $(RTL) tests/tb_soc.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_soc -o $@ $(RTL) tests/tb_soc.sv
 build/tb_fault: $(RTL) tests/tb_fault.sv | build
-	$(IVERILOG) -g2012 -s tb_fault -o $@ $(RTL) tests/tb_fault.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_fault -o $@ $(RTL) tests/tb_fault.sv
 build/tb_ram: $(RTL) tests/tb_ram.sv | build
-	$(IVERILOG) -g2012 -s tb_ram -o $@ $(RTL) tests/tb_ram.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_ram -o $@ $(RTL) tests/tb_ram.sv
 test: build/tb_ecc build/tb_exec build/tb_soc build/tb_fault build/tb_ram build/tb_trace
 	$(VVP) build/tb_ecc
 	$(VVP) build/tb_exec
@@ -28,7 +44,7 @@ clean:
 build/program.hex: tools/gen_program.py tools/gen_vectors.py | build
 	python3 tools/gen_program.py
 build/tb_trace: $(RTL) tests/tb_trace.sv build/program.hex | build
-	$(IVERILOG) -g2012 -s tb_trace -o $@ $(RTL) tests/tb_trace.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_trace -o $@ $(RTL) tests/tb_trace.sv
 SV2V ?= sv2v
 YOSYS ?= yosys
 .PHONY: synth
@@ -106,7 +122,7 @@ kc705-program:
 PIPELINE_RTL = rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv
 .PHONY: pipeline-compile pipeline-test pipeline-test-ecc pipeline-test-tmr formal-pipeline formal-pipeline-prepare kc705-instrumented kc705-instrumented-synth kc705-inject test-muldiv test-injector
 pipeline-compile: | build
-	$(IVERILOG) -g2012 -s tb_pipeline -o build/pipeline_compile $(PIPELINE_RTL) tests/cocotb/tb_pipeline.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline -o build/pipeline_compile $(PIPELINE_RTL) tests/cocotb/tb_pipeline.sv
 pipeline-test-ecc: pipeline-tools
 	$(PIPELINE_PYTHON) tools/run_pipeline.py ecc
 pipeline-test-tmr: pipeline-tools
@@ -127,10 +143,10 @@ kc705-inject:
 kc705-inject-run:
 	$(VIVADO) -mode batch -nojournal -source boards/kc705/lab/run_injection.tcl -tclargs "$(KC705_BUILD)" $(KC705_INJECT_TARGET) $(KC705_INJECT_INDEX) $(KC705_INJECT_MASK)
 test-muldiv: | build
-	$(IVERILOG) -g2012 -s tb_muldiv -o build/tb_muldiv rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_muldiv.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_muldiv -o build/tb_muldiv rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_muldiv.sv
 	$(VVP) build/tb_muldiv
 test-injector: | build
-	$(IVERILOG) -g2012 -s tb_injector -o build/tb_injector rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/fi_campaign_controller.sv tests/tb_injector.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_injector -o build/tb_injector rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/fi_campaign_controller.sv tests/tb_injector.sv
 	$(VVP) build/tb_injector
 
 .PHONY: pipeline-upstream-build pipeline-upstream
@@ -151,20 +167,20 @@ formal-muldiv formal-injector: formal-fetch formal-tools
 
 .PHONY: pipeline-smoke
 pipeline-smoke: | build
-	$(IVERILOG) -g2012 -s tb_pipeline_smoke -o build/pipeline-smoke $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_smoke -o build/pipeline-smoke $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
 	$(VVP) build/pipeline-smoke
-	$(IVERILOG) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=1 -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=1 -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
 	$(VVP) build/pipeline-smoke-tmr
 
 .PHONY: pipeline-jump
 pipeline-jump: | build
-	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-late
-	$(IVERILOG) -g2012 -s tb_pipeline_jump -o build/pipeline-jump-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -o build/pipeline-jump-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-early
-	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-tmr-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-tmr-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-tmr-late
-	$(IVERILOG) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -o build/pipeline-jump-tmr-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -o build/pipeline-jump-tmr-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-tmr-early
 
 KV260_CLK_HZ ?= 10000000
@@ -178,9 +194,9 @@ kv260-synth:
 kv260-dtbo: | build
 	dtc -@ -I dts -O dtb -o build/riscue-uio.dtbo boards/kv260/riscue-uio.dts
 test-kv260-axi: | build
-	$(IVERILOG) -g2012 -s tb_kv260_axi -o build/tb_kv260_axi $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_kv260_axi -o build/tb_kv260_axi $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
 	$(VVP) build/tb_kv260_axi
-	$(IVERILOG) -g2012 -s tb_kv260_axi -Ptb_kv260_axi.RF_TMR=1 -o build/tb_kv260_axi_tmr $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_kv260_axi -Ptb_kv260_axi.RF_TMR=1 -o build/tb_kv260_axi_tmr $(filter-out rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/fi_campaign_controller.sv rtl/riscue_axi_soc.sv rtl/riscue_kv260_axi.sv tests/tb_kv260_axi.sv
 	$(VVP) build/tb_kv260_axi_tmr
 
 RISCV_GCC ?= riscv64-unknown-elf-gcc
@@ -205,7 +221,7 @@ firmware-platform: build/software-profile.mk | build
 build/bitmanip_vectors.txt: tools/bitmanip_vectors.py | build
 	$(PYTHON) tools/bitmanip_vectors.py
 test-bitmanip: build/bitmanip_vectors.txt
-	$(IVERILOG) -g2012 -s tb_bitmanip -o build/tb_bitmanip rtl/ft_pkg.sv rtl/riscue_execute.sv tests/tb_bitmanip.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_bitmanip -o build/tb_bitmanip rtl/ft_pkg.sv rtl/riscue_execute.sv tests/tb_bitmanip.sv
 	$(VVP) build/tb_bitmanip
 pipeline-bitmanip:
 	TEST_FILTER=bitmanip $(PIPELINE_PYTHON) tools/run_pipeline.py ecc
@@ -251,7 +267,7 @@ c-workload: c-workload-build
 .PHONY: test-multiplier-exhaustive c-fir-build c-fir pipeline-multiplier
 test-multiplier-exhaustive: | build
 	$(PYTHON) tools/multiplier_reference.py
-	$(IVERILOG) -g2012 -s tb_multiplier_exhaustive -o build/tb_multiplier_exhaustive rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_multiplier_exhaustive.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_multiplier_exhaustive -o build/tb_multiplier_exhaustive rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_muldiv.sv tests/tb_multiplier_exhaustive.sv
 	$(VVP) build/tb_multiplier_exhaustive
 c-fir-build:
 	RISCV_GCC="$(RISCV_GCC)" RISCV_OBJCOPY="$(RISCV_OBJCOPY)" RISCV_READELF="$(RISCV_READELF)" RISCV_OBJDUMP="$(RISCV_OBJDUMP)" RISCV_NM="$(RISCV_NM)" $(PYTHON) tools/build_c_fir.py
@@ -265,26 +281,26 @@ pipeline-multiplier:
 AXI_CORE_RTL = $(filter-out rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv rtl/riscue_pipeline_soc.sv,$(PIPELINE_RTL)) rtl/riscue_axi_master_bridge.sv rtl/riscue_axi_core.sv
 .PHONY: test-axi-core
 test-axi-core: | build
-	$(IVERILOG) -g2012 -s tb_axi_core -o build/tb_axi_core $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_core -o build/tb_axi_core $(AXI_CORE_RTL) tests/tb_axi_core.sv
 	$(VVP) build/tb_axi_core
-	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_core -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
 	$(VVP) build/tb_axi_core_tmr
 
 .PHONY: test-axi-master-bridge
 test-axi-master-bridge: | build
-	$(IVERILOG) -g2012 -s tb_axi_master_bridge -o build/tb_axi_master_bridge rtl/ft_pkg.sv rtl/riscue_axi_master_bridge.sv tests/tb_axi_master_bridge.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_master_bridge -o build/tb_axi_master_bridge rtl/ft_pkg.sv rtl/riscue_axi_master_bridge.sv tests/tb_axi_master_bridge.sv
 	$(VVP) build/tb_axi_master_bridge
 
 .PHONY: test-axi-core-errors
 test-axi-core-errors: test-axi-core
-	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -o build/tb_axi_core_store $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -o build/tb_axi_core_store $(AXI_CORE_RTL) tests/tb_axi_core.sv
 	$(VVP) build/tb_axi_core_store
-	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_store_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -Ptb_axi_core.RF_TMR=1 -o build/tb_axi_core_store_tmr $(AXI_CORE_RTL) tests/tb_axi_core.sv
 	$(VVP) build/tb_axi_core_store_tmr
 
 .PHONY: test-axi-ecc-ram
 test-axi-ecc-ram: | build
-	$(IVERILOG) -g2012 -s tb_axi_ecc_ram -o build/tb_axi_ecc_ram rtl/ft_pkg.sv rtl/ft_ecc_ram.sv rtl/riscue_axi_ecc_ram.sv tests/tb_axi_ecc_ram.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_ecc_ram -o build/tb_axi_ecc_ram rtl/ft_pkg.sv rtl/ft_ecc_ram.sv rtl/riscue_axi_ecc_ram.sv tests/tb_axi_ecc_ram.sv
 	$(VVP) build/tb_axi_ecc_ram
 
 AXI_ECC_RTL = $(AXI_CORE_RTL) rtl/ft_ecc_ram.sv rtl/riscue_axi_ecc_ram.sv
@@ -296,9 +312,9 @@ test-axi-ecc-c: axi-c-images
 
 .PHONY: test-axi-ecc-fatal
 test-axi-ecc-fatal: axi-c-images
-	$(IVERILOG) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -o build/axi-c/fatal $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -o build/axi-c/fatal $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
 	$(VVP) build/axi-c/fatal +finish_pc=52
-	$(IVERILOG) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -Ptb_axi_ecc_system.RF_TMR=1 -o build/axi-c/fatal-tmr $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_axi_ecc_system -Ptb_axi_ecc_system.INJECT_DED=1 -Ptb_axi_ecc_system.RF_TMR=1 -o build/axi-c/fatal-tmr $(AXI_ECC_RTL) tests/tb_axi_ecc_system.sv
 	$(VVP) build/axi-c/fatal-tmr +finish_pc=52
 
 # KC705 development monitor: serial loader and CPU/AXI/ECC ownership tests.
@@ -307,7 +323,7 @@ MONITOR_RTL = $(AXI_ECC_RTL) boards/kc705/uart_rx.sv boards/kc705/uart_tx.sv rtl
 test-monitor-host:
 	$(PYTHON) -m unittest discover -s tests -p 'test_kc705_monitor.py' -v
 test-monitor-icarus: | build
-	$(IVERILOG) -g2012 -s tb_serial_monitor -o build/tb_serial_monitor $(MONITOR_RTL) tests/tb_serial_monitor.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_serial_monitor -o build/tb_serial_monitor $(MONITOR_RTL) tests/tb_serial_monitor.sv
 	$(VVP) build/tb_serial_monitor
 
 VERILATOR ?= verilator
@@ -315,7 +331,7 @@ test-monitor: axi-c-images test-monitor-host test-monitor-disabled
 	VERILATOR="$(VERILATOR)" $(PYTHON) tools/run_monitor_tests.py
 .PHONY: test-monitor-disabled
 test-monitor-disabled: | build
-	$(IVERILOG) -g2012 -s tb_monitor_disabled -o build/tb_monitor_disabled rtl/ft_pkg.sv boards/kc705/uart_rx.sv boards/kc705/uart_tx.sv rtl/riscue_serial_monitor.sv tests/tb_monitor_disabled.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_monitor_disabled -o build/tb_monitor_disabled rtl/ft_pkg.sv boards/kc705/uart_rx.sv boards/kc705/uart_tx.sv rtl/riscue_serial_monitor.sv tests/tb_monitor_disabled.sv
 	$(VVP) build/tb_monitor_disabled
 .PHONY: monitor-tools
 monitor-tools:
@@ -361,3 +377,27 @@ test-debug: test-debug-directed
 check-debug-board:
 	$(PYTHON) tools/check_debug_board.py
 test-debug: check-debug-board
+
+.PHONY: pipeline-config
+pipeline-config: | build
+	$(PYTHON) tools/pipeline_config.py --mode "$(PIPELINE_PROTECTION)" --experimental "$(ALLOW_EXPERIMENTAL_PARITY)" --output build/pipeline-config-$(PIPELINE_PROTECTION).json
+pipeline-smoke pipeline-jump pipeline-compile: pipeline-config
+
+.PHONY: pipeline-replay-test pipeline-selection-test
+pipeline-replay-test: | build
+	$(PYTHON) tools/check_pipeline_campaign.py final
+pipeline-selection-test: | build
+	$(PYTHON) tools/check_pipeline_selection.py
+	$(PYTHON) tools/check_pipeline_make.py
+	$(PYTHON) tools/check_pipeline_config.py
+
+# Explicit current-pipeline estimates; legacy synth target remains separate.
+.PHONY: synth-pipeline-kintex7 formal-setup-check packet-demo
+SYNTH_RF_TMR ?= 0
+SYNTH_FRONTEND ?= slang
+synth-pipeline-kintex7:
+	$(PYTHON) tools/synth_pipeline.py --rf-tmr $(SYNTH_RF_TMR) --frontend $(SYNTH_FRONTEND)
+formal-setup-check:
+	$(PYTHON) tools/formal_smoke.py
+packet-demo:
+	$(PYTHON) tools/build_packet_demo.py

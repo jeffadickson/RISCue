@@ -1,5 +1,7 @@
 // Board-independent serial development system, CPU and monitor share one RAM.
-module riscue_monitor_soc #(parameter integer WORDS=1024,CLOCK_HZ=10000000,BAUD=115200,TIMEOUT=100000,parameter bit RF_TMR=0,FI_ENABLE=0,parameter INIT_FILE="")(
+module riscue_monitor_soc #(
+ parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,
+ parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,parameter integer WORDS=1024,CLOCK_HZ=10000000,BAUD=115200,TIMEOUT=100000,parameter bit RF_TMR=0,FI_ENABLE=0,parameter INIT_FILE="")(
  input wire clk,rst_n,uart_rx,output wire uart_tx,
  output wire running,fatal,retire_valid,output wire [31:0] pc,
  output wire [31:0] corrected_count,uncorrectable_count
@@ -97,7 +99,7 @@ module riscue_monitor_soc #(parameter integer WORDS=1024,CLOCK_HZ=10000000,BAUD=
  assign h_rvalid=!running?m_rvalid:'0;
  assign m_rready=running?c_rready:h_rready;
  riscue_serial_monitor #(.WORDS(WORDS),.CLOCK_HZ(CLOCK_HZ),.BAUD(BAUD),.TIMEOUT(TIMEOUT),.FI_ENABLE(FI_ENABLE)) monitor(.*);
- riscue_axi_core #(.RF_TMR(RF_TMR),.MEMORY_FAULT_INPUT(1),.MONITOR_CONTROL(1)) cpu(
+ riscue_axi_core #(.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.RF_TMR(RF_TMR),.MEMORY_FAULT_INPUT(1),.MONITOR_CONTROL(1)) cpu(
  .aclk(clk),.aresetn(rst_n&&cpu_resetn),.external_irq(1'b0),.external_memory_fault(memory_fatal),
  .halt_request(halt_request),.boot_pc(boot_pc),.quiescent(core_quiescent),.bridge_idle(core_bridge_idle),
  .fatal(core_fatal),.pc(pc),.trap_cause(trap_cause),.trap_value(trap_value),.retire_valid(retire_valid),

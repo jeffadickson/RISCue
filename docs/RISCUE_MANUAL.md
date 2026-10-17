@@ -4,7 +4,7 @@ See the [programmer and microarchitecture reference](PROGRAMMER_REFERENCE.md) fo
 
 **Implementation baseline: 0.7.7.** This manual describes the five-stage core, its fault-mitigation mechanisms, software contract, AXI interfaces, FPGA targets and executable test rigs. It also identifies the preserved legacy implementation so evidence is not attributed to the wrong core.
 
-RISCue is an original RV32 processor prototype with ECC/TMR protection and digital fault-injection facilities. Compiled C and directed fault tests have passed in simulation. FPGA resource usage, achieved clock frequency, physical redundancy and radiation performance have not been established.
+RISCue is an original RV32 processor prototype with ECC/TMR protection and digital fault-injection facilities. Compiled C and directed fault tests have passed in simulation. Initial paired Series-7 core resource estimates are recorded in [local toolchain evidence](../verification/local-toolchain-2026-10-16.json). Device fit, achieved clock frequency, physical redundancy and radiation performance have not been established.
 
 Code excerpts below are exact slices of repository files. Some are intentionally partial blocks; follow their source links for surrounding declarations and logic. `make docs` refreshes them, and `make docs-check` detects drift. The requirements and specialist guides remain linked from each chapter.
 
@@ -311,11 +311,21 @@ The pipeline/platform record is 4,038 bits per replica, and each arithmetic reco
 Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
 
 ```systemverilog
-  s=(c0&c1)|(c0&c2)|(c1&c2);n=s;
+  voted=(c0&c1)|(c0&c2)|(c1&c2);
+  s=voted;
+  payload_bad=PARITY_REPLAY&&(stage_parity(c0)!=payload_parity);
+  if(PARITY_REPLAY)begin
+   s.f=c0.f;s.d=c0.d;s.x=c0.x;s.m=c0.m;s.w=c0.w;
+   // Contain corrupt control before operand addressing or commit decisions.
+   if(payload_bad)begin s.f='0;s.d='0;s.x='0;s.m='0;s.w='0;end
+  end
+  n=s;
   store_mask=s.m.e.mask;store_data=s.m.e.wdata;
-  record_bad=(c0!=c1)&&(c0!=c2)&&(c1!=c2);
+  record_bad=PARITY_REPLAY?((trusted(c0)!=c1)&&(trusted(c0)!=c2)&&(c1!=c2)):((c0!=c1)&&(c0!=c2)&&(c1!=c2));
   ra=ecc_decode(rf[s.d.insn[19:15]]);rb=ecc_decode(rf[s.d.insn[24:20]]);scrubbed=ecc_decode(rf[s.scrub]);response=ecc_decode(rdata_code);
   rf_bad=!RF_TMR&&((s.d.valid&&uses1(s.d.insn)&&ra.uncorrectable)||(s.d.valid&&uses2(s.d.insn)&&rb.uncorrectable)||scrubbed.uncorrectable);
+  if(RF_TMR)begin
+   ra.data=(tmr0[s.d.insn[19:15]]&tmr1[s.d.insn[19:15]])|(tmr0[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]])|(tmr1[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]]);
 ```
 <!-- /excerpt:vote -->
 
@@ -735,9 +745,9 @@ The runner parses the compiled ELF, zero-fills its loadable memory image and emi
 Source: [tools/run_monitor_tests.py](../tools/run_monitor_tests.py)
 
 ```python
-    (vectors/'load.hex').write_text(''.join(f'{int.from_bytes(frame(i&255,3,a,v),"little"):040x}\n' for i,(a,v) in enumerate(words)))
-    (vectors/'golden.mask').write_text(''.join(('00000000' if 'x' in line.lower() else '00000001')+'\n' for line in (ROOT/'build/axi-c/smoke.expected').read_text().splitlines()))
-    finish=json.loads((ROOT/'build/c-smoke/metadata.json').read_text())['finish_pc']
+        (vectors/'load.hex').write_text(''.join(f'{int.from_bytes(frame(i&255,3,a,v),"little"):040x}\n' for i,(a,v) in enumerate(words)))
+        (vectors/'golden.mask').write_text(''.join(('00000000' if 'x' in line.lower() else '00000001')+'\n' for line in (ROOT/'build/axi-c/smoke.expected').read_text().splitlines()))
+        finish=json.loads((ROOT/'build/c-smoke/metadata.json').read_text())['finish_pc']
 ```
 <!-- /excerpt:runner -->
 
@@ -792,8 +802,8 @@ A separate [disabled-injection bench](../tests/tb_monitor_disabled.sv) confirms 
 Source: [tools/run_monitor_tests.py](../tools/run_monitor_tests.py)
 
 ```python
-        args=[os.environ.get('VERILATOR','verilator'),'--binary','--timing','--top-module','tb_serial_monitor','-Wno-fatal','-CFLAGS','-O0','-j','2','--Mdir',str(build),f'-GRF_TMR={mode}',*files]
-        with (out/f'compile-{mode}.log').open('w') as log:subprocess.run(args,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
+        args=[os.environ.get('VERILATOR','verilator'),*protection['iverilog_flags'],'--cc','--main','--exe','--timing','--top-module','tb_serial_monitor','-Wno-fatal','-CFLAGS','-O0','-j','2','--Mdir',str(build),f'-GRF_TMR={mode}',*files]
+        with (out/f'compile-{mode}.log').open('w') as log:
 ```
 <!-- /excerpt:source_list -->
 

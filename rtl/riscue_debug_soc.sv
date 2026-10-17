@@ -1,6 +1,8 @@
 // Dedicated lab debug target. The debug and application reset domains are separate.
 // SBA owns ECC SRAM only while the core is halted and its bus is quiescent.
-module riscue_debug_soc #(parameter integer WORDS=2048,parameter INIT_FILE="",parameter bit RF_TMR=0,EARLY_JUMP=1)(
+module riscue_debug_soc #(
+ parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,
+ parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,parameter integer WORDS=2048,parameter INIT_FILE="",parameter bit RF_TMR=0,EARLY_JUMP=1)(
  input logic clk,rst_n,tck,tms,tdi,input logic external_irq,output logic tdo,
  output logic debug_halted,fatal,trap,retire_valid,output logic [31:0] pc,retire_pc,retire_insn
 );
@@ -28,7 +30,7 @@ module riscue_debug_soc #(parameter integer WORDS=2048,parameter INIT_FILE="",pa
  always_comb decoded=ecc_decode(ram_rc);
  assign sb_ready=ram_ready&&sb_grant;assign sb_error=ram_error||decoded.uncorrectable;
  assign sb_rdata=decoded.data;
- riscue_pipeline_core #(.RF_TMR(RF_TMR),.EARLY_JUMP(EARLY_JUMP),.DEBUG_ENABLE(1)) core(
+ riscue_pipeline_core #(.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.RF_TMR(RF_TMR),.EARLY_JUMP(EARLY_JUMP),.DEBUG_ENABLE(1)) core(
   .clk(clk),.rst_n(core_reset_n),.external_irq(external_irq),.halt_request(1'b0),.boot_pc(32'b0),.quiescent(quiescent),
   .debug_haltreq(haltreq),.debug_resumereq(resumereq),.debug_halted(debug_halted),.debug_resumeack(resumeack),
   .debug_reg_valid(reg_valid),.debug_reg_write(reg_write),.debug_regno(regno),.debug_wdata(reg_wdata),.debug_rdata(reg_rdata),.debug_reg_ready(reg_ready),.debug_reg_error(reg_error),

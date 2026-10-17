@@ -1,0 +1,563 @@
+{
+  "campaign": "pipeline-protection-local-2026-10-16",
+  "passed": true,
+  "local_iterations": [
+    {
+      "iteration": 1,
+      "label": "Baseline: existing TMR smoke and jumps",
+      "command": [
+        "C:\\dev\\tools\\msys64\\usr\\bin\\bash.exe",
+        "-lc",
+        "cd /c/dev/RISCue && PATH=/ucrt64/bin:$PATH make pipeline-smoke pipeline-jump"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 25.05,
+      "core_sha256": "d41b6d00fde48faaade6cd68c86310ed5b110afcb8e4be8226a1826c09fadb08"
+    },
+    {
+      "iteration": 2,
+      "label": "Common wrapper preserves TMR baseline",
+      "command": [
+        "C:\\dev\\tools\\msys64\\usr\\bin\\bash.exe",
+        "-lc",
+        "cd /c/dev/RISCue && PATH=/ucrt64/bin:$PATH make pipeline-smoke pipeline-jump"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 24.21,
+      "core_sha256": "912d796a1b896ce60bca93aa559c414b6da50b00dab293049841336302a31f0a"
+    },
+    {
+      "iteration": 3,
+      "label": "Reject invalid and unavailable pipeline selections",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_selection.py"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 25.01,
+      "core_sha256": "912d796a1b896ce60bca93aa559c414b6da50b00dab293049841336302a31f0a"
+    },
+    {
+      "iteration": 4,
+      "label": "Propagate pipeline selection through SoC interfaces",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "test-axi-master-bridge",
+        "test-axi-ecc-ram"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 29.68,
+      "core_sha256": "912d796a1b896ce60bca93aa559c414b6da50b00dab293049841336302a31f0a"
+    },
+    {
+      "iteration": 5,
+      "label": "Named Make selection and explicit experimental opt-in",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_make.py"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.87,
+      "core_sha256": "912d796a1b896ce60bca93aa559c414b6da50b00dab293049841336302a31f0a"
+    },
+    {
+      "iteration": 6,
+      "label": "Record mode and FI ABI in build provenance",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_config.py"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 18.78,
+      "core_sha256": "912d796a1b896ce60bca93aa559c414b6da50b00dab293049841336302a31f0a"
+    },
+    {
+      "iteration": 7,
+      "label": "Single-copy stage parity storage and fail-stop containment, no-fault matrix",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=PARITY_REPLAY",
+        "ALLOW_EXPERIMENTAL_PARITY=1"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 85.04,
+      "core_sha256": "fde21811bfbcf7fe22086fa6338e722f768cefe8cb7b3392789d0711c9f71048"
+    },
+    {
+      "iteration": 8,
+      "label": "Safe parity replay preserves architectural smoke trace",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "1"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 51.29,
+      "core_sha256": "5fdba6c36dc3e62f9fcd01e4e42522842a5b3118dedf7151f445f43b3e52810d"
+    },
+    {
+      "iteration": 9,
+      "label": "Memory side-effect boundary fails closed on corrupted store control",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "2"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 26.82,
+      "core_sha256": "5fdba6c36dc3e62f9fcd01e4e42522842a5b3118dedf7151f445f43b3e52810d"
+    },
+    {
+      "iteration": 10,
+      "label": "Illegal recovery encoding enters sticky fail-stop",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "3"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 5.51,
+      "core_sha256": "5fdba6c36dc3e62f9fcd01e4e42522842a5b3118dedf7151f445f43b3e52810d"
+    },
+    {
+      "iteration": 11,
+      "label": "Bounded retry budget escalates instead of wrapping",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "4"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 8.41,
+      "core_sha256": "5fdba6c36dc3e62f9fcd01e4e42522842a5b3118dedf7151f445f43b3e52810d"
+    },
+    {
+      "iteration": 12,
+      "label": "Outstanding fetch remains asserted while stale response drains",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-24.04",
+        "--cd",
+        "/mnt/c/dev/RISCue",
+        "--exec",
+        "python3",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "5"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 12.42,
+      "core_sha256": "5fdba6c36dc3e62f9fcd01e4e42522842a5b3118dedf7151f445f43b3e52810d"
+    },
+    {
+      "iteration": 13,
+      "label": "Recovery watchdog registered fail-stop avoids combinational request glitch",
+      "command": [
+        "C:\\Users\\jeffd\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "6"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 9.73,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 14,
+      "label": "Parity metadata fault safely replays committed trace",
+      "command": [
+        "C:\\Users\\jeffd\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "tools/check_pipeline_replay.py",
+        "--scenario",
+        "7"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 10.63,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 15,
+      "label": "Controller replica repair, majority loss and every illegal recovery code",
+      "command": [
+        "C:\\Users\\jeffd\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "tools/check_pipeline_campaign.py",
+        "controller"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 145.58,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 16,
+      "label": "Decode-valid and WB-result fault containment across both RF modes",
+      "command": [
+        "C:\\Users\\jeffd\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "tools/check_pipeline_campaign.py",
+        "commit"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 80.89,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 17,
+      "label": "Both-mode AXI errors, bridge, ECC RAM and disabled-monitor integration",
+      "command": [
+        "C:\\Users\\jeffd\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "tools/check_pipeline_integration.py"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 36.8,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 18,
+      "label": "Selection matrix and TMR board wrapper elaboration after hierarchy audit update",
+      "command": [
+        "C:\\dev\\tools\\msys64\\usr\\bin\\bash.exe",
+        "-c",
+        "cd /c/dev/RISCue && make pipeline-selection-test PYTHON=python && python tools/check_kc705.py"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 21.74,
+      "core_sha256": "520e5f3c606c99375429db3981a8b254c3b6493ffadf88fb696884eef4a934f2"
+    },
+    {
+      "iteration": 19,
+      "label": "Requirements, protection inventory and refreshed manual source anchors",
+      "command": [
+        "C:\\dev\\tools\\msys64\\usr\\bin\\bash.exe",
+        "-c",
+        "cd /c/dev/RISCue && python tools/write_requirements.py && make docs docs-check PYTHON=python"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 3.53,
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "iteration": 20,
+      "label": "Final strict outcome oracle, controller campaign and synchronized documentation",
+      "command": [
+        "C:\\dev\\tools\\msys64\\usr\\bin\\bash.exe",
+        "-c",
+        "cd /c/dev/RISCue && python tools/check_pipeline_campaign.py controller && python tools/build_manual.py --check"
+      ],
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 53.0,
+      "core_sha256": "520e5f3c606c99375429db3981a8b254c3b6493ffadf88fb696884eef4a934f2"
+    }
+  ],
+  "final_core_sha256": "520e5f3c606c99375429db3981a8b254c3b6493ffadf88fb696884eef4a934f2",
+  "compiled_c": [
+    {
+      "pipeline_protection": "TMR",
+      "RF_TMR": false,
+      "passed": true,
+      "executed": 1,
+      "skipped": 17,
+      "configuration": {
+        "pipeline_protection": "TMR",
+        "mode_id": 0,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": 2,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      }
+    },
+    {
+      "pipeline_protection": "TMR",
+      "RF_TMR": true,
+      "passed": true,
+      "executed": 1,
+      "skipped": 17,
+      "configuration": {
+        "pipeline_protection": "TMR",
+        "mode_id": 0,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": 2,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      }
+    },
+    {
+      "pipeline_protection": "PARITY_REPLAY",
+      "RF_TMR": false,
+      "passed": true,
+      "executed": 1,
+      "skipped": 17,
+      "configuration": {
+        "pipeline_protection": "PARITY_REPLAY",
+        "mode_id": 1,
+        "experimental": true,
+        "explicit_opt_in": true,
+        "fi_abi": 3,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=1",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      }
+    },
+    {
+      "pipeline_protection": "PARITY_REPLAY",
+      "RF_TMR": true,
+      "passed": true,
+      "executed": 1,
+      "skipped": 17,
+      "configuration": {
+        "pipeline_protection": "PARITY_REPLAY",
+        "mode_id": 1,
+        "experimental": true,
+        "explicit_opt_in": true,
+        "fi_abi": 3,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=1",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      }
+    }
+  ],
+  "c_metadata": {
+    "compiler": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+    "command": [
+      "riscv64-unknown-elf-gcc",
+      "-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+      "-mabi=ilp32",
+      "-mcmodel=medlow",
+      "-mstrict-align",
+      "-mno-relax",
+      "-msmall-data-limit=0",
+      "-ffreestanding",
+      "-fno-builtin",
+      "-fno-pic",
+      "-fno-stack-protector",
+      "-nostdlib",
+      "-nostartfiles",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wl,--no-relax",
+      "-T",
+      "/mnt/c/dev/RISCue/firmware/smoke/link.ld",
+      "/mnt/c/dev/RISCue/firmware/smoke/start.S",
+      "/mnt/c/dev/RISCue/firmware/smoke/main.c",
+      "-o",
+      "/mnt/c/dev/RISCue/build/c-smoke/smoke.elf"
+    ],
+    "finish_pc": 52,
+    "binary_sha256": "16a4fdf24a105ac87577c980d4d95b3e72dd1d98549375c8320ab71ab839d29e",
+    "mailbox_address": 4032,
+    "isa_report": {
+      "file": "/mnt/c/dev/RISCue/build/c-smoke/smoke.elf",
+      "entry": 0,
+      "architecture_attributes": [
+        "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+      ],
+      "instructions_checked": 58,
+      "status": "pass",
+      "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+    }
+  },
+  "debug": [
+    {
+      "passed": true,
+      "configuration": {
+        "pipeline_protection": "TMR",
+        "mode_id": 0,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": 2,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      },
+      "runs": [
+        {
+          "name": "tb_debug",
+          "passed": true,
+          "output": "PASS debug directed: command errors, x0, ECC write, TMR repair, SBA alignment, reset halt, step trap/IRQ, fatal containment, sticky DM majority loss\n- /mnt/c/dev/RISCue/tests/debug/tb_debug.sv:64: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.048 2026-04-26\n- Verilator: $finish at 1us; walltime 0.008 s; speed 149.476 us/s\n- Verilator: cpu 0.007 s on 1 threads; allocated 7 MB\n"
+        }
+      ],
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    },
+    {
+      "passed": true,
+      "configuration": {
+        "pipeline_protection": "PARITY_REPLAY",
+        "mode_id": 1,
+        "experimental": true,
+        "explicit_opt_in": true,
+        "fi_abi": 3,
+        "iverilog_flags": [
+          "-DRISCUE_PIPELINE_PROTECTION=1",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+      },
+      "runs": [
+        {
+          "name": "tb_debug",
+          "passed": true,
+          "output": "PASS debug directed: command errors, x0, ECC write, TMR repair, SBA alignment, reset halt, step trap/IRQ, fatal containment, sticky DM majority loss\n- /mnt/c/dev/RISCue/tests/debug/tb_debug.sv:64: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.048 2026-04-26\n- Verilator: $finish at 1us; walltime 0.012 s; speed 90.858 us/s\n- Verilator: cpu 0.012 s on 1 threads; allocated 7 MB\n"
+        }
+      ],
+      "core_sha256": "0a77c9f058173e0ad0aee76bcc83b7b367c36550e021b96f9ad516d4c25901cf"
+    }
+  ],
+  "uart_monitor_protocol": [
+    [
+      {
+        "name": "protocol-0",
+        "pipeline_protection": "TMR",
+        "status": "pass",
+        "result": "PASS serial monitor RF_TMR=0: UART CRC replay timeout ECC DED recovery nonzero straddled entry run-stop-read",
+        "seconds": 16.256026498999972
+      }
+    ],
+    [
+      {
+        "name": "protocol-0",
+        "pipeline_protection": "PARITY_REPLAY",
+        "status": "pass",
+        "result": "PASS serial monitor RF_TMR=0: UART CRC replay timeout ECC DED recovery nonzero straddled entry run-stop-read",
+        "seconds": 29.501073281000117
+      }
+    ]
+  ],
+  "source_sha256": {
+    "rtl\\fi_campaign_controller.sv": "25cbdcb478680c8b12288aeaa14ccc0ef484e5c8807bdfad20fb1fe4faa47124",
+    "rtl\\ft_ecc_ram.sv": "c4fd6fb344992e9c58fa31e261aee86278abf4208f005e53364b60cce7b498ae",
+    "rtl\\ft_event_monitor.sv": "8185db879b0025bba95c6e0c50f4094b0d0e6580354279669369735c23f51449",
+    "rtl\\ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+    "rtl\\riscue_axi_core.sv": "ff687b92431dba83a4d2d5809dea9213811d81b85e9807c8dfcadc30e815b938",
+    "rtl\\riscue_axi_ecc_ram.sv": "7cf95b908500514b09efa5b09a77c4412bfd0a59bbedf1eb89dae852e2268873",
+    "rtl\\riscue_axi_master_bridge.sv": "2e40a1ecd8325229c6bb1641da5336e7f36e8c4f9ed5d74d471bc172a842cc45",
+    "rtl\\riscue_axi_soc.sv": "0e8abc01c8c2dd2832d2f2ecc01b867f87737204f7f6463f33fd7a3128b671dd",
+    "rtl\\riscue_debug_module.sv": "049109a1367138bbf397554cc1fdc4ed01c2eae5e51c475db522259215dcc545",
+    "rtl\\riscue_debug_soc.sv": "b2ce46a09b8bc520a68aaf5d4ea93078accb136e5321dd2f483864962cc55da2",
+    "rtl\\riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+    "rtl\\riscue_jtag_dtm.sv": "2c0b993cd4899f31d72a344407f0d18606516651d582eade63d56cf42b80740c",
+    "rtl\\riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+    "rtl\\riscue_kv260_axi.sv": "f0034365fb5bd5b01a08e25a07cc4d1e3a9e67c4c0e1df7cddc11cee26501d05",
+    "rtl\\riscue_monitor_soc.sv": "f86117207f93527b4879b859bf843fbc86f9778b6c2dce99f5d823e4d22301aa",
+    "rtl\\riscue_muldiv.sv": "88d10b93349881d2df12dcdb8698a9446942d30f6134df6ecd3ae90195f99793",
+    "rtl\\riscue_packet_soc.sv": "a1e3a55606d31891397ae9da2856768300d6dd7d31f2a31ecdb1d5bcc78897e0",
+    "rtl\\riscue_packet_uart.sv": "0230dbd310c31f3b7bd7195e3f916099d90cc0a65da39c178c67a79b36c18333",
+    "rtl\\riscue_pipeline_core.sv": "520e5f3c606c99375429db3981a8b254c3b6493ffadf88fb696884eef4a934f2",
+    "rtl\\riscue_pipeline_pkg.sv": "2204cbee184caa17ef963cd0c988b5901503bef99e3efd097db15ee6987de34d",
+    "rtl\\riscue_pipeline_soc.sv": "28d6737dbf90fe6376eaba5086369280cd5aee8faeb65fb2bf214cbdfb5a0e04",
+    "rtl\\riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+    "rtl\\riscue_serial_monitor.sv": "1d4cb62157ecf7891f33f06bb8c432ee1c6623d793a654cd3852cf524634eca2",
+    "rtl\\rv32im_ft_core.sv": "cc170d0bd1e2634c522b8a9011d1d8e48d9da28987d5035db2e98ca4c30f6fc2",
+    "rtl\\rv32im_ft_soc.sv": "5591e61ccdd7a2228c1a4ee4aa3bb498ce88f8b5c235e1b83ee6cb763182dde6",
+    "rtl\\rv32_execute.sv": "b152794e86388f48b5509f83f77d2e303c5fdc64b243e2d944b2d6ab222c7780",
+    "tests\\tb_pipeline_replay.sv": "14a3241224023d97013555ec752bdbab94d3b64c45589dbffdc6873619c90ff9",
+    "tools\\pipeline_config.py": "6c298115332615c726bac08f659c8b8ec2415b5d38c0de6a288a1a294f49f48f"
+  },
+  "scope": [
+    "TMR remains default; parity/replay is experimental and requires explicit opt-in",
+    "20 numbered local iterations include implementation, fault, integration and documentation rounds; not 20 independent RTL revisions",
+    "31 controller cases, 10 commit cases and 24 final directed cases overlap; not exhaustive stage-bit coverage",
+    "Final architectural/Python matrix is retained in 20-stale-excerpt-attempt.log; only its documentation check failed. Refreshed documentation and controller campaign passed in final 20.log",
+    "Core hash in iteration records is observed at record completion. Failed attempt 13 overlapped a correction; do not treat its hash as an exact compile input",
+    "Additional compiled C and debug checks straddled a controller-telemetry-only refinement; their recorded source hashes are preserved. The final fault/architectural matrix covers the final RTL",
+    "Slow Icarus UART attempt was stopped; Verilator UART protocol passed in both pipeline modes with RF_TMR=0",
+    "Initial shared-drive Verilator build was stopped; focused debug builds passed using Linux-native generated-file cache",
+    "No Vivado synthesis/place/route, physical board, complete pipeline formal proof, radiation qualification or Tiny Tapeout-fit result is claimed"
+  ]
+}

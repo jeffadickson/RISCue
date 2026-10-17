@@ -1,6 +1,8 @@
 // Generic processor wrapper: AXI4-Lite master to an external interconnect.
 // Separate from the KV260 ARM-control AXI slave and its local ECC SRAM.
 module riscue_axi_core #(
+ parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,
+ parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,
  parameter logic [31:0] RESET_PC=0,parameter integer BUS_TIMEOUT=1024,
  parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MEMORY_FAULT_INPUT=0,MONITOR_CONTROL=0
 )(
@@ -27,7 +29,7 @@ module riscue_axi_core #(
 );
  logic req,ready,bus_error,core_fatal,core_ce,core_dis,bridge_ce,bridge_dis;
  logic [38:0] addr_code,wdata_code,ctrl_code,rdata_code;
- riscue_pipeline_core #(.RESET_PC(RESET_PC),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP),.MONITOR_CONTROL(MONITOR_CONTROL)) core(
+ riscue_pipeline_core #(.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.RESET_PC(RESET_PC),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP),.MONITOR_CONTROL(MONITOR_CONTROL)) core(
   .clk(aclk),.rst_n(aresetn),.halt_request(halt_request),.boot_pc(boot_pc),.quiescent(quiescent),.external_irq(external_irq),.req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
   .ready(ready),.bus_error(bus_error),.external_fault(bridge_fatal||(MEMORY_FAULT_INPUT&&external_memory_fault)),.rdata_code(rdata_code),
   .halted(halted),.fatal(core_fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),

@@ -1,6 +1,6 @@
-# Pipeline fault-injection ABI 2
+# TMR pipeline fault-injection ABI 2
 
-This is the full local-SoC/VIO campaign ABI. The default KC705 UART monitor exposes **RAM target 8 only**, using a byte address translated to the word index; it does not expose the RF, core, arithmetic or recorder targets. Generic AXI bridge/controller state has no public FI target. Telemetry aggregation depends on the wrapper: the UART monitor returns AXI RAM counters, while the local-SoC recorder combines core and RAM events.
+This is the TMR-mode local-SoC/VIO campaign ABI. Experimental parity/replay uses ABI 3; see [mode-specific mapping and limitations](PIPELINE_PROTECTION.md#fault-injection-abi). The default KC705 UART monitor exposes **RAM target 8 only**, using a byte address translated to the word index; it does not expose the RF, core, arithmetic or recorder targets. Generic AXI bridge/controller state has no public FI target. Telemetry aggregation depends on the wrapper: the UART monitor returns AXI RAM counters, while the local-SoC recorder combines core and RAM events.
 
 Early direct-jump resolution changes no packed state fields or window offsets; this remains ABI 2. The added compared target lanes are combinational.
 

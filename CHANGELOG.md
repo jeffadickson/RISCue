@@ -1,3 +1,11 @@
+## Unreleased — Experimental pipeline integration
+
+- Add a static drop-in TMR/PARITY_REPLAY boundary, named build selection and mode manifests; TMR stays default.
+- Add single-copy stage parity, protected architectural state, bounded replay, distance-three recovery phases and conservative memory-side-effect fail-stop.
+- Add directed fault and interface campaigns; preserve compared execution and independent RF selection.
+- Keep parity explicitly experimental and reject it in vendor board release flows pending mapped audits. Area, full fault coverage and flight qualification remain open.
+- Add local Yosys Series-7 resource estimation, an executable SECDED formal setup check, and a self-contained CRC assembly/simulation page for David.
+
 ## 0.8.0 — Hardware debug and GDB integration
 
 - Add opt-in resumable core debug, exact instruction stepping, dcsr/dpc and abstract register access, plus EBREAK/C.EBREAK debug entry.

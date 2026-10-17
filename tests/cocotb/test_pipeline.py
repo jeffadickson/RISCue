@@ -169,10 +169,10 @@ async def pinned_upstream_programs(d):
             if int(d.trap.value):
                 assert int(d.trap_cause.value)==3,record['name']+' unexpected architectural trap'
                 if TMR:
-                    a=int(d.soc.core.tmr0[10].value);b=int(d.soc.core.tmr1[10].value);c=int(d.soc.core.tmr2[10].value)
+                    a=int(d.soc.core.impl.tmr0[10].value);b=int(d.soc.core.impl.tmr1[10].value);c=int(d.soc.core.impl.tmr2[10].value)
                     value=(a&b)|(a&c)|(b&c)
                 else:
-                    code=int(d.soc.core.rf[10].value)
+                    code=int(d.soc.core.impl.rf[10].value)
                     value=sum(((code>>(p-1))&1)<<j for j,p in enumerate(p for p in range(1,39) if p not in {1,2,4,8,16,32}))
                 assert value==record['pass_value'],record['name']+' software failure '+str(value)
                 break
@@ -387,8 +387,8 @@ async def multiplier_full_core_interrupts(d):
         await boot(d,words,handler=handler);injected=False;traps=0;rows=[];request_cycle=0
         for cycle in range(1,2001):
             await FallingEdge(d.clk);assert not int(d.fatal.value)
-            if not injected and int(d.soc.core.md_ready0.value)==0 and int(d.soc.core.md_ready1.value)==0:
-                assert int(d.soc.core.x_insn.value)==words[7];d.external_irq.value=1;injected=True;request_cycle=cycle
+            if not injected and int(d.soc.core.impl.md_ready0.value)==0 and int(d.soc.core.impl.md_ready1.value)==0:
+                assert int(d.soc.core.impl.x_insn.value)==words[7];d.external_irq.value=1;injected=True;request_cycle=cycle
             if int(d.trap.value):
                 assert int(d.trap_cause.value)==0x8000000b;traps+=1;d.external_irq.value=0
             if int(d.retire_valid.value):

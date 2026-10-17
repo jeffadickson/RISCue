@@ -9,8 +9,8 @@
   {
     "id": "vote",
     "path": "rtl/riscue_pipeline_core.sv",
-    "start": "  s=(c0&c1)",
-    "lines": 5,
+    "start": "  voted=(c0&c1)",
+    "lines": 15,
     "language": "systemverilog"
   },
   {
