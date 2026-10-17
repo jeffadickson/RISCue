@@ -11,3 +11,5 @@ Do not introduce stateful helpers without declaring their protection strategy. K
 `docs/requirements.json` is the editable source of truth. Run `python3 tools/write_requirements.py` to regenerate its CSV and Markdown views. Treat historical evidence as immutable provenance; add a new named campaign rather than changing old outcomes.
 
 The current entry point is `docs/RISCUE_MANUAL.md`. Its code excerpts are selected by `docs/manual-excerpts.json`; run `make docs` after changing those sources and `make docs-check` before publishing documentation. Keep archived legacy descriptions clearly labeled.
+
+Current-core functional changes require `make pipeline-variants-check`. Keep all three variants maintained together; see docs/UNPROTECTED.md.

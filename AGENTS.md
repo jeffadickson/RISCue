@@ -9,3 +9,5 @@
 - Store generated logs/tool downloads in ignored build/.tools paths. Preserve historical verification evidence; add new named results.
 - On the configured Windows host, C:/dev is shared with Ubuntu-24.04 at /mnt/c/dev. Source /mnt/c/dev/Enter-RISCue.sh to select its Python environment; read C:/dev/LOCAL-DEVELOPMENT.md for machine-specific setup.
 - Request confirmation for administrative system changes or restarts. Report unrun checks and tool failures precisely.
+
+- Maintain TMR, PARITY_REPLAY (checked), and PLAIN (unprotected) together. Every functional RTL change must pass `make pipeline-variants-check` locally before completion. This includes smoke/jump regressions for all three, selector rejection, protected replay tests, and documentation checks. Report failures; never silently skip a variant. PLAIN requires RF_TMR=0 and FI_ENABLE=0.

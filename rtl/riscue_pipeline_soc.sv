@@ -18,6 +18,38 @@ module riscue_pipeline_soc #(
  output logic [31:0] first_pc,first_address,last_pc,last_address,
  output logic [15:0] first_flags,last_flags
 );
+`ifdef RISCUE_PLAIN_MEMORY
+ initial if(PIPELINE_PROTECTION!=2)$fatal(1,"Plain RAM requires PIPELINE_PROTECTION=PLAIN");
+ generate if(1)begin: plain
+ riscue_pipeline_core #(.PIPELINE_PROTECTION(2),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
+  .clk(clk),.rst_n(rst_n),.external_irq(external_irq),.req(req),.addr_code(ac),.wdata_code(wc),.ctrl_code(cc),
+  .ready(ready),.bus_error(error),.external_fault(1'b0),.rdata_code({7'b0,rd}),
+  .halted(halted),.fatal(fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),
+  .retire_valid(retire_valid),.retire_pc(retire_pc),.retire_insn(retire_insn),.retire_result(retire_result),.retire_rd(retire_rd),
+  .fi_valid(1'b0),.fi_target(4'b0),.fi_index(32'b0),.fi_mask(512'b0));
+ wire req;wire [38:0] ac,wc,cc;logic ready,error;logic [31:0] rd;
+ logic [31:0] mem[0:WORDS-1];integer i,b;
+ initial begin for(i=0;i<WORDS;i=i+1)mem[i]=0;if(INIT_FILE!="")$readmemh(INIT_FILE,mem);end
+ always @(posedge clk)begin
+  if(!rst_n)begin ready<=0;error<=0;rd<=0;end
+  else begin
+   ready<=0;error<=0;
+   if(req&&!ready)begin
+    ready<=1;
+    if(ac[31:2]>=WORDS||ac[1:0]!=0||cc[31:5]!=0)begin error<=1;rd<=0;end
+    else begin
+     rd<=mem[ac[31:2]];
+     if(cc[4])for(b=0;b<4;b=b+1)if(cc[b])mem[ac[31:2]][b*8+:8]<=wc[b*8+:8];
+    end
+   end
+  end
+ end
+ assign corrected_event=0;assign disagreement_event=0;assign fi_ack=0;assign event_valid=0;assign sticky_flags=0;
+ assign corrected_count=0;assign uncorrectable_count=0;assign disagreement_count=0;assign fatal_count=0;
+ assign first_pc=0;assign first_address=0;assign last_pc=0;assign last_address=0;assign first_flags=0;assign last_flags=0;
+ end endgenerate
+`else
+ initial if(PIPELINE_PROTECTION==2)$fatal(1,"PLAIN SoC requires RISCUE_PLAIN_MEMORY from canonical build flags");
  wire [31:0] injection_width=riscue_pipeline_pkg::fi_width(RF_TMR,WORDS,fi_target,fi_index);
  wire fi_dispatch=rst_n&&fi_valid&&injection_width!=0&&fi_mask!=0&&(fi_mask>>injection_width)==0;
  logic req,ready,error,mem_fatal,mem_ce,mem_dis,core_ce,core_dis,report_dis;
@@ -48,4 +80,5 @@ module riscue_pipeline_soc #(
  assign corrected_event=core_ce|mem_ce;
  assign disagreement_event=core_dis|mem_dis|report_dis;
  assign fi_ack=core_ack|mem_ack|report_ack;
+`endif
 endmodule

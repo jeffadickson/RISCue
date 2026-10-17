@@ -28,7 +28,13 @@ module tb_pipeline_smoke #(parameter bit RF_TMR=0);
   image[64]=csr(12'h342,20,0,2);image[65]=csr(12'h341,21,0,2);
   image[66]=32'h004a8a93;image[67]=csr(12'h341,0,21,1);image[68]=32'h30200073;
   repeat(3)@(negedge clk);
-  for(integer k=0;k<1024;k=k+1)dut.ram.mem[k]=ecc_encode(image[k]);
+  for(integer k=0;k<1024;k=k+1)begin
+`ifdef RISCUE_PLAIN_MEMORY
+ dut.plain.mem[k]=image[k];
+`else
+ dut.ram.mem[k]=ecc_encode(image[k]);
+`endif
+ end;
   rst_n=1;
   while(cycles<2000)begin
    @(negedge clk);cycles=cycles+1;
@@ -43,6 +49,18 @@ module tb_pipeline_smoke #(parameter bit RF_TMR=0);
      256:check(20,11);260:check(21,48);264:check(21,52);268:check(0,0);272:check(0,0);
      52:begin
       check(11,99);if(!saw_trap||retired!=20)$fatal(1,"missing trap or retirement");
+`ifdef RISCUE_PLAIN_MEMORY
+      dut.plain.core.impl.rf[30]=39'h1;
+      dut.plain.mem[1000]=32'h1;
+      repeat(40)@(negedge clk);
+      if(dut.plain.core.impl.rf[30]!==39'h1||dut.plain.mem[1000]!==32'h1)
+       $fatal(1,"PLAIN unexpectedly corrected a raw RF/RAM upset");
+      if(dut.plain.core.impl.c1!=='0||dut.plain.core.impl.c2!=='0||
+         dut.plain.core.impl.arithmetic0.s1!=='0||dut.plain.core.impl.arithmetic0.s2!=='0)
+       $fatal(1,"PLAIN retained changing replica state");
+      if(dut.corrected_event||dut.disagreement_event)$fatal(1,"PLAIN emitted mitigation event");
+      $display("PASS PLAIN: raw RF/RAM upsets persist without correction");
+`endif
       $display("PASS pipeline smoke RF_TMR=%d: %d retirements in %d clocks",RF_TMR,retired,cycles);$finish;
      end
      default:$fatal(1,"unexpected retirement PC %h",retire_pc);

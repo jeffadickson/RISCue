@@ -9,10 +9,12 @@ PIPELINE_MODE_ID = 1
 ifneq ($(ALLOW_EXPERIMENTAL_PARITY),1)
 $(error PARITY_REPLAY requires ALLOW_EXPERIMENTAL_PARITY=1)
 endif
+else ifeq ($(PIPELINE_PROTECTION),PLAIN)
+PIPELINE_MODE_ID = 2
 else
-$(error Invalid PIPELINE_PROTECTION; use TMR or PARITY_REPLAY)
+$(error Invalid PIPELINE_PROTECTION; use TMR, PARITY_REPLAY or PLAIN)
 endif
-PIPELINE_FLAGS = -DRISCUE_PIPELINE_PROTECTION=$(PIPELINE_MODE_ID) -DRISCUE_ALLOW_EXPERIMENTAL_PARITY=$(ALLOW_EXPERIMENTAL_PARITY)
+PIPELINE_FLAGS = $(if $(filter PLAIN,$(PIPELINE_PROTECTION)),-DRISCUE_PLAIN_MEMORY) -DRISCUE_PIPELINE_PROTECTION=$(PIPELINE_MODE_ID) -DRISCUE_ALLOW_EXPERIMENTAL_PARITY=$(ALLOW_EXPERIMENTAL_PARITY)
 
 IVERILOG ?= iverilog
 VVP ?= vvp
@@ -169,7 +171,7 @@ formal-muldiv formal-injector: formal-fetch formal-tools
 pipeline-smoke: | build
 	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_smoke -o build/pipeline-smoke $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
 	$(VVP) build/pipeline-smoke
-	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=1 -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_smoke -Ptb_pipeline_smoke.RF_TMR=$(if $(filter PLAIN,$(PIPELINE_PROTECTION)),0,1) -o build/pipeline-smoke-tmr $(PIPELINE_RTL) tests/tb_pipeline_smoke.sv
 	$(VVP) build/pipeline-smoke-tmr
 
 .PHONY: pipeline-jump
@@ -178,9 +180,9 @@ pipeline-jump: | build
 	$(VVP) build/pipeline-jump-late
 	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -o build/pipeline-jump-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-early
-	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-tmr-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=$(if $(filter PLAIN,$(PIPELINE_PROTECTION)),0,1) -Ptb_pipeline_jump.EARLY_JUMP=0 -o build/pipeline-jump-tmr-late $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-tmr-late
-	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=1 -o build/pipeline-jump-tmr-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
+	$(IVERILOG) $(PIPELINE_FLAGS) -g2012 -s tb_pipeline_jump -Ptb_pipeline_jump.RF_TMR=$(if $(filter PLAIN,$(PIPELINE_PROTECTION)),0,1) -o build/pipeline-jump-tmr-early $(PIPELINE_RTL) tests/tb_pipeline_jump.sv
 	$(VVP) build/pipeline-jump-tmr-early
 
 KV260_CLK_HZ ?= 10000000
@@ -401,3 +403,7 @@ formal-setup-check:
 	$(PYTHON) tools/formal_smoke.py
 packet-demo:
 	$(PYTHON) tools/build_packet_demo.py
+
+.PHONY: pipeline-variants-check
+pipeline-variants-check:
+	$(PYTHON) tools/run_variant_matrix.py

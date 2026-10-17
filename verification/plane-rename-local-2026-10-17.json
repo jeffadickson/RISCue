@@ -1,0 +1,80 @@
+{
+  "core_sha256": "724cf09c9cbb49853d6601b18e4ca04bc21e9eaeffe1823652da99f78b31a0ee",
+  "results": [
+    {
+      "command": [
+        "make",
+        "pipeline-selection-test"
+      ],
+      "exit_code": 0,
+      "seconds": 7.16,
+      "log": "build/variant-matrix/0.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=TMR",
+        "ALLOW_EXPERIMENTAL_PARITY=0"
+      ],
+      "exit_code": 0,
+      "seconds": 14.89,
+      "log": "build/variant-matrix/1.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=PARITY_REPLAY",
+        "ALLOW_EXPERIMENTAL_PARITY=1"
+      ],
+      "exit_code": 0,
+      "seconds": 27.87,
+      "log": "build/variant-matrix/2.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=PLANE",
+        "ALLOW_EXPERIMENTAL_PARITY=0"
+      ],
+      "exit_code": 0,
+      "seconds": 11.7,
+      "log": "build/variant-matrix/3.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-replay-test"
+      ],
+      "exit_code": 0,
+      "seconds": 71.45,
+      "log": "build/variant-matrix/4.log"
+    },
+    {
+      "command": [
+        "make",
+        "docs",
+        "docs-check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.58,
+      "log": "build/variant-matrix/5.log"
+    }
+  ],
+  "variant_name": "Plane",
+  "build_selector": "PLANE",
+  "mode_id": 2,
+  "scope": "Naming change from NONE to PLANE; all three variant functional regressions, 24 protected replay cases, selector and documentation checks passed locally.",
+  "source_sha256": {
+    "Makefile": "48d277a77c352a9e0d4130d0c044fbfcf48360bd89df7115741602f59c4aacd4",
+    "rtl/riscue_pipeline_core.sv": "724cf09c9cbb49853d6601b18e4ca04bc21e9eaeffe1823652da99f78b31a0ee",
+    "rtl/riscue_pipeline_soc.sv": "023c43b5440dd9766248c6d82b14ce452ef15eeb7a1185acc96c3c1eba7c7a4a",
+    "tools/pipeline_config.py": "2ac08227436f19ba3bde75de63b77a1e93357c3abecb766c846d5ccbf5c7d16f",
+    "tools/run_variant_matrix.py": "f1e5d9a17284df9c533cf502b9aa07afa59ad3e0653daa024f891953bb33ea39"
+  }
+}

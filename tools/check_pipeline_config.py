@@ -7,3 +7,7 @@ for mode,exp in [('bad','1'),('PARITY_REPLAY','0'),('TMR','2')]:
  except ValueError:pass
  else:raise AssertionError((mode,exp))
 print('PASS pipeline build provenance and negative selection tests')
+
+assert configuration('PLAIN','0')['mode_id']==2
+assert configuration('PLAIN','0')['fi_abi'] is None
+assert '-DRISCUE_PLAIN_MEMORY' in configuration('PLAIN','0')['iverilog_flags']

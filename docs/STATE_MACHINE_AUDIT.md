@@ -50,3 +50,6 @@ The dedicated debug target adds a triplicated DM command/run-control/SBA record,
 with sticky majority-loss failure. The seven architectural debug bits are part
 of the pipeline record. TAP/CDC state remains outside this protection claim.
 See [hardware debug](HARDWARE_DEBUG.md).
+
+## PLAIN baseline
+Mode PLAIN uses unprotected single state records and ordinary RF/RAM words; no SEU detection/correction claim applies. Normal traps, bus errors and timeouts retain functional semantics. See UNPROTECTED.md.

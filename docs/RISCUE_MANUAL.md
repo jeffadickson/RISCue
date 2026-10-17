@@ -312,20 +312,20 @@ Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
 
 ```systemverilog
   voted=(c0&c1)|(c0&c2)|(c1&c2);
-  s=voted;
+  s=UNPROTECTED?c0:voted;
   payload_bad=PARITY_REPLAY&&(stage_parity(c0)!=payload_parity);
   if(PARITY_REPLAY)begin
    s.f=c0.f;s.d=c0.d;s.x=c0.x;s.m=c0.m;s.w=c0.w;
    // Contain corrupt control before operand addressing or commit decisions.
    if(payload_bad)begin s.f='0;s.d='0;s.x='0;s.m='0;s.w='0;end
   end
+  if(UNPROTECTED)begin recovery='0;recovery_next='0;recovery_bad=0;end
   n=s;
   store_mask=s.m.e.mask;store_data=s.m.e.wdata;
   record_bad=PARITY_REPLAY?((trusted(c0)!=c1)&&(trusted(c0)!=c2)&&(c1!=c2)):((c0!=c1)&&(c0!=c2)&&(c1!=c2));
-  ra=ecc_decode(rf[s.d.insn[19:15]]);rb=ecc_decode(rf[s.d.insn[24:20]]);scrubbed=ecc_decode(rf[s.scrub]);response=ecc_decode(rdata_code);
+  if(UNPROTECTED)record_bad=0;
+  ra=word_decode(rf[s.d.insn[19:15]]);rb=word_decode(rf[s.d.insn[24:20]]);scrubbed=word_decode(rf[s.scrub]);response=word_decode(rdata_code);
   rf_bad=!RF_TMR&&((s.d.valid&&uses1(s.d.insn)&&ra.uncorrectable)||(s.d.valid&&uses2(s.d.insn)&&rb.uncorrectable)||scrubbed.uncorrectable);
-  if(RF_TMR)begin
-   ra.data=(tmr0[s.d.insn[19:15]]&tmr1[s.d.insn[19:15]])|(tmr0[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]])|(tmr1[s.d.insn[19:15]]&tmr2[s.d.insn[19:15]]);
 ```
 <!-- /excerpt:vote -->
 
@@ -1023,3 +1023,7 @@ The [packet reference](PACKET_PROCESSOR.md) contains MMIO offsets, framing,
 watchdog/IRQ semantics, local FI ABI, commands and remaining work. The
 [recorded results](../verification/packet-results.json) apply to simulation,
 not line-rate performance, physical boards, formal proof or radiation behavior.
+
+## Unprotected comparison build
+
+See [the PLAIN baseline](UNPROTECTED.md). Use `make pipeline-variants-check` for the required local three-variant development gate. TMR stays the default; parity/replay stays experimental.

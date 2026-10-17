@@ -32,7 +32,13 @@ module tb_pipeline_jump #(parameter bit RF_TMR=0,EARLY_JUMP=1);
   for(integer k=0;k<5;k=k+1)begin expected_pc[15+k]=256+4*k;expected_pc[23+k]=256+4*k;end
   expected_pc[20]=56;expected_pc[21]=64;expected_pc[22]=68;expected_pc[28]=72;expected_pc[29]=80;
   repeat(3)@(negedge clk);
-  for(integer k=0;k<1024;k=k+1)dut.ram.mem[k]=ecc_encode(image[k]);rst_n=1;
+  for(integer k=0;k<1024;k=k+1)begin
+`ifdef RISCUE_PLAIN_MEMORY
+ dut.plain.mem[k]=image[k];
+`else
+ dut.ram.mem[k]=ecc_encode(image[k]);
+`endif
+ end;rst_n=1;
   while(cycles<2000)begin
    @(negedge clk);cycles=cycles+1;
    if(fatal)$fatal(1,"hardware fatal");

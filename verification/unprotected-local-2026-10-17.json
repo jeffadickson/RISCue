@@ -1,0 +1,87 @@
+{
+  "core_sha256": "79aff923be5de91a379e82e05cef2cb3357d67c8dd7771a3d67d3a169f32ed1b",
+  "results": [
+    {
+      "command": [
+        "make",
+        "pipeline-selection-test"
+      ],
+      "exit_code": 0,
+      "seconds": 9.62,
+      "log": "build/variant-matrix/0.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=TMR",
+        "ALLOW_EXPERIMENTAL_PARITY=0"
+      ],
+      "exit_code": 0,
+      "seconds": 22.16,
+      "log": "build/variant-matrix/1.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=PARITY_REPLAY",
+        "ALLOW_EXPERIMENTAL_PARITY=1"
+      ],
+      "exit_code": 0,
+      "seconds": 32.57,
+      "log": "build/variant-matrix/2.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-smoke",
+        "pipeline-jump",
+        "PIPELINE_PROTECTION=NONE",
+        "ALLOW_EXPERIMENTAL_PARITY=0"
+      ],
+      "exit_code": 0,
+      "seconds": 12.12,
+      "log": "build/variant-matrix/3.log"
+    },
+    {
+      "command": [
+        "make",
+        "pipeline-replay-test"
+      ],
+      "exit_code": 0,
+      "seconds": 71.91,
+      "log": "build/variant-matrix/4.log"
+    },
+    {
+      "command": [
+        "make",
+        "docs",
+        "docs-check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.87,
+      "log": "build/variant-matrix/5.log"
+    }
+  ],
+  "recorded_at": "2026-10-17T15:17:15.599400+00:00",
+  "host": "Dell 15; Windows / WSL Ubuntu-24.04",
+  "base_commit": "654949b82817135ab6a1a383341099630fa0f51b",
+  "source_sha256": {
+    "Makefile": "a341dce35f99e76a065072c91d5529a19bc0607ee08745947e8b8297630df2c1",
+    "rtl/riscue_pipeline_core.sv": "79aff923be5de91a379e82e05cef2cb3357d67c8dd7771a3d67d3a169f32ed1b",
+    "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+    "rtl/riscue_pipeline_soc.sv": "a3b8b691e48851e4518288504d760e4c2911e16c38d733435e4953f1ed58e440",
+    "tests/tb_pipeline_smoke.sv": "ad601640d8600927cb3da6207cc644d40ce9c5e941a9eeb58fe71d2b926a1c2e",
+    "tests/tb_pipeline_jump.sv": "2225a571bd4fd5002bf3ad8d21fb2b17bffeda6392188742ec39f7959a69c907",
+    "tools/run_variant_matrix.py": "33c1ea03c4022b666eacf04d41a92fd0322d09ac8a0ca74d7e176df6525d62f7",
+    "tools/pipeline_config.py": "65744eafd02d65405cbf65a209acd1e19852d9ce8202b1107f4475ac53ffc3b1",
+    "tools/check_pipeline_selection.py": "cc82f384a81a3839f3c1b2b79aa9b5feaeefa38d494bf3d747af7f49daa3f229",
+    "tools/check_pipeline_make.py": "29e0cf4bb6af9882a6ba375678a02aabbca179abf45b49fde4f05b2b24d70e61",
+    "tools/check_pipeline_config.py": "e94d4814e42690bc01f28e068629a829a671f5ba590d247da59be4a70d5a32ea"
+  },
+  "scope": "Directed local simulation: TMR and PARITY_REPLAY in both RF choices; NONE with raw RF/RAM; early/late jumps, selector rejection, 24 parity/replay cases, docs. NONE raw RF/RAM upsets persist without correction. No full ISA, formal equivalence, synthesis area/timing or FPGA claim.",
+  "rerun": "source /mnt/c/dev/Enter-RISCue.sh && cd /mnt/c/dev/RISCue && make pipeline-variants-check"
+}

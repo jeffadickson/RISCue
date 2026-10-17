@@ -172,3 +172,7 @@ exist. RTL counts alone are not a footprint guarantee.
 Canonical requirements: [requirements.json](requirements.json); generated
 [traceability table](REQUIREMENTS.md). Current implementation:
 [state inventory](STATE_MACHINE_AUDIT.md); limits: [protection](PROTECTION.md).
+
+## Unprotected baseline and required development gate
+
+PLAIN is a third, deliberately unprotected local simulation option. See [the unprotected variant](UNPROTECTED.md). Functional changes must pass `make pipeline-variants-check` across all three variants. Existing radiation-protection obligations describe protected variants; PLAIN makes no SEU mitigation claim.

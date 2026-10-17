@@ -862,5 +862,13 @@
     "verification": "Local paired Series-7 quick mapping and scoped core/recovery replica audit in verification/local-toolchain-2026-10-16.json; full mode-specific mapped path/FSM audits and vendor place-and-route remain required",
     "status": "partial; paired RF_TMR=0 core resource estimates and scoped replica audit passed; parity release, timing and full protection gates open",
     "priority": "must"
+  },
+  {
+    "id": "BUILD-005",
+    "category": "Build",
+    "requirement": "Maintain TMR, experimental PARITY_REPLAY and unprotected PLAIN together; every functional current-core change shall pass the local pipeline-variants-check gate. PLAIN shall use single state/lane/register/RAM storage without SEU correction and reject RF_TMR or FI_ENABLE.",
+    "verification": "make pipeline-variants-check; verification/plane-rename-local-2026-10-17.json",
+    "status": "implemented; three-variant directed local regression passed 2026-10-17",
+    "priority": "must"
   }
 ]
