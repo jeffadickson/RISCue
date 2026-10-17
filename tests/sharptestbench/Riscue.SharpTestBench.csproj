@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SharpTestBenchRoot)/src/SharpTestBench/SharpTestBench.csproj"
+      Condition="'$(SharpTestBenchRoot)' != ''" />
+  </ItemGroup>
+  <Target Name="RequireSharpTestBenchRoot" BeforeTargets="ResolveReferences" Condition="'$(SharpTestBenchRoot)' == ''">
+    <Error Text="Set -p:SharpTestBenchRoot=/absolute/path/to/SharpTestBench checkout" />
+  </Target>
+</Project>

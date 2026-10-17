@@ -1,0 +1,42 @@
+name: One-off Cocotb RISCue parity benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/sharptestbench-riscue-verification]
+    paths: ['.github/ci-trigger/cocotb-parity-once.txt', '.github/ci-trigger/cocotb-parity-retry.txt', '.github/ci-trigger/cocotb-parity-final.txt']
+permissions:
+  contents: read
+jobs:
+  cocotb-parity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        simulator: [icarus, verilator]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install simulators and cocotb
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq iverilog verilator g++ make
+          python -m pip install 'cocotb==2.0.1'
+      - name: Run matched CPU retirement test
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          set -o pipefail
+          python tests/sharptestbench/run_cocotb.py \
+            --sim ${{ matrix.simulator }} \
+            --build-dir build/cocotb-${{ matrix.simulator }} 2>&1 | tee cocotb-${{ matrix.simulator }}.log
+          grep -q 'RISCUE_COCOTB_PASS' cocotb-${{ matrix.simulator }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: riscue-cocotb-${{ matrix.simulator }}
+          path: |
+            cocotb-${{ matrix.simulator }}.log
+            build/cocotb-${{ matrix.simulator }}/cocotb-trace.json

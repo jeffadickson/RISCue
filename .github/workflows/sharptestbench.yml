@@ -1,0 +1,143 @@
+name: SharpTestBench CPU integration
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/sharptestbench-riscue-verification]
+    paths: ['.github/ci-trigger/verilator-benchmark-once.txt', '.github/ci-trigger/simulator-benchmark.txt']
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'tests/sharptestbench/**'
+      - 'tests/tb_pipeline_smoke.sv'
+      - 'rtl/**'
+      - '.github/workflows/sharptestbench.yml'
+concurrency:
+  group: riscue-stb-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  pr-smoke:
+    name: Fast Icarus pipeline smoke
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v5
+      - name: Compile and execute existing CPU retirement smoke test
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq iverilog
+          mkdir -p build/stb
+          iverilog -g2012 -s tb_pipeline_smoke -o build/stb/original.vvp \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv
+          vvp build/stb/original.vvp | tee build/stb/original.log
+          grep -q 'PASS pipeline smoke' build/stb/original.log
+  icarus-managed:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: jeffadickson/SharpTestBench
+          ref: 172935ae6ff382e93e957eb53235f90c27d978e6
+          path: vendor/SharpTestBench
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y iverilog g++ gcc
+      - name: Provision transitional native GPI adapters
+        working-directory: vendor/SharpTestBench
+        run: |
+          python tools/prepare_upstream.py
+          CC=gcc CXX=g++ python -m pip install ./build/upstream/cocotb-source pytest
+      - name: Compile RISCue C# scoreboard
+        run: |
+          mkdir -p build/stb
+          set -o pipefail
+          dotnet build tests/sharptestbench/Riscue.SharpTestBench.csproj -c Release -p:SharpTestBenchRoot="$GITHUB_WORKSPACE/vendor/SharpTestBench" 2>&1 | tee build/stb/managed-build.log
+      - name: Validate generated managed assembly
+        run: |
+          test -f tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.dll
+          test -f tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.runtimeconfig.json
+      - name: Run original Icarus hardware test
+        run: |
+          set -o pipefail
+          mkdir -p build/stb
+          iverilog -g2012 -s tb_pipeline_smoke -o build/stb/original.vvp             rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv             rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv             rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv             rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv
+          vvp build/stb/original.vvp | tee build/stb/original.log
+          grep -q 'PASS pipeline smoke' build/stb/original.log
+      - name: Run RISCue managed SharpTestBench under Icarus
+        run: |
+          set -o pipefail
+          python vendor/SharpTestBench/tools/run.py             --sim icarus --assembly "$GITHUB_WORKSPACE/tests/sharptestbench/bin/Release/net10.0/Riscue.SharpTestBench.dll"             --top tb_sharptestbench_riscue --entry-type "Entry, Riscue.SharpTestBench" --label riscue             --source rtl/ft_pkg.sv --source rtl/riscue_pipeline_pkg.sv             --source rtl/riscue_rvc.sv --source rtl/riscue_jump_target.sv             --source rtl/riscue_execute.sv --source rtl/riscue_muldiv.sv             --source rtl/riscue_pipeline_core.sv --source rtl/ft_ecc_ram.sv             --source rtl/ft_event_monitor.sv --source rtl/riscue_pipeline_soc.sv             --source tests/sharptestbench/tb_sharptestbench_riscue.sv 2>&1 | tee build/stb/sharptestbench.log
+        env:
+          RISCUE_STB_TRACE: ${{ github.workspace }}/build/stb/retirements.json
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: riscue-managed-icarus
+          path: |
+            build/stb/**
+            vendor/SharpTestBench/build/riscue-*
+  verilator-native:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - run: sudo apt-get update && sudo apt-get install -y verilator g++ make
+      - name: Verilator version and lint stage
+        run: |
+          mkdir -p build/stb
+          verilator --version | tee build/stb/verilator-version.txt
+          verilator --lint-only --timing -Wno-fatal --top-module tb_pipeline_smoke \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv 2>&1 | tee build/stb/verilator-lint.log
+      - name: Build existing self-checking native model
+        run: |
+          mkdir -p build/stb
+          set -o pipefail
+          verilator --binary --timing -Wno-fatal -j 2             --top-module tb_pipeline_smoke --Mdir build/stb/verilator             -CFLAGS "-std=c++20 -O3" -O3             rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv             rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv             rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv             rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv 2>&1 | tee build/stb/verilator-build.log
+      - name: Run native model and check retirement oracle
+        run: |
+          set -o pipefail
+          /usr/bin/time -p build/stb/verilator/Vtb_pipeline_smoke 2>&1 | tee build/stb/verilator-native.log
+          grep -q 'PASS pipeline smoke' build/stb/verilator-native.log
+      - name: Compile matched Icarus baseline
+        run: |
+          sudo apt-get install -y iverilog
+          iverilog -g2012 -s tb_pipeline_smoke -o build/stb/benchmark-icarus.vvp \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv
+      - name: Benchmark prebuilt simulator executables
+        run: |
+          python3 tests/sharptestbench/benchmark_simulators.py \
+            --runs 150 \
+            --native build/stb/verilator/Vtb_pipeline_smoke \
+            --icarus build/stb/benchmark-icarus.vvp \
+            --output build/stb/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: riscue-verilator-native
+          path: |
+            build/stb/verilator-native.log
+            build/stb/verilator-build.log
+            build/stb/verilator-lint.log
+            build/stb/verilator-version.txt
+            build/stb/benchmark.json
