@@ -15,7 +15,7 @@ build=Path(A.build_dir).resolve()
 build.mkdir(parents=True,exist_ok=True)
 r=get_runner(A.sim)
 r.build(sources=[Path(s).resolve() for s in sources],hdl_toplevel="tb_sharptestbench_riscue",
-build_dir=build,always=True,build_args=["-Wno-fatal"] if A.sim=="verilator" else [])
+build_dir=build,always=True,build_args=["-Wno-fatal", "--timing"] if A.sim=="verilator" else [])
 r.test(hdl_toplevel="tb_sharptestbench_riscue",
 test_module="test_riscue_cocotb_smoke",
 test_dir=build,
