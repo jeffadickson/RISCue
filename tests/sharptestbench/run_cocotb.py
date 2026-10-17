@@ -13,7 +13,7 @@ sources=["rtl/ft_pkg.sv","rtl/riscue_pipeline_pkg.sv","rtl/riscue_rvc.sv",
 "rtl/riscue_pipeline_soc.sv","tests/sharptestbench/tb_sharptestbench_riscue.sv"]
 build=Path(A.build_dir).resolve()
 build.mkdir(parents=True,exist_ok=True)
-r=get_runner(A.sim)()
+r=get_runner(A.sim)
 r.build(sources=[Path(s).resolve() for s in sources],hdl_toplevel="tb_sharptestbench_riscue",
 build_dir=build,always=True,build_args=["-Wno-fatal"] if A.sim=="verilator" else [])
 r.test(hdl_toplevel="tb_sharptestbench_riscue",
