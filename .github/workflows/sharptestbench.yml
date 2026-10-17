@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/sharptestbench-riscue-verification]
-    paths: ['.github/ci-trigger/verilator-benchmark-once.txt']
+    paths: ['.github/ci-trigger/verilator-benchmark-once.txt', '.github/ci-trigger/simulator-benchmark.txt']
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
@@ -116,6 +116,21 @@ jobs:
           set -o pipefail
           /usr/bin/time -p build/stb/verilator/Vtb_pipeline_smoke 2>&1 | tee build/stb/verilator-native.log
           grep -q 'PASS pipeline smoke' build/stb/verilator-native.log
+      - name: Compile matched Icarus baseline
+        run: |
+          sudo apt-get install -y iverilog
+          iverilog -g2012 -s tb_pipeline_smoke -o build/stb/benchmark-icarus.vvp \
+            rtl/ft_pkg.sv rtl/riscue_pipeline_pkg.sv rtl/riscue_rvc.sv \
+            rtl/riscue_jump_target.sv rtl/riscue_execute.sv rtl/riscue_muldiv.sv \
+            rtl/riscue_pipeline_core.sv rtl/ft_ecc_ram.sv rtl/ft_event_monitor.sv \
+            rtl/riscue_pipeline_soc.sv tests/tb_pipeline_smoke.sv
+      - name: Benchmark prebuilt simulator executables
+        run: |
+          python3 tests/sharptestbench/benchmark_simulators.py \
+            --runs 150 \
+            --native build/stb/verilator/Vtb_pipeline_smoke \
+            --icarus build/stb/benchmark-icarus.vvp \
+            --output build/stb/benchmark.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -125,3 +140,4 @@ jobs:
             build/stb/verilator-build.log
             build/stb/verilator-lint.log
             build/stb/verilator-version.txt
+            build/stb/benchmark.json
