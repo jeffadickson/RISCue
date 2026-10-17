@@ -1,6 +1,9 @@
 name: SharpTestBench CPU integration
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/sharptestbench-riscue-verification]
+    paths: ['.github/ci-trigger/verilator-benchmark-once.txt']
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
@@ -88,7 +91,7 @@ jobs:
             build/stb/**
             vendor/SharpTestBench/build/riscue-*
   verilator-native:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
