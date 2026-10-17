@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/sharptestbench-riscue-verification]
-    paths: ['.github/ci-trigger/cocotb-parity-once.txt']
+    paths: ['.github/ci-trigger/cocotb-parity-once.txt', '.github/ci-trigger/cocotb-parity-retry.txt']
 permissions:
   contents: read
 jobs:
