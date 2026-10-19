@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_axi_master_bridge;
+module tb_axi_master_bridge #(parameter bit CHECKED_VOTER=0);
  wire idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
@@ -13,7 +13,7 @@ module tb_axi_master_bridge;
  logic fi_valid=0;logic [3:0] fi_target=0;logic [31:0] fi_index=0;logic [511:0] fi_mask=0;
  logic core_req=0;wire core_ready,core_error;
  logic [38:0] addr_code,wdata_code,ctrl_code;wire [38:0] rdata_code;
- riscue_axi_master_bridge dut(.clk(aclk),.rst_n(aresetn),.fatal(bridge_fatal),.*);
+ riscue_axi_master_bridge #(.CHECKED_VOTER(CHECKED_VOTER)) dut(.clk(aclk),.rst_n(aresetn),.fatal(bridge_fatal),.*);
  always #5 aclk=~aclk;
  task tick;begin @(negedge aclk);#1;end endtask
  initial begin
