@@ -281,6 +281,11 @@ test-axi-checked-voter: | build
 	$(IVERILOG) -g2012 -s tb_axi_master_bridge -Ptb_axi_master_bridge.CHECKED_VOTER=1 -o build/tb_axi_checked_voter rtl/ft_pkg.sv rtl/riscue_axi_master_bridge.sv tests/tb_axi_master_bridge.sv
 	$(VVP) build/tb_axi_checked_voter
 
+.PHONY: test-axi-integrity-guard
+test-axi-integrity-guard: | build
+	$(IVERILOG) -g2012 -s tb_axi_master_bridge -Ptb_axi_master_bridge.CHECKED_VOTER=1 -Ptb_axi_master_bridge.INTEGRITY_GUARD=1 -o build/tb_axi_integrity_guard rtl/ft_pkg.sv rtl/riscue_axi_master_bridge.sv tests/tb_axi_master_bridge.sv
+	$(VVP) build/tb_axi_integrity_guard
+
 .PHONY: test-axi-core-errors
 test-axi-core-errors: test-axi-core
 	$(IVERILOG) -g2012 -s tb_axi_core -Ptb_axi_core.STORE_ERROR=1 -o build/tb_axi_core_store $(AXI_CORE_RTL) tests/tb_axi_core.sv
