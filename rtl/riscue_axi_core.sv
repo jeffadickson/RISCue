@@ -35,7 +35,7 @@ module riscue_axi_core #(
   .corrected_event(core_ce),.disagreement_event(core_dis),.retire_valid(retire_valid),.retire_pc(retire_pc),.retire_insn(retire_insn),.retire_result(retire_result),.retire_rd(retire_rd),
   .fi_valid(fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask),.fi_ack(fi_ack),
   .event_flags(core_event_flags),.event_address(core_event_address));
- riscue_axi_master_bridge #(.CHECKED_VOTER(AXI_CHECKED_VOTER)) bridge(.idle(bridge_idle),.clk(aclk),.rst_n(aresetn),.core_req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
+ riscue_axi_master_bridge #(.CHECKED_VOTER(AXI_CHECKED_VOTER),.INTEGRITY_GUARD(AXI_INTEGRITY_GUARD)) bridge(.idle(bridge_idle),.clk(aclk),.rst_n(aresetn),.core_req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
   .core_ready(ready),.core_error(bus_error),.rdata_code(rdata_code),.corrected_event(bridge_ce),.disagreement_event(bridge_dis),.fatal(bridge_fatal),
   .m_axi_awaddr(m_axi_awaddr),.m_axi_awprot(m_axi_awprot),.m_axi_awvalid(m_axi_awvalid),.m_axi_awready(m_axi_awready),
   .m_axi_wdata(m_axi_wdata),.m_axi_wstrb(m_axi_wstrb),.m_axi_wvalid(m_axi_wvalid),.m_axi_wready(m_axi_wready),
