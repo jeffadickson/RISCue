@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_axi_master_bridge;
+module tb_axi_master_bridge #(parameter bit CHECKED_VOTER=0,INTEGRITY_GUARD=0);
  wire idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
@@ -13,7 +13,7 @@ module tb_axi_master_bridge;
  logic fi_valid=0;logic [3:0] fi_target=0;logic [31:0] fi_index=0;logic [511:0] fi_mask=0;
  logic core_req=0;wire core_ready,core_error;
  logic [38:0] addr_code,wdata_code,ctrl_code;wire [38:0] rdata_code;
- riscue_axi_master_bridge dut(.clk(aclk),.rst_n(aresetn),.fatal(bridge_fatal),.*);
+ riscue_axi_master_bridge #(.CHECKED_VOTER(CHECKED_VOTER),.INTEGRITY_GUARD(INTEGRITY_GUARD)) dut(.clk(aclk),.rst_n(aresetn),.fatal(bridge_fatal),.*);
  always #5 aclk=~aclk;
  task tick;begin @(negedge aclk);#1;end endtask
  initial begin
@@ -45,6 +45,22 @@ module tb_axi_master_bridge;
   if(!corrected_event||bridge_fatal||m_axi_araddr!=32'h80)$fatal(1,"ECC correction");
   aresetn=0;tick();aresetn=1;core_req=1;addr_code=ecc_encode(32'h80)^39'd3;tick();
   if(!bridge_fatal||m_axi_arvalid||m_axi_awvalid)$fatal(1,"ECC DED fail stop");
+  // Separate optional-guard negative test: an uncorrectable shadow
+  // descriptor must stop AW/W before any external write handshake.
+  if(INTEGRITY_GUARD)begin
+   core_req=0;aresetn=0;tick();aresetn=1;
+   addr_code=ecc_encode(32'h100);wdata_code=ecc_encode(32'h87654321);
+   ctrl_code=ecc_encode(32'h1f);core_req=1;tick();
+   if(!m_axi_awvalid||!m_axi_wvalid||bridge_fatal)
+    $fatal(1,"Guard test transaction did not issue");
+   dut.guard_addr=dut.guard_addr^39'd3;
+   #1;
+   if(!bridge_fatal||m_axi_awvalid||m_axi_wvalid)
+    $fatal(1,"Corrupt integrity descriptor allowed an AXI write");
+   tick();
+   if(!bridge_fatal||m_axi_awvalid||m_axi_wvalid)
+    $fatal(1,"Integrity guard error not sticky");
+  end
   $display("PASS AXI bridge ownership/drain, W-before-AW, response error, TMR repair, held request, ECC correction/DED");$finish;
  end
 endmodule
