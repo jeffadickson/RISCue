@@ -1,5 +1,8 @@
 # Remaining implementation and verification work
 
+**Architecture direction (October 2026):** retain the reduced-complexity, protected single-pipeline processor as the flagship. Prioritize checked voter/commit boundaries, preserve existing ECC/TMR register-file options and compared execution lanes; do not require three complete cores. Treat Xilinx configuration scrubbing as a separately validated FPGA platform responsibility, not processor RTL development. Design and acceptance gates: [reduced-complexity TMR plan](REDUCED_COMPLEXITY_TMR_PLAN.md).
+
+
 The current five-stage core, M-mode platform, bit manipulation, AXI ECC RAM and KC705 UART monitor have directed simulation evidence, including compiled C. See [validation](VALIDATION.md) and [the manual](RISCUE_MANUAL.md).
 
 1. Run the actual KC705 Vivado flow, inspect resource use, timing, CDC and replica preservation, then verify clock/reset, UART identity, ELF loading, execution and error recovery on the board.
