@@ -64,3 +64,25 @@ On one pinned Xilinx target, report post-synthesis and post-place/route LUT, FF,
 - G4: implementation-level review and board tests; platform owner separately verifies Xilinx configuration scrub integration.
 
 References: `docs/PROTECTION.md`, `docs/STATE_MACHINE_AUDIT.md`, `docs/VALIDATION.md`, `docs/AXI_ECC_MEMORY.md`, and AMD PG268 (MicroBlaze TMR). This plan is intentionally **not** a claim of functional parity, certification, or radiation qualification.
+
+## AXI4-Lite Integrity Guard — detailed implementation work package (AXIG-001 through AXIG-012)
+
+**Priority:** protection of the existing single AXI master, not three AXI masters. AMD PG268 motivates protocol-aware voter/comparator checks for triplicated AXI interfaces, but this design uses independent transaction-intent checks around the single-master boundary. It is *not* equivalent to an AMD TMR Voter, and protocol/ECC encoding of a wrong upstream address cannot make it correct.
+
+### Proposed placement and contract
+
+1. Inventory `riscue_pipeline_core` ECC-coded request generation, `riscue_axi_master_bridge`, `riscue_axi_core`, AXI interconnect boundary and `riscue_axi_ecc_ram` independently. Identify the earliest trustworthy source of instruction intent and a checker that does not simply recalculate from the same shared corrupted source.
+2. Capture and protect an authorization descriptor (operation/read-write, byte address, size, WSTRB, WDATA or appropriately derived/checkable data, provenance/retirement order, destination window, transaction epoch). Check the descriptor against *actual output pins and ownership state* before releasing side-effecting AXI handshakes. Distinct lanes/protected registered information must be demonstrably independent; otherwise mark that fault class uncovered.
+3. Model AW and W as **separately accepted channels**. Do not presume AXI transfers are atomic or that withdrawing VALID cancels an already accepted transfer. Choose and document an approach preventing unsafe half-issued writes—e.g., holding both AW/W while qualifying the descriptor and freezing payloads through acceptance; guarantee safe behavior for every accepted/unaccepted combination, including fault during backpressure. Reject authorization mismatches before first acceptance wherever possible. After partial acceptance, classify recovery as constrained, not automatically rollback-capable.
+4. Check AR and R channels, response ownership and integrity, and B responses. Enforce stable payload/VALID while READY is low; detect unexpected, missing, duplicated or misattributed responses. A fail-stop must not present a mismatched read or failed write as successful architectural retirement.
+5. Attribute faults with sticky detection, source identity and address/PC context; inhibit *new* requests, coordinate existing accepted transactions and fatal/drain policies with AXI and RAM controllers. No speculative replay of non-idempotent stores.
+6. Prefer structurally independent voter/commit checkers with explicit synthesis hierarchy/keep review; test single-replica state faults separately from voter-output or shared combinational-cone faults. Independence is a testable property, not an assertion.
+7. Keep configurable comparator diagnostics, mask behavior and injection lab-only by default; a masked field must never silently disable critical address/side-effect authorization checks.
+
+### Required phase-aware verification
+
+Test AW-before-W, W-before-AW, simultaneous AW/W, arbitrarily delayed READY/B/R, asserted VALID under backpressure, successful and error responses, bridge/core reset and fatal escalation. Inject into address, data, byte enables, read/write intent, AWVALID/WVALID/ARVALID, B/R response ownership, and checker/voter paths at pre-authorization, pre-first-handshake, between partial handshakes and post-acceptance phases. For each case, assert the injected signal was actually corrupted; compare the pin-level accepted transaction trace to an independent expected ledger. Categorize outcome as masked, detected/fail-stop, undetected externally visible corruption, or inconclusive; preserve evidence and source SHA.
+
+**Acceptance gates:** (1) no unauthorized external memory/peripheral write is accepted for covered single-fault sites before acceptance; (2) no detected mismatch is reported as a successful retirement; (3) AXI channel stability/ownership holds under stalls and faults; (4) ECC/TMR mode and compiled-C baseline parity; (5) area/Fmax changes and noncovered common modes explicitly reported. The acceptance gate cannot claim universal elimination of shared-input/common-mode errors or cancellation of transactions accepted before detection.
+
+**Xilinx configuration boundary:** FPGA configuration memory scrubbing is supplied and verified by the board/system integrator. It is intentionally not an in-core RTL feature. SEM does not replace this AXI guard, user-state correction or protection from transient illegal writes.
