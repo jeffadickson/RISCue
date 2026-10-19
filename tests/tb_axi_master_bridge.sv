@@ -45,6 +45,22 @@ module tb_axi_master_bridge #(parameter bit CHECKED_VOTER=0,INTEGRITY_GUARD=0);
   if(!corrected_event||bridge_fatal||m_axi_araddr!=32'h80)$fatal(1,"ECC correction");
   aresetn=0;tick();aresetn=1;core_req=1;addr_code=ecc_encode(32'h80)^39'd3;tick();
   if(!bridge_fatal||m_axi_arvalid||m_axi_awvalid)$fatal(1,"ECC DED fail stop");
+  // Separate optional-guard negative test: an uncorrectable shadow
+  // descriptor must stop AW/W before any external write handshake.
+  if(INTEGRITY_GUARD)begin
+   core_req=0;aresetn=0;tick();aresetn=1;
+   addr_code=ecc_encode(32'h100);wdata_code=ecc_encode(32'h87654321);
+   ctrl_code=ecc_encode(32'h1f);core_req=1;tick();
+   if(!m_axi_awvalid||!m_axi_wvalid||bridge_fatal)
+    $fatal(1,"Guard test transaction did not issue");
+   dut.guard_addr=dut.guard_addr^39'd3;
+   #1;
+   if(!bridge_fatal||m_axi_awvalid||m_axi_wvalid)
+    $fatal(1,"Corrupt integrity descriptor allowed an AXI write");
+   tick();
+   if(!bridge_fatal||m_axi_awvalid||m_axi_wvalid)
+    $fatal(1,"Integrity guard error not sticky");
+  end
   $display("PASS AXI bridge ownership/drain, W-before-AW, response error, TMR repair, held request, ECC correction/DED");$finish;
  end
 endmodule
