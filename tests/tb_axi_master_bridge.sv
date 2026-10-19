@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_axi_master_bridge #(parameter bit CHECKED_VOTER=0);
+module tb_axi_master_bridge #(parameter bit CHECKED_VOTER=0,INTEGRITY_GUARD=0);
  wire idle;
  import ft_pkg::*;
  logic aclk=0,aresetn=0,external_irq=0;
