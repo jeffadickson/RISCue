@@ -3,7 +3,7 @@
 module riscue_axi_core #(
  parameter logic [31:0] RESET_PC=0,parameter integer BUS_TIMEOUT=1024,
  parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MEMORY_FAULT_INPUT=0,MONITOR_CONTROL=0,
- parameter bit AXI_CHECKED_VOTER=0
+ parameter bit AXI_CHECKED_VOTER=0,AXI_INTEGRITY_GUARD=0
 )(
  (* X_INTERFACE_INFO="xilinx.com:signal:clock:1.0 CLK CLK", X_INTERFACE_PARAMETER="ASSOCIATED_BUSIF M_AXI, ASSOCIATED_RESET aresetn" *) input logic aclk,
  (* X_INTERFACE_INFO="xilinx.com:signal:reset:1.0 RESET RST", X_INTERFACE_PARAMETER="POLARITY ACTIVE_LOW" *) input logic aresetn,
