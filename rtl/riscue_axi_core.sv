@@ -2,7 +2,8 @@
 // Separate from the KV260 ARM-control AXI slave and its local ECC SRAM.
 module riscue_axi_core #(
  parameter logic [31:0] RESET_PC=0,parameter integer BUS_TIMEOUT=1024,
- parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MEMORY_FAULT_INPUT=0,MONITOR_CONTROL=0
+ parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MEMORY_FAULT_INPUT=0,MONITOR_CONTROL=0,
+ parameter bit AXI_CHECKED_VOTER=0
 )(
  (* X_INTERFACE_INFO="xilinx.com:signal:clock:1.0 CLK CLK", X_INTERFACE_PARAMETER="ASSOCIATED_BUSIF M_AXI, ASSOCIATED_RESET aresetn" *) input logic aclk,
  (* X_INTERFACE_INFO="xilinx.com:signal:reset:1.0 RESET RST", X_INTERFACE_PARAMETER="POLARITY ACTIVE_LOW" *) input logic aresetn,
@@ -34,7 +35,7 @@ module riscue_axi_core #(
   .corrected_event(core_ce),.disagreement_event(core_dis),.retire_valid(retire_valid),.retire_pc(retire_pc),.retire_insn(retire_insn),.retire_result(retire_result),.retire_rd(retire_rd),
   .fi_valid(fi_valid),.fi_target(fi_target),.fi_index(fi_index),.fi_mask(fi_mask),.fi_ack(fi_ack),
   .event_flags(core_event_flags),.event_address(core_event_address));
- riscue_axi_master_bridge bridge(.idle(bridge_idle),.clk(aclk),.rst_n(aresetn),.core_req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
+ riscue_axi_master_bridge #(.CHECKED_VOTER(AXI_CHECKED_VOTER)) bridge(.idle(bridge_idle),.clk(aclk),.rst_n(aresetn),.core_req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
   .core_ready(ready),.core_error(bus_error),.rdata_code(rdata_code),.corrected_event(bridge_ce),.disagreement_event(bridge_dis),.fatal(bridge_fatal),
   .m_axi_awaddr(m_axi_awaddr),.m_axi_awprot(m_axi_awprot),.m_axi_awvalid(m_axi_awvalid),.m_axi_awready(m_axi_awready),
   .m_axi_wdata(m_axi_wdata),.m_axi_wstrb(m_axi_wstrb),.m_axi_wvalid(m_axi_wvalid),.m_axi_wready(m_axi_wready),
