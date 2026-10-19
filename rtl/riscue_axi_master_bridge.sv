@@ -1,6 +1,9 @@
 // One outstanding AXI4-Lite transaction; capture the core's ECC-coded request.
 // The bridge owns accepted payloads until response, even if core req drops.
-module riscue_axi_master_bridge(
+module riscue_axi_master_bridge #(
+ // Opt-in: retain the historical bridge exactly when disabled.
+ parameter bit CHECKED_VOTER=0
+)(
  input logic clk,rst_n,core_req,
  input logic [38:0] addr_code,wdata_code,ctrl_code,
  output logic core_ready,core_error,output logic [38:0] rdata_code,
@@ -28,10 +31,18 @@ module riscue_axi_master_bridge(
  (* keep="true",DONT_TOUCH="TRUE" *) bridge_t s0,s1,s2;
  bridge_t s,n;ecc_result_t da,dw,dc;
  wire record_bad=(s0!=s1)&&(s0!=s2)&&(s1!=s2);
+ // Check the bitwise state voter against a whole-record matching pair.
+ // An isolated replica upset is repaired as before. If no two complete
+ // transaction records match, the existing fail-stop behavior still applies.
+ // This is a *logical* checker, not guaranteed independent after synthesis.
+ bridge_t whole_record_reference;
+ wire voter_mismatch;
+ assign whole_record_reference=(s0==s1)?s0:((s0==s2)?s0:s1);
+ assign voter_mismatch=CHECKED_VOTER&&!record_bad&&(s!=whole_record_reference);
  assign idle=(s.phase==IDLE)&&!fatal;
  assign s=(s0&s1)|(s0&s2)|(s1&s2);
  assign disagreement_event=(s0!=s1)||(s0!=s2);
- assign fatal=s.dead||record_bad;
+ assign fatal=s.dead||record_bad||voter_mismatch;
  assign corrected_event=s.corrected;
  assign core_ready=rst_n&&!fatal&&s.phase==COMPLETE;
  assign core_error=s.error;
@@ -51,7 +62,7 @@ module riscue_axi_master_bridge(
  always @(s or core_req or addr_code or wdata_code or ctrl_code or record_bad or m_axi_arready or m_axi_rvalid or m_axi_rdata or m_axi_rresp or m_axi_awready or m_axi_wready or m_axi_bvalid or m_axi_bresp) begin
   n=s;n.corrected=0;
   da=ecc_decode(addr_code);dw=ecc_decode(wdata_code);dc=ecc_decode(ctrl_code);
-  if(record_bad)begin n.dead=1;end
+  if(record_bad||voter_mismatch)begin n.dead=1;end
   else if(!s.dead)case(s.phase)
    IDLE:if(core_req)begin
     if(da.uncorrectable||dc.uncorrectable||(dc.data[4]&&dw.uncorrectable))n.dead=1;
