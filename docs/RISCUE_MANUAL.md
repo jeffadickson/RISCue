@@ -312,7 +312,7 @@ Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
 
 ```systemverilog
   voted=(c0&c1)|(c0&c2)|(c1&c2);
-  s=UNPROTECTED?c0:voted;
+  s=MULTICYCLE?compact_decode(UNPROTECTED?compact0:((compact0&compact1)|(compact0&compact2)|(compact1&compact2))):(UNPROTECTED?c0:voted);
   payload_bad=PARITY_REPLAY&&(stage_parity(c0)!=payload_parity);
   if(PARITY_REPLAY)begin
    s.f=c0.f;s.d=c0.d;s.x=c0.x;s.m=c0.m;s.w=c0.w;
@@ -323,9 +323,9 @@ Source: [rtl/riscue_pipeline_core.sv](../rtl/riscue_pipeline_core.sv)
   n=s;
   store_mask=s.m.e.mask;store_data=s.m.e.wdata;
   record_bad=PARITY_REPLAY?((trusted(c0)!=c1)&&(trusted(c0)!=c2)&&(c1!=c2)):((c0!=c1)&&(c0!=c2)&&(c1!=c2));
+  if(MULTICYCLE)record_bad=(compact0!=compact1)&&(compact0!=compact2)&&(compact1!=compact2);
   if(UNPROTECTED)record_bad=0;
   ra=word_decode(rf[s.d.insn[19:15]]);rb=word_decode(rf[s.d.insn[24:20]]);scrubbed=word_decode(rf[s.scrub]);response=word_decode(rdata_code);
-  rf_bad=!RF_TMR&&((s.d.valid&&uses1(s.d.insn)&&ra.uncorrectable)||(s.d.valid&&uses2(s.d.insn)&&rb.uncorrectable)||scrubbed.uncorrectable);
 ```
 <!-- /excerpt:vote -->
 
@@ -1027,3 +1027,41 @@ not line-rate performance, physical boards, formal proof or radiation behavior.
 ## Unprotected comparison build
 
 See [the PLAIN baseline](UNPROTECTED.md). Use `make pipeline-variants-check` for the required local three-variant development gate. TMR stays the default; parity/replay stays experimental.
+
+## Measured architecture comparison
+
+The [local architecture comparison](../verification/architecture-comparison-local-2026-10-17.json) measures the existing serialized RV32IM core and all three full-feature pipeline variants. Reproduce common-workload trace checks with `make architecture-compare`; add `ARCH_COMPARE_ARGS=--synthesis` for bounded Series-7 mapping.
+
+On the same single-port memory model, 200 dependent ADDIs take 600 clocks in the legacy core versus 805 in each pipeline variant. The 202-retirement mixed RV32IM program takes 726 versus 1467 clocks; combinational versus iterative division is a major confounder. All traces matched. These are clock counts, not measured wall-clock hardware performance.
+
+Core-only quick mapping gives legacy 30,992 LUTs / 2,361 FFs / 24 DSPs; TMR pipeline 33,486 / 15,204 / 8; checked pipeline 31,717 / 10,033 / 8; Plain pipeline 10,007 / 3,877 / 4. No system RAM is included. Protected runs preserve redundancy and sequential state conservatively; Plain permits pruning. These are resource measurements without a new protection qualification audit.
+
+The legacy core lacks compressed instructions, CSRs, the M-mode interrupt platform and bit manipulation, so this does not isolate pipeline cost or establish a drop-in replacement. A fair compact successor should retain the required software profile and reuse iterative arithmetic. Fmax, placement, power and representative application throughput remain unmeasured.
+
+## Five current-ISA designs and compiled C benchmarks
+
+The current core supports PIPELINED TMR, PIPELINED PARITY_REPLAY, PIPELINED PLAIN, MULTICYCLE TMR and MULTICYCLE PLAIN. Select the architecture with CORE_ARCH and protection with PIPELINE_PROTECTION. MULTICYCLE uses one 1930-bit active-instruction/control record per protected replica, instead of a 4038-bit pipeline record. The wrapper retains its historical riscue_pipeline_core name.
+
+Run make pipeline-variants-check for all five smoke/jump configurations, compact state correction/phase tests, existing replay tests and documentation checks. Run make design-benchmarks for cached Verilator execution of the same linked C binaries across all five cores and two memory latencies. Add DESIGN_BENCH_ARGS=--synthesis for paired core-only Series-7 estimates and scoped protected-state audits.
+
+[The final local campaign](../verification/five-design-campaign-2026-10-17.json) records 30 passing C runs, identical per-kernel architectural/memory-effect hashes, independent expected CRC/sort/integer results, five passing mapped estimates, 5790 compact logical-state bit injections and all 250 unused phases. Simulator wall time is not hardware execution time.
+
+| Design | LUT cells | Flip-flops | CRC clocks | Sort clocks | Integer clocks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| TMR pipeline | 33,494 | 15,204 | 11,465 | 7,761 | 3,169 |
+| Checked pipeline | 31,719 | 10,033 | 11,465 | 7,761 | 3,169 |
+| Plain pipeline baseline | 10,006 | 3,877 | 11,465 | 7,761 | 3,169 |
+| Protected non-pipelined | 25,820 | 8,880 | 16,520 | 10,860 | 4,681 |
+| Plain non-pipelined | 10,117 | 2,824 | 16,520 | 10,860 | 4,681 |
+
+Clock counts above use zero added memory wait states and include startup; the evidence also contains three-wait-state runs. Each compiled kernel uses exactly the same binary on all five designs. These full-feature compiled workloads show a pipeline clock-count advantage unlike the earlier feature-mismatched legacy comparison. Actual time depends on unmeasured achieved frequency.
+
+Protected non-pipelined saves about 23% LUTs and 42% FFs relative to TMR pipelined. Plain variants have similar LUT counts; non-pipelined Plain saves about 27% FFs. Retain both alternatives for workload and implementation comparisons. Full ISA/interrupt/debug/formal coverage, physical radiation protection, vendor place-and-route and board qualification remain separate work.
+
+## Conditional-branch prediction study
+
+The current core has early direct-jump target lookahead and sequential conditional-branch fetching; it has no learned branch predictor. The benchmark testbench now observes retired expanded instructions (including compressed forms) and models conditional direction prediction with 16-, 64-, and 256-entry two-bit saturating-counter tables, indexed by (PC >> 1) modulo table size and initialized weakly not-taken for each run. It also compares backward-taken/forward-not-taken using the expanded branch displacement sign. Updates occur at retirement, with no speculative updates, target table, tags, or return stack.
+
+Run tools/run_design_benchmarks.py in the configured environment to reproduce the five-design comparison at both memory latencies. Branch statistics include startup through the first retirement at the completion loop. These shadow models leave RTL, fetch behavior, cycle counts, and retirement hashes unchanged. Direction accuracy does not establish integrated prediction accuracy, clock savings, resource use, or achieved frequency. Fetch-time aliasing and in-flight update timing would need an implemented predictor comparison.
+
+Recorded evidence: [2026-10-19 branch prediction study](../verification/branch-prediction-study-2026-10-19.json).

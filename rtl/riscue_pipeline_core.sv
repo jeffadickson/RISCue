@@ -5,13 +5,17 @@
 `ifndef RISCUE_ALLOW_EXPERIMENTAL_PARITY
 `define RISCUE_ALLOW_EXPERIMENTAL_PARITY 0
 `endif
-// Overlapping five-stage, in-order RV32IMC machine-mode core.
+`ifndef RISCUE_MULTICYCLE
+`define RISCUE_MULTICYCLE 0
+`endif
+// Shared RV32IMC machine-mode core with pipelined or compact multicycle storage.
 // Unified ECC-coded bus: req stays asserted through ready, then drops for
 // one cycle. Stores issue only from MEM after older WB traps are resolved.
 module riscue_pipeline_core #(
  parameter logic [31:0] RESET_PC=0,
  parameter integer BUS_TIMEOUT=1024,
  parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,MAX_REPLAYS=3,
+ parameter bit MULTICYCLE=`RISCUE_MULTICYCLE,
  parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,
  parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MONITOR_CONTROL=0,DEBUG_ENABLE=0
 )(
@@ -39,12 +43,13 @@ module riscue_pipeline_core #(
   if(PIPELINE_PROTECTION<0||PIPELINE_PROTECTION>2)$fatal(1,"Invalid PIPELINE_PROTECTION");
   if(PIPELINE_PROTECTION==1&&!ALLOW_EXPERIMENTAL_PARITY)$fatal(1,"PARITY_REPLAY requires explicit experimental opt-in");
   if(PIPELINE_PROTECTION==2&&(RF_TMR||FI_ENABLE))$fatal(1,"PLAIN requires RF_TMR=0 and FI_ENABLE=0");
+  if(MULTICYCLE&&PIPELINE_PROTECTION==1)$fatal(1,"MULTICYCLE supports TMR or PLAIN, not pipeline parity/replay");
   if(MAX_REPLAYS<1)$fatal(1,"MAX_REPLAYS must be positive");
  end
  riscue_pipeline_engine #(.RESET_PC(RESET_PC),.BUS_TIMEOUT(BUS_TIMEOUT),
   .RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP),
   .MONITOR_CONTROL(MONITOR_CONTROL),.DEBUG_ENABLE(DEBUG_ENABLE),
-  .UNPROTECTED(PIPELINE_PROTECTION==2),.PARITY_REPLAY(PIPELINE_PROTECTION==1),.MAX_REPLAYS(MAX_REPLAYS)) impl(.*);
+  .MULTICYCLE(MULTICYCLE),.UNPROTECTED(PIPELINE_PROTECTION==2),.PARITY_REPLAY(PIPELINE_PROTECTION==1),.MAX_REPLAYS(MAX_REPLAYS)) impl(.*);
 endmodule
 
 // Overlapping five-stage, in-order RV32IMC machine-mode core.
@@ -52,7 +57,7 @@ endmodule
 // one cycle. Stores issue only from MEM after older WB traps are resolved.
 module riscue_pipeline_engine #(
  parameter logic [31:0] RESET_PC=0,
- parameter integer BUS_TIMEOUT=1024,MAX_REPLAYS=3,parameter bit UNPROTECTED=0,PARITY_REPLAY=0,
+ parameter integer BUS_TIMEOUT=1024,MAX_REPLAYS=3,parameter bit MULTICYCLE=0,UNPROTECTED=0,PARITY_REPLAY=0,
  parameter bit RF_TMR=0,FI_ENABLE=0,EARLY_JUMP=1,MONITOR_CONTROL=0,DEBUG_ENABLE=0
 )(
  input logic clk,rst_n,external_irq,
@@ -87,8 +92,150 @@ module riscue_pipeline_engine #(
    word_decode=d;
   end
  endfunction
- localparam integer STATE_BITS=$bits(state_t),WINDOWS=(STATE_BITS+511)/512;
- (* keep=UNPROTECTED?"false":"true",DONT_TOUCH=UNPROTECTED?"FALSE":"TRUE" *) state_t c0,c1,c2;
+ localparam integer STATE_BITS=$bits(state_t),COMPACT_BITS=$bits(compact_state_t);
+ localparam integer STORAGE_BITS=MULTICYCLE?COMPACT_BITS:STATE_BITS,WINDOWS=(STORAGE_BITS+511)/512;
+ localparam logic [7:0] MC_IDLE=8'h00,MC_FETCH=8'h0f,MC_DECODE=8'h33,
+  MC_EXECUTE=8'h3c,MC_MEMORY=8'h55,MC_WRITEBACK=8'h5a;
+ (* keep=!UNPROTECTED,DONT_TOUCH=UNPROTECTED?"FALSE":"TRUE" *) compact_state_t compact0,compact1,compact2;
+ logic [COMPACT_BITS-1:0] compact_injection;
+ function automatic compact_state_t compact_encode(input state_t t);
+  compact_state_t q;begin
+   q='0;
+   q.debug_halted=t.debug_halted;
+   q.debug_step=t.debug_step;
+   q.debug_step_issued=t.debug_step_issued;
+   q.debug_ebreakm=t.debug_ebreakm;
+   q.debug_cause=t.debug_cause;
+   q.fetch_pc=t.fetch_pc;
+   q.arch_pc=t.arch_pc;
+   q.half_word=t.half_word;
+   q.half_valid=t.half_valid;
+   q.bus_active=t.bus_active;
+   q.bus_data=t.bus_data;
+   q.bus_half=t.bus_half;
+   q.bus_kill=t.bus_kill;
+   q.bus_cooldown=t.bus_cooldown;
+   q.bus_pc=t.bus_pc;
+   q.bus_addr=t.bus_addr;
+   q.bus_wdata=t.bus_wdata;
+   q.bus_ctrl=t.bus_ctrl;
+   q.bus_wait=t.bus_wait;
+   q.x_started=t.x_started;
+   q.x_done=t.x_done;
+   q.x_result=t.x_result;
+   q.fatal=t.fatal;
+   q.trap_pulse=t.trap_pulse;
+   q.irq_drain=t.irq_drain;
+   q.irq_cause=t.irq_cause;
+   q.irq_meta=t.irq_meta;
+   q.irq_sync=t.irq_sync;
+   q.mtvec=t.mtvec;
+   q.mepc=t.mepc;
+   q.mcause=t.mcause;
+   q.mtval=t.mtval;
+   q.mscratch=t.mscratch;
+   q.mie=t.mie;
+   q.mie_global=t.mie_global;
+   q.mpie=t.mpie;
+   q.msip=t.msip;
+   q.mcycle=t.mcycle;
+   q.minstret=t.minstret;
+   q.mtime=t.mtime;
+   q.mtimecmp=t.mtimecmp;
+   q.order=t.order;
+   q.scrub=t.scrub;
+   q.retire=t.retire;
+   q.retire_trap=t.retire_trap;
+   q.retire_intr=t.retire_intr;
+   q.interrupt_next=t.interrupt_next;
+   q.retired=t.retired;
+
+   q.phase=MC_IDLE;
+   if(t.f.valid)begin q.phase=MC_FETCH;q.active=t.f;end
+   if(t.d.valid)begin q.phase=MC_DECODE;q.active=t.d;end
+   if(t.x.valid)begin q.phase=MC_EXECUTE;q.active=t.x;end
+   if(t.m.valid)begin q.phase=MC_MEMORY;q.active=t.m;end
+   if(t.w.valid)begin q.phase=MC_WRITEBACK;q.active=t.w;end
+   if((t.f.valid?1:0)+(t.d.valid?1:0)+(t.x.valid?1:0)+(t.m.valid?1:0)+(t.w.valid?1:0)>1)begin q.phase=8'hff;q.fatal=1;end
+   compact_encode=q;
+  end
+ endfunction
+ function automatic state_t compact_decode(input compact_state_t q);
+  state_t t;begin
+   t='0;
+   t.debug_halted=q.debug_halted;
+   t.debug_step=q.debug_step;
+   t.debug_step_issued=q.debug_step_issued;
+   t.debug_ebreakm=q.debug_ebreakm;
+   t.debug_cause=q.debug_cause;
+   t.fetch_pc=q.fetch_pc;
+   t.arch_pc=q.arch_pc;
+   t.half_word=q.half_word;
+   t.half_valid=q.half_valid;
+   t.bus_active=q.bus_active;
+   t.bus_data=q.bus_data;
+   t.bus_half=q.bus_half;
+   t.bus_kill=q.bus_kill;
+   t.bus_cooldown=q.bus_cooldown;
+   t.bus_pc=q.bus_pc;
+   t.bus_addr=q.bus_addr;
+   t.bus_wdata=q.bus_wdata;
+   t.bus_ctrl=q.bus_ctrl;
+   t.bus_wait=q.bus_wait;
+   t.x_started=q.x_started;
+   t.x_done=q.x_done;
+   t.x_result=q.x_result;
+   t.fatal=q.fatal;
+   t.trap_pulse=q.trap_pulse;
+   t.irq_drain=q.irq_drain;
+   t.irq_cause=q.irq_cause;
+   t.irq_meta=q.irq_meta;
+   t.irq_sync=q.irq_sync;
+   t.mtvec=q.mtvec;
+   t.mepc=q.mepc;
+   t.mcause=q.mcause;
+   t.mtval=q.mtval;
+   t.mscratch=q.mscratch;
+   t.mie=q.mie;
+   t.mie_global=q.mie_global;
+   t.mpie=q.mpie;
+   t.msip=q.msip;
+   t.mcycle=q.mcycle;
+   t.minstret=q.minstret;
+   t.mtime=q.mtime;
+   t.mtimecmp=q.mtimecmp;
+   t.order=q.order;
+   t.scrub=q.scrub;
+   t.retire=q.retire;
+   t.retire_trap=q.retire_trap;
+   t.retire_intr=q.retire_intr;
+   t.interrupt_next=q.interrupt_next;
+   t.retired=q.retired;
+
+   // Inactive views alias the same instruction bits. Only their valid tags
+   // differ, avoiding five wide data-gating networks around the one register.
+   t.f=q.active;t.d=q.active;t.x=q.active;t.m=q.active;t.w=q.active;
+   t.f.valid=0;t.d.valid=0;t.x.valid=0;t.m.valid=0;t.w.valid=0;
+   case(q.phase)
+    MC_IDLE:begin end
+    MC_FETCH:t.f.valid=1;
+    MC_DECODE:t.d.valid=1;
+    MC_EXECUTE:t.x.valid=1;
+    MC_MEMORY:t.m.valid=1;
+    MC_WRITEBACK:t.w.valid=1;
+    default:t.fatal=1;
+   endcase
+   compact_decode=t;
+  end
+ endfunction
+ function automatic state_t reset_state();
+  state_t t;begin
+   t='0;t.fetch_pc=MONITOR_CONTROL?boot_pc:RESET_PC;
+   t.arch_pc=t.fetch_pc;t.mtimecmp='1;reset_state=t;
+  end
+ endfunction
+
+ (* keep=(!UNPROTECTED&&!MULTICYCLE),DONT_TOUCH=(UNPROTECTED||MULTICYCLE)?"FALSE":"TRUE" *) state_t c0,c1,c2;
  state_t s,n;
  // Only stage payloads use single-copy parity storage. Architectural and bus
  // state, including the committed retirement record, remain triplicated.
@@ -189,7 +336,7 @@ module riscue_pipeline_engine #(
   recovery_bad=((replay0!=replay1)&&(replay0!=replay2)&&(replay1!=replay2))||
    !(recovery.phase==REPLAY_RUN||recovery.phase==REPLAY_DRAIN||recovery.phase==REPLAY_RESTART||recovery.phase==REPLAY_DEAD);
   voted=(c0&c1)|(c0&c2)|(c1&c2);
-  s=UNPROTECTED?c0:voted;
+  s=MULTICYCLE?compact_decode(UNPROTECTED?compact0:((compact0&compact1)|(compact0&compact2)|(compact1&compact2))):(UNPROTECTED?c0:voted);
   payload_bad=PARITY_REPLAY&&(stage_parity(c0)!=payload_parity);
   if(PARITY_REPLAY)begin
    s.f=c0.f;s.d=c0.d;s.x=c0.x;s.m=c0.m;s.w=c0.w;
@@ -200,6 +347,7 @@ module riscue_pipeline_engine #(
   n=s;
   store_mask=s.m.e.mask;store_data=s.m.e.wdata;
   record_bad=PARITY_REPLAY?((trusted(c0)!=c1)&&(trusted(c0)!=c2)&&(c1!=c2)):((c0!=c1)&&(c0!=c2)&&(c1!=c2));
+  if(MULTICYCLE)record_bad=(compact0!=compact1)&&(compact0!=compact2)&&(compact1!=compact2);
   if(UNPROTECTED)record_bad=0;
   ra=word_decode(rf[s.d.insn[19:15]]);rb=word_decode(rf[s.d.insn[24:20]]);scrubbed=word_decode(rf[s.scrub]);response=word_decode(rdata_code);
   rf_bad=!RF_TMR&&((s.d.valid&&uses1(s.d.insn)&&ra.uncorrectable)||(s.d.valid&&uses2(s.d.insn)&&rb.uncorrectable)||scrubbed.uncorrectable);
@@ -251,6 +399,7 @@ module riscue_pipeline_engine #(
   execute_bad=(EARLY_JUMP&&s.d.valid&&!s.d.trap&&s.d.insn[6:0]==7'h6f&&jump_target0!=jump_target1)||(s.x.valid&&e0!=e1)||md_done0!=md_done1||md_ready0!=md_ready1||(md_done0&&md_result0!=md_result1)||md_fatal0||md_fatal1;
   corrected_event=!RF_TMR&&((s.d.valid&&(ra.corrected||rb.corrected))||scrubbed.corrected)||(s.bus_active&&ready&&response.corrected);
   disagreement_event=(PARITY_REPLAY?((trusted(c0)!=c1)||(trusted(c0)!=c2)||payload_bad||(replay0!=replay1)||(replay0!=replay2)):((c0!=c1)||(c0!=c2)))||md_dis0||md_dis1;
+  if(MULTICYCLE)disagreement_event=(compact0!=compact1)||(compact0!=compact2)||md_dis0||md_dis1;
   if(UNPROTECTED)begin corrected_event=0;disagreement_event=0;execute_bad=md_fatal0;end
   if(RF_TMR)for(j=0;j<32;j=j+1)begin
    if(tmr0[j]!=tmr1[j]||tmr0[j]!=tmr2[j])disagreement_event=1;
@@ -408,7 +557,7 @@ module riscue_pipeline_engine #(
      if(n.m.valid&&n.m.e.mem&&!n.m.trap&&!(n.w.valid&&n.w.trap)&&!clint(n.m.e.addr))begin
       n.bus_active=1;n.bus_data=1;n.bus_kill=0;n.bus_pc=n.m.e.addr;
       n.bus_addr=n.m.e.addr&32'hfffffffc;n.bus_wdata=n.m.e.wdata;n.bus_ctrl=n.m.e.we?(32'h10|32'(n.m.e.mask)):32'b0;n.bus_wait=0;
-     end else if((!monitor_stop||n.half_valid)&&!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending)begin
+     end else if((!monitor_stop||n.half_valid)&&!n.f.valid&&!n.irq_drain&&!flush&&!serial_pending&&(!MULTICYCLE||(!n.f.valid&&!n.d.valid&&!n.x.valid&&!n.m.valid&&!n.w.valid)))begin
       if(n.fetch_pc[0])begin n.f='0;n.f.valid=1;n.f.pc=n.fetch_pc;n.f.trap=1;n.f.serial=1;n.f.cause=0;n.f.tval=n.fetch_pc;n.f.bytes=2;end
       else begin
        n.bus_active=1;n.bus_data=0;n.bus_kill=0;n.bus_half=n.half_valid;
@@ -512,10 +661,12 @@ module riscue_pipeline_engine #(
    recovery_next.unsafe_memory=(n.bus_active&&n.bus_data)||(n.m.valid&&n.m.e.mem)||(n.w.valid&&n.w.e.mem);
   end
   if(n.fatal)begin n.retire=0;write_rf=0;md_cancel=1;end
+  compact_injection='0;
+  if(FI_ENABLE)for(j=0;j<COMPACT_BITS;j=j+1)if(j/512==fi_index)compact_injection[j]=fi_mask[j%512];
   injection='0;
-  for(j=0;j<STATE_BITS;j=j+1)if(j/512==fi_index)injection[j]=fi_mask[j%512];
+  if(FI_ENABLE)for(j=0;j<STATE_BITS;j=j+1)if(j/512==fi_index)injection[j]=fi_mask[j%512];
   core_ack=rst_n&&FI_ENABLE&&fi_valid&&fi_target>=5&&fi_target<=7&&fi_index<WINDOWS&&fi_mask!=0;
-  if(fi_index==WINDOWS-1&&(fi_mask>>(STATE_BITS%512==0?512:STATE_BITS%512))!=0)core_ack=0;
+  if(fi_index==WINDOWS-1&&(fi_mask>>(STORAGE_BITS%512==0?512:STORAGE_BITS%512))!=0)core_ack=0;
   if(PARITY_REPLAY&&fi_target!=5&&trusted(injection)!=injection)core_ack=0;
   rf_ack=rst_n&&FI_ENABLE&&fi_valid&&fi_index<32&&fi_mask!=0&&((!RF_TMR&&fi_target==1&&(fi_mask>>39)==0)||(RF_TMR&&fi_target>=2&&fi_target<=4&&(fi_mask>>32)==0));
   fi_rf_base=rf[fi_index[4:0]];
@@ -526,17 +677,45 @@ module riscue_pipeline_engine #(
   if(fi_index==0)fi_rf_base=word_encode(0);
   fi_ack=core_ack||rf_ack||md_ack0||md_ack1;
  end
- always_ff @(posedge clk)begin
-  if(!rst_n)begin
-   c0<='0;c1<='0;c2<='0;payload_parity<=0;replay0<='0;replay1<='0;replay2<='0;
+ generate if(MULTICYCLE)begin: multicycle_storage
+  assign c0=compact_decode(compact0);
+  assign c1=compact_decode(compact1);
+  assign c2=compact_decode(compact2);
+  always_ff @(posedge clk)begin
+   if(!rst_n)begin
+    compact0<=compact_encode(reset_state());compact1<=UNPROTECTED?'0:compact_encode(reset_state());compact2<=UNPROTECTED?'0:compact_encode(reset_state());
+   end else begin
+    compact0<=compact_encode(n);compact1<=UNPROTECTED?'0:compact_encode(n);compact2<=UNPROTECTED?'0:compact_encode(n);
+    if(core_ack)case(fi_target)
+     5:compact0<=compact_encode(n)^compact_injection;
+     6:compact1<=compact_encode(n)^compact_injection;
+     7:compact2<=compact_encode(n)^compact_injection;
+    endcase
+   end
+  end
+ end else begin: pipeline_storage
+  assign compact0='0;assign compact1='0;assign compact2='0;
+  always_ff @(posedge clk)begin
+   if(!rst_n)begin
+   c0<='0;c1<='0;c2<='0;
    c0.fetch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c1.fetch_pc<=UNPROTECTED?0:(MONITOR_CONTROL?boot_pc:RESET_PC);c2.fetch_pc<=UNPROTECTED?0:(MONITOR_CONTROL?boot_pc:RESET_PC);
    c0.arch_pc<=(MONITOR_CONTROL?boot_pc:RESET_PC);c1.arch_pc<=UNPROTECTED?0:(MONITOR_CONTROL?boot_pc:RESET_PC);c2.arch_pc<=UNPROTECTED?0:(MONITOR_CONTROL?boot_pc:RESET_PC);
    c0.mtimecmp<='1;c1.mtimecmp<=UNPROTECTED?0:'1;c2.mtimecmp<=UNPROTECTED?0:'1;
+
+   end else begin
+   c0<=n;c1<=UNPROTECTED?'0:(PARITY_REPLAY?trusted(n):n);c2<=UNPROTECTED?'0:(PARITY_REPLAY?trusted(n):n);
+   if(core_ack)case(fi_target)5:c0<=n^injection;6:c1<=(PARITY_REPLAY?trusted(n):n)^injection;7:c2<=(PARITY_REPLAY?trusted(n):n)^injection;endcase
+
+   end
+  end
+ end endgenerate
+ always_ff @(posedge clk)begin
+  if(!rst_n)begin
+   payload_parity<=0;replay0<='0;replay1<='0;replay2<='0;
    for(integer z=0;z<32;z=z+1)begin rf[z]<=word_encode(0);tmr0[z]<=0;tmr1[z]<=0;tmr2[z]<=0;end
   end else begin
    replay0<=PARITY_REPLAY?recovery_next:'0;replay1<=PARITY_REPLAY?recovery_next:'0;replay2<=PARITY_REPLAY?recovery_next:'0;
-   c0<=n;c1<=UNPROTECTED?'0:(PARITY_REPLAY?trusted(n):n);c2<=UNPROTECTED?'0:(PARITY_REPLAY?trusted(n):n);payload_parity<=PARITY_REPLAY?stage_parity(n):0;
-   if(core_ack)case(fi_target)5:c0<=n^injection;6:c1<=(PARITY_REPLAY?trusted(n):n)^injection;7:c2<=(PARITY_REPLAY?trusted(n):n)^injection;endcase
+   payload_parity<=PARITY_REPLAY?stage_parity(n):0;
    if(RF_TMR)begin
     for(integer z=0;z<32;z=z+1)begin
      tmr0[z]<=(tmr0[z]&tmr1[z])|(tmr0[z]&tmr2[z])|(tmr1[z]&tmr2[z]);

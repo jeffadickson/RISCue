@@ -1,4 +1,5 @@
 module riscue_pipeline_soc #(
+ parameter bit MULTICYCLE=`RISCUE_MULTICYCLE,
  parameter integer PIPELINE_PROTECTION=`RISCUE_PIPELINE_PROTECTION,
  parameter bit ALLOW_EXPERIMENTAL_PARITY=`RISCUE_ALLOW_EXPERIMENTAL_PARITY,
  parameter integer WORDS=1024,parameter INIT_FILE="",parameter integer BUS_TIMEOUT=1024,
@@ -21,7 +22,7 @@ module riscue_pipeline_soc #(
 `ifdef RISCUE_PLAIN_MEMORY
  initial if(PIPELINE_PROTECTION!=2)$fatal(1,"Plain RAM requires PIPELINE_PROTECTION=PLAIN");
  generate if(1)begin: plain
- riscue_pipeline_core #(.PIPELINE_PROTECTION(2),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
+ riscue_pipeline_core #(.MULTICYCLE(MULTICYCLE),.PIPELINE_PROTECTION(2),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
   .clk(clk),.rst_n(rst_n),.external_irq(external_irq),.req(req),.addr_code(ac),.wdata_code(wc),.ctrl_code(cc),
   .ready(ready),.bus_error(error),.external_fault(1'b0),.rdata_code({7'b0,rd}),
   .halted(halted),.fatal(fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),
@@ -50,13 +51,17 @@ module riscue_pipeline_soc #(
  end endgenerate
 `else
  initial if(PIPELINE_PROTECTION==2)$fatal(1,"PLAIN SoC requires RISCUE_PLAIN_MEMORY from canonical build flags");
- wire [31:0] injection_width=riscue_pipeline_pkg::fi_width(RF_TMR,WORDS,fi_target,fi_index);
+ wire [31:0] compact_bits=$bits(riscue_pipeline_pkg::compact_state_t);
+ wire [31:0] compact_windows=(compact_bits+511)/512;
+ wire [31:0] injection_width=(MULTICYCLE&&fi_target>=5&&fi_target<=7)?
+  (fi_index<compact_windows?(fi_index==compact_windows-1?compact_bits-(compact_windows-1)*512:512):0):
+  riscue_pipeline_pkg::fi_width(RF_TMR,WORDS,fi_target,fi_index);
  wire fi_dispatch=rst_n&&fi_valid&&injection_width!=0&&fi_mask!=0&&(fi_mask>>injection_width)==0;
  logic req,ready,error,mem_fatal,mem_ce,mem_dis,core_ce,core_dis,report_dis;
  logic core_ack,mem_ack,report_ack;
  logic [7:0] core_flags,mem_flags;logic [31:0] core_address,mem_address;
  logic [38:0] addr_code,wdata_code,ctrl_code,rdata_code;
- riscue_pipeline_core #(.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
+ riscue_pipeline_core #(.MULTICYCLE(MULTICYCLE),.PIPELINE_PROTECTION(PIPELINE_PROTECTION),.ALLOW_EXPERIMENTAL_PARITY(ALLOW_EXPERIMENTAL_PARITY),.BUS_TIMEOUT(BUS_TIMEOUT),.RF_TMR(RF_TMR),.FI_ENABLE(FI_ENABLE),.EARLY_JUMP(EARLY_JUMP)) core(
   .clk(clk),.rst_n(rst_n),.external_irq(external_irq),.req(req),.addr_code(addr_code),.wdata_code(wdata_code),.ctrl_code(ctrl_code),
   .ready(ready),.bus_error(error),.external_fault(mem_fatal),.rdata_code(rdata_code),
   .halted(halted),.fatal(fatal),.trap(trap),.trap_cause(trap_cause),.trap_value(trap_value),.pc(pc),

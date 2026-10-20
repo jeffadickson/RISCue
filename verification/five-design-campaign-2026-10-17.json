@@ -1,0 +1,2290 @@
+{
+  "recorded_at": "2026-10-17T17:38:56.694872+00:00",
+  "host": "Dell 15; Ubuntu-24.04 WSL",
+  "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+  "benchmarks": {
+    "scope": "Measured compiled C clock counts and exact-result checks, with architectural retirement hash comparison; no measured FPGA clock/power or standard CoreMark/Dhrystone score",
+    "simulator": "verilator",
+    "variants": [
+      [
+        "pipeline-tmr",
+        "PIPELINED",
+        "TMR"
+      ],
+      [
+        "pipeline-parity",
+        "PIPELINED",
+        "PARITY_REPLAY"
+      ],
+      [
+        "pipeline-plain",
+        "PIPELINED",
+        "PLAIN"
+      ],
+      [
+        "multicycle-tmr",
+        "MULTICYCLE",
+        "TMR"
+      ],
+      [
+        "multicycle-plain",
+        "MULTICYCLE",
+        "PLAIN"
+      ]
+    ],
+    "binaries": [
+      {
+        "kernel": "crc32",
+        "command": [
+          "/mnt/c/dev/RISCue/.tools/riscv/root/usr/bin/riscv64-unknown-elf-gcc",
+          "-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+          "-mabi=ilp32",
+          "-mcmodel=medlow",
+          "-mstrict-align",
+          "-mno-relax",
+          "-msmall-data-limit=0",
+          "-ffreestanding",
+          "-fno-builtin",
+          "-fno-pic",
+          "-fno-stack-protector",
+          "-O2",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-variable",
+          "-nostdlib",
+          "-nostartfiles",
+          "-Wl,--no-relax",
+          "-DBENCH_KIND=0",
+          "-T",
+          "/mnt/c/dev/RISCue/firmware/smoke/link.ld",
+          "/mnt/c/dev/RISCue/firmware/smoke/start.S",
+          "/mnt/c/dev/RISCue/firmware/benchmarks/kernels.c",
+          "-o",
+          "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/crc32/benchmark.elf"
+        ],
+        "compiler": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+        "binary_sha256": "4b215a3bd24aa21c5521bed7857049009d72121873bba2947e9624e9c48b3224",
+        "expected_checksum": 2851373333,
+        "finish_pc": 52,
+        "isa_audit": {
+          "file": "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/crc32/benchmark.elf",
+          "entry": 0,
+          "architecture_attributes": [
+            "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+          ],
+          "instructions_checked": 41,
+          "status": "pass",
+          "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+        }
+      },
+      {
+        "kernel": "insertion_sort",
+        "command": [
+          "/mnt/c/dev/RISCue/.tools/riscv/root/usr/bin/riscv64-unknown-elf-gcc",
+          "-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+          "-mabi=ilp32",
+          "-mcmodel=medlow",
+          "-mstrict-align",
+          "-mno-relax",
+          "-msmall-data-limit=0",
+          "-ffreestanding",
+          "-fno-builtin",
+          "-fno-pic",
+          "-fno-stack-protector",
+          "-O2",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-variable",
+          "-nostdlib",
+          "-nostartfiles",
+          "-Wl,--no-relax",
+          "-DBENCH_KIND=1",
+          "-T",
+          "/mnt/c/dev/RISCue/firmware/smoke/link.ld",
+          "/mnt/c/dev/RISCue/firmware/smoke/start.S",
+          "/mnt/c/dev/RISCue/firmware/benchmarks/kernels.c",
+          "-o",
+          "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/insertion_sort/benchmark.elf"
+        ],
+        "compiler": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+        "binary_sha256": "4764c872a4897b155db1c43c7d80193349d8adfed59e9e9d2d47568e5897b1ce",
+        "expected_checksum": 6635174,
+        "finish_pc": 52,
+        "isa_audit": {
+          "file": "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/insertion_sort/benchmark.elf",
+          "entry": 0,
+          "architecture_attributes": [
+            "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+          ],
+          "instructions_checked": 83,
+          "status": "pass",
+          "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+        }
+      },
+      {
+        "kernel": "integer_muldiv",
+        "command": [
+          "/mnt/c/dev/RISCue/.tools/riscv/root/usr/bin/riscv64-unknown-elf-gcc",
+          "-march=rv32imc_zicsr_zifencei_zicntr_zbb_zbc_zbs",
+          "-mabi=ilp32",
+          "-mcmodel=medlow",
+          "-mstrict-align",
+          "-mno-relax",
+          "-msmall-data-limit=0",
+          "-ffreestanding",
+          "-fno-builtin",
+          "-fno-pic",
+          "-fno-stack-protector",
+          "-O2",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-Wno-unused-variable",
+          "-nostdlib",
+          "-nostartfiles",
+          "-Wl,--no-relax",
+          "-DBENCH_KIND=2",
+          "-T",
+          "/mnt/c/dev/RISCue/firmware/smoke/link.ld",
+          "/mnt/c/dev/RISCue/firmware/smoke/start.S",
+          "/mnt/c/dev/RISCue/firmware/benchmarks/kernels.c",
+          "-o",
+          "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/integer_muldiv/benchmark.elf"
+        ],
+        "compiler": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+        "binary_sha256": "01bb6ec469e7d637e1e5e39b9aa9f243883f6fa56181575b5f2ac37adca4ffd4",
+        "expected_checksum": 3636532152,
+        "finish_pc": 52,
+        "isa_audit": {
+          "file": "/mnt/c/dev/RISCue/build/design-benchmarks/2026-10-17-verilator/integer_muldiv/benchmark.elf",
+          "entry": 0,
+          "architecture_attributes": [
+            "rv32i2p1_m2p0_c2p0_zicntr2p0_zicsr2p0_zifencei2p0_zmmul1p0_zbb1p0_zbc1p0_zbs1p0"
+          ],
+          "instructions_checked": 43,
+          "status": "pass",
+          "scope": "ELF ABI/ISA attributes and GNU-decoded executable sections; not reachability, dynamic code, platform legality or compliance proof"
+        }
+      }
+    ],
+    "runs": [
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 0,
+        "cycles": 11465,
+        "instructions": 2042,
+        "CPI": 5.6146,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.08,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 0,
+        "cycles": 11465,
+        "instructions": 2042,
+        "CPI": 5.6146,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.13,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 0,
+        "cycles": 11465,
+        "instructions": 2042,
+        "CPI": 5.6146,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.04,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 0,
+        "cycles": 16520,
+        "instructions": 2042,
+        "CPI": 8.0901,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 0,
+        "cycles": 16520,
+        "instructions": 2042,
+        "CPI": 8.0901,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 3,
+        "cycles": 20060,
+        "instructions": 2042,
+        "CPI": 9.8237,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 3,
+        "cycles": 20060,
+        "instructions": 2042,
+        "CPI": 9.8237,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.17,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 3,
+        "cycles": 20060,
+        "instructions": 2042,
+        "CPI": 9.8237,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 3,
+        "cycles": 24341,
+        "instructions": 2042,
+        "CPI": 11.9202,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "crc32",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 3,
+        "cycles": 24341,
+        "instructions": 2042,
+        "CPI": 11.9202,
+        "checksum": "a9f48115",
+        "retirement_hash": "853a0954268a412b",
+        "simulator_seconds": 0.17,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 0,
+        "cycles": 7761,
+        "instructions": 1350,
+        "CPI": 5.7489,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 0,
+        "cycles": 7761,
+        "instructions": 1350,
+        "CPI": 5.7489,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 0,
+        "cycles": 7761,
+        "instructions": 1350,
+        "CPI": 5.7489,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.04,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 0,
+        "cycles": 10860,
+        "instructions": 1350,
+        "CPI": 8.0444,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 0,
+        "cycles": 10860,
+        "instructions": 1350,
+        "CPI": 8.0444,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 3,
+        "cycles": 13578,
+        "instructions": 1350,
+        "CPI": 10.0578,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 3,
+        "cycles": 13578,
+        "instructions": 1350,
+        "CPI": 10.0578,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.13,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 3,
+        "cycles": 13578,
+        "instructions": 1350,
+        "CPI": 10.0578,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 3,
+        "cycles": 16341,
+        "instructions": 1350,
+        "CPI": 12.1044,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "insertion_sort",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 3,
+        "cycles": 16341,
+        "instructions": 1350,
+        "CPI": 12.1044,
+        "checksum": "00653ea6",
+        "retirement_hash": "c5198ea6a4051c7b",
+        "simulator_seconds": 0.12,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 0,
+        "cycles": 3169,
+        "instructions": 445,
+        "CPI": 7.1213,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 0,
+        "cycles": 3169,
+        "instructions": 445,
+        "CPI": 7.1213,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 0,
+        "cycles": 3169,
+        "instructions": 445,
+        "CPI": 7.1213,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.04,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 0,
+        "cycles": 4681,
+        "instructions": 445,
+        "CPI": 10.5191,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.04,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 0,
+        "cycles": 4681,
+        "instructions": 445,
+        "CPI": 10.5191,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.08,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-tmr",
+        "memory_wait_states": 3,
+        "cycles": 4678,
+        "instructions": 445,
+        "CPI": 10.5124,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.09,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-parity",
+        "memory_wait_states": 3,
+        "cycles": 4678,
+        "instructions": 445,
+        "CPI": 10.5124,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "pipeline-plain",
+        "memory_wait_states": 3,
+        "cycles": 4678,
+        "instructions": 445,
+        "CPI": 10.5124,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.04,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "multicycle-tmr",
+        "memory_wait_states": 3,
+        "cycles": 6280,
+        "instructions": 445,
+        "CPI": 14.1124,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.07,
+        "passed": true
+      },
+      {
+        "kernel": "integer_muldiv",
+        "variant": "multicycle-plain",
+        "memory_wait_states": 3,
+        "cycles": 6280,
+        "instructions": 445,
+        "CPI": 14.1124,
+        "checksum": "d8c113b8",
+        "retirement_hash": "d5756fc008e7a998",
+        "simulator_seconds": 0.04,
+        "passed": true
+      }
+    ],
+    "synthesis": [],
+    "source_sha256": {
+      "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+      "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+      "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+      "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+      "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+      "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+      "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+      "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8",
+      "firmware/benchmarks/kernels.c": "1fdbd45c44cfc180692ef925b1a790178bedf2da0983281e565c26d7adfba46a",
+      "tools/run_design_benchmarks.py": "621b349d00e64b1e72f97ee24eb8d8ae2c3b4bcb202599a67b2e1198ab7e13df"
+    },
+    "simulation_builds": {
+      "pipeline-tmr": {
+        "sources": {
+          "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+          "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+          "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+          "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+          "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+          "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+          "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+          "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8"
+        },
+        "flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+      },
+      "pipeline-parity": {
+        "sources": {
+          "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+          "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+          "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+          "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+          "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+          "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+          "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+          "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8"
+        },
+        "flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PIPELINE_PROTECTION=1",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+      },
+      "pipeline-plain": {
+        "sources": {
+          "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+          "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+          "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+          "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+          "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+          "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+          "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+          "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8"
+        },
+        "flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PLAIN_MEMORY",
+          "-DRISCUE_PIPELINE_PROTECTION=2",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+      },
+      "multicycle-tmr": {
+        "sources": {
+          "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+          "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+          "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+          "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+          "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+          "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+          "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+          "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8"
+        },
+        "flags": [
+          "-DRISCUE_MULTICYCLE=1",
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+      },
+      "multicycle-plain": {
+        "sources": {
+          "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+          "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+          "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+          "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+          "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+          "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+          "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+          "tests/tb_design_benchmarks.sv": "76045dfab91a3459471933c0e3e68f9a6ca56e584c78bd71cb8e1a2ce65f18c8"
+        },
+        "flags": [
+          "-DRISCUE_MULTICYCLE=1",
+          "-DRISCUE_PLAIN_MEMORY",
+          "-DRISCUE_PIPELINE_PROTECTION=2",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+      }
+    }
+  },
+  "synthesis": [
+    {
+      "variant": "multicycle-tmr",
+      "exit_code": 0,
+      "status": "pass",
+      "configuration": {
+        "core_arch": "MULTICYCLE",
+        "pipeline_protection": "TMR",
+        "mode_id": 0,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": 4,
+        "iverilog_flags": [
+          "-DRISCUE_MULTICYCLE=1",
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "RF_TMR": 0,
+      "frontend": "slang",
+      "top": "riscue_pipeline_core",
+      "family": "xc7",
+      "reference_board": "KC705 / Kintex-7 XC7K325T",
+      "mapping_flow": "Series-7 primitive mapping followed by ABC strash/if uniform 6-input LUT mapping (quick estimate); not ABC9 timing optimization",
+      "scope": "Out-of-context mapped cell counts, not device-constrained fitting, placement/routing, timing, protection qualification or Tiny Tapeout area",
+      "FI_ENABLE": 0,
+      "DEBUG_ENABLE": 0,
+      "source_sha256": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+      "conversion_command": [
+        "read_slang",
+        "--best-effort-hierarchy",
+        "--unroll-limit",
+        "16384",
+        "--top",
+        "riscue_pipeline_core",
+        "-G",
+        "RF_TMR=0",
+        "-G",
+        "FI_ENABLE=0",
+        "-G",
+        "DEBUG_ENABLE=0",
+        "-DRISCUE_MULTICYCLE=1",
+        "-DRISCUE_PIPELINE_PROTECTION=0",
+        "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0",
+        "/mnt/c/dev/RISCue/rtl/ft_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_rvc.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_jump_target.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_execute.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_muldiv.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_core.sv"
+      ],
+      "synthesis_command": [
+        "/mnt/c/dev/RISCue/.tools/oss-cad-suite/bin/yosys",
+        "-m",
+        "slang",
+        "-Q",
+        "-q",
+        "-l",
+        "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-TMR-rf0/yosys-full.log",
+        "-s",
+        "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-TMR-rf0/synth.ys"
+      ],
+      "cells_by_type": {
+        "$scopeinfo": 2,
+        "CARRY4": 490,
+        "DSP48E1": 8,
+        "FDRE": 8688,
+        "FDSE": 192,
+        "INV": 293,
+        "LUT1": 158,
+        "LUT2": 1064,
+        "LUT3": 4791,
+        "LUT4": 4590,
+        "LUT5": 5667,
+        "LUT6": 9550,
+        "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+        "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+      },
+      "resources": {
+        "LUT_cells": 25820,
+        "flip_flop_cells": 8880,
+        "DSP48_cells": 8,
+        "RAMB18_cells": 0,
+        "RAMB36_cells": 0,
+        "CARRY4_cells": 490
+      },
+      "replica_audit": {
+        "passed": true,
+        "records": [
+          {
+            "module": "riscue_pipeline_core",
+            "prefix": "impl.",
+            "core_replica_ff_bits": {
+              "0": 1930,
+              "1": 1930,
+              "2": 1930
+            },
+            "pairwise_disjoint": true,
+            "storage": "compact",
+            "compared_instances": {
+              "lane0": [
+                "impl.lane0"
+              ],
+              "lane1": [
+                "impl.protected_lane1.lane1"
+              ],
+              "jump0": [
+                "impl.jump0"
+              ],
+              "jump1": [
+                "impl.protected_jump.jump1"
+              ]
+            }
+          }
+        ],
+        "scope": "Core/recovery flip-flop disjointness and compared-instance presence only; not a full protection, parity-path, encoding, RF/arithmetic, placement or timing audit"
+      },
+      "statistics": {
+        "creator": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+        "invocation": "stat -json -top riscue_pipeline_core ",
+        "modules": {
+          "\\riscue_execute$riscue_pipeline_core.impl.lane0": {
+            "num_wires": 1481,
+            "num_wire_bits": 8685,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2679,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 101,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 286,
+              "LUT3": 362,
+              "LUT4": 208,
+              "LUT5": 779,
+              "LUT6": 931
+            }
+          },
+          "\\riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": {
+            "num_wires": 1481,
+            "num_wire_bits": 8687,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2678,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 101,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 287,
+              "LUT3": 362,
+              "LUT4": 209,
+              "LUT5": 775,
+              "LUT6": 932
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.jump0": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": {
+            "num_wires": 837,
+            "num_wire_bits": 7342,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": {
+            "num_wires": 848,
+            "num_wire_bits": 7360,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_pipeline_core": {
+            "num_wires": 10580,
+            "num_wire_bits": 82401,
+            "num_pub_wires": 207,
+            "num_pub_wire_bits": 37349,
+            "num_ports": 58,
+            "num_port_bits": 1354,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 24326,
+            "num_submodules": 6,
+            "num_cells_by_type": {
+              "$scopeinfo": 2,
+              "CARRY4": 154,
+              "FDRE": 6846,
+              "FDSE": 192,
+              "INV": 89,
+              "LUT1": 148,
+              "LUT2": 193,
+              "LUT3": 3443,
+              "LUT4": 3093,
+              "LUT5": 3431,
+              "LUT6": 6735,
+              "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+              "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+            }
+          }
+        },
+        "design": {
+          "num_wires": 15243,
+          "num_wire_bits": 114983,
+          "num_pub_wires": 293,
+          "num_pub_wire_bits": 43281,
+          "num_ports": 108,
+          "num_port_bits": 3472,
+          "num_memories": 0,
+          "num_memory_bits": 0,
+          "num_processes": 0,
+          "num_cells": 35493,
+          "num_submodules": 6,
+          "num_cells_by_type": {
+            "$scopeinfo": 2,
+            "CARRY4": 490,
+            "DSP48E1": 8,
+            "FDRE": 8688,
+            "FDSE": 192,
+            "INV": 293,
+            "LUT1": 158,
+            "LUT2": 1064,
+            "LUT3": 4791,
+            "LUT4": 4590,
+            "LUT5": 5667,
+            "LUT6": 9550,
+            "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+            "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+          }
+        }
+      },
+      "netlist_path": "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-TMR-rf0/netlist.json",
+      "seconds": 61.41
+    },
+    {
+      "variant": "multicycle-plain",
+      "exit_code": 0,
+      "status": "pass",
+      "configuration": {
+        "core_arch": "MULTICYCLE",
+        "pipeline_protection": "PLAIN",
+        "mode_id": 2,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": null,
+        "iverilog_flags": [
+          "-DRISCUE_MULTICYCLE=1",
+          "-DRISCUE_PLAIN_MEMORY",
+          "-DRISCUE_PIPELINE_PROTECTION=2",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "RF_TMR": 0,
+      "frontend": "slang",
+      "top": "riscue_pipeline_core",
+      "family": "xc7",
+      "reference_board": "KC705 / Kintex-7 XC7K325T",
+      "mapping_flow": "Series-7 primitive mapping followed by ABC strash/if uniform 6-input LUT mapping (quick estimate); not ABC9 timing optimization",
+      "scope": "Out-of-context mapped cell counts, not device-constrained fitting, placement/routing, timing, protection qualification or Tiny Tapeout area",
+      "FI_ENABLE": 0,
+      "DEBUG_ENABLE": 0,
+      "source_sha256": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+      "conversion_command": [
+        "read_slang",
+        "--best-effort-hierarchy",
+        "--unroll-limit",
+        "16384",
+        "--top",
+        "riscue_pipeline_core",
+        "-G",
+        "RF_TMR=0",
+        "-G",
+        "FI_ENABLE=0",
+        "-G",
+        "DEBUG_ENABLE=0",
+        "-DRISCUE_MULTICYCLE=1",
+        "-DRISCUE_PLAIN_MEMORY",
+        "-DRISCUE_PIPELINE_PROTECTION=2",
+        "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0",
+        "/mnt/c/dev/RISCue/rtl/ft_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_rvc.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_jump_target.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_execute.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_muldiv.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_core.sv"
+      ],
+      "synthesis_command": [
+        "/mnt/c/dev/RISCue/.tools/oss-cad-suite/bin/yosys",
+        "-m",
+        "slang",
+        "-Q",
+        "-q",
+        "-l",
+        "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-PLAIN-rf0/yosys-full.log",
+        "-s",
+        "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-PLAIN-rf0/synth.ys"
+      ],
+      "cells_by_type": {
+        "$scopeinfo": 2,
+        "CARRY4": 299,
+        "DSP48E1": 4,
+        "FDRE": 2760,
+        "FDSE": 64,
+        "INV": 203,
+        "LUT1": 136,
+        "LUT2": 897,
+        "LUT3": 1251,
+        "LUT4": 1009,
+        "LUT5": 2730,
+        "LUT6": 4094,
+        "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+      },
+      "resources": {
+        "LUT_cells": 10117,
+        "flip_flop_cells": 2824,
+        "DSP48_cells": 4,
+        "RAMB18_cells": 0,
+        "RAMB36_cells": 0,
+        "CARRY4_cells": 299
+      },
+      "replica_audit": {
+        "applicable": false,
+        "scope": "Plain has no retained redundant state"
+      },
+      "statistics": {
+        "creator": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+        "invocation": "stat -json -top riscue_pipeline_core ",
+        "modules": {
+          "\\riscue_execute$riscue_pipeline_core.impl.lane0": {
+            "num_wires": 1475,
+            "num_wire_bits": 8621,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2674,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 98,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 286,
+              "LUT3": 366,
+              "LUT4": 206,
+              "LUT5": 774,
+              "LUT6": 932
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.jump0": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": {
+            "num_wires": 144,
+            "num_wire_bits": 3070,
+            "num_pub_wires": 22,
+            "num_pub_wire_bits": 1675,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 825,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 57,
+              "DSP48E1": 4,
+              "FDRE": 238,
+              "INV": 126,
+              "LUT2": 117,
+              "LUT3": 43,
+              "LUT4": 88,
+              "LUT5": 100,
+              "LUT6": 52
+            }
+          },
+          "\\riscue_pipeline_core": {
+            "num_wires": 4447,
+            "num_wire_bits": 58142,
+            "num_pub_wires": 212,
+            "num_pub_wire_bits": 37459,
+            "num_ports": 58,
+            "num_port_bits": 1354,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 9911,
+            "num_submodules": 3,
+            "num_cells_by_type": {
+              "$scopeinfo": 2,
+              "CARRY4": 136,
+              "FDRE": 2522,
+              "FDSE": 64,
+              "INV": 70,
+              "LUT1": 131,
+              "LUT2": 463,
+              "LUT3": 842,
+              "LUT4": 715,
+              "LUT5": 1856,
+              "LUT6": 3110,
+              "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+            }
+          }
+        },
+        "design": {
+          "num_wires": 6074,
+          "num_wire_bits": 70087,
+          "num_pub_wires": 253,
+          "num_pub_wire_bits": 39811,
+          "num_ports": 83,
+          "num_port_bits": 2413,
+          "num_memories": 0,
+          "num_memory_bits": 0,
+          "num_processes": 0,
+          "num_cells": 13449,
+          "num_submodules": 3,
+          "num_cells_by_type": {
+            "$scopeinfo": 2,
+            "CARRY4": 299,
+            "DSP48E1": 4,
+            "FDRE": 2760,
+            "FDSE": 64,
+            "INV": 203,
+            "LUT1": 136,
+            "LUT2": 897,
+            "LUT3": 1251,
+            "LUT4": 1009,
+            "LUT5": 2730,
+            "LUT6": 4094,
+            "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+          }
+        }
+      },
+      "netlist_path": "/home/jeffd/.cache/riscue-synthesis/slang/MULTICYCLE-PLAIN-rf0/netlist.json",
+      "seconds": 37.33
+    },
+    {
+      "variant": "pipeline-tmr",
+      "exit_code": 0,
+      "status": "pass",
+      "configuration": {
+        "core_arch": "PIPELINED",
+        "pipeline_protection": "TMR",
+        "mode_id": 0,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": 2,
+        "iverilog_flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PIPELINE_PROTECTION=0",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "RF_TMR": 0,
+      "frontend": "slang",
+      "top": "riscue_pipeline_core",
+      "family": "xc7",
+      "reference_board": "KC705 / Kintex-7 XC7K325T",
+      "mapping_flow": "Series-7 primitive mapping followed by ABC strash/if uniform 6-input LUT mapping (quick estimate); not ABC9 timing optimization",
+      "scope": "Out-of-context mapped cell counts, not device-constrained fitting, placement/routing, timing, protection qualification or Tiny Tapeout area",
+      "FI_ENABLE": 0,
+      "DEBUG_ENABLE": 0,
+      "source_sha256": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+      "conversion_command": [
+        "read_slang",
+        "--best-effort-hierarchy",
+        "--unroll-limit",
+        "16384",
+        "--top",
+        "riscue_pipeline_core",
+        "-G",
+        "RF_TMR=0",
+        "-G",
+        "FI_ENABLE=0",
+        "-G",
+        "DEBUG_ENABLE=0",
+        "-DRISCUE_MULTICYCLE=0",
+        "-DRISCUE_PIPELINE_PROTECTION=0",
+        "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0",
+        "/mnt/c/dev/RISCue/rtl/ft_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_rvc.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_jump_target.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_execute.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_muldiv.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_core.sv"
+      ],
+      "synthesis_command": [
+        "/mnt/c/dev/RISCue/.tools/oss-cad-suite/bin/yosys",
+        "-m",
+        "slang",
+        "-Q",
+        "-q",
+        "-l",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-TMR-rf0/yosys-full.log",
+        "-s",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-TMR-rf0/synth.ys"
+      ],
+      "cells_by_type": {
+        "$scopeinfo": 2,
+        "CARRY4": 494,
+        "DSP48E1": 8,
+        "FDRE": 15012,
+        "FDSE": 192,
+        "INV": 293,
+        "LUT1": 158,
+        "LUT2": 1080,
+        "LUT3": 6859,
+        "LUT4": 7632,
+        "LUT5": 7310,
+        "LUT6": 10455,
+        "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+        "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+      },
+      "resources": {
+        "LUT_cells": 33494,
+        "flip_flop_cells": 15204,
+        "DSP48_cells": 8,
+        "RAMB18_cells": 0,
+        "RAMB36_cells": 0,
+        "CARRY4_cells": 494
+      },
+      "replica_audit": {
+        "passed": true,
+        "records": [
+          {
+            "module": "riscue_pipeline_core",
+            "prefix": "impl.",
+            "core_replica_ff_bits": {
+              "0": 4038,
+              "1": 4038,
+              "2": 4038
+            },
+            "pairwise_disjoint": true,
+            "storage": "c",
+            "compared_instances": {
+              "lane0": [
+                "impl.lane0"
+              ],
+              "lane1": [
+                "impl.protected_lane1.lane1"
+              ],
+              "jump0": [
+                "impl.jump0"
+              ],
+              "jump1": [
+                "impl.protected_jump.jump1"
+              ]
+            }
+          }
+        ],
+        "scope": "Core/recovery flip-flop disjointness and compared-instance presence only; not a full protection, parity-path, encoding, RF/arithmetic, placement or timing audit"
+      },
+      "statistics": {
+        "creator": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+        "invocation": "stat -json -top riscue_pipeline_core ",
+        "modules": {
+          "\\riscue_execute$riscue_pipeline_core.impl.lane0": {
+            "num_wires": 1484,
+            "num_wire_bits": 8656,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2682,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 100,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 286,
+              "LUT3": 370,
+              "LUT4": 206,
+              "LUT5": 777,
+              "LUT6": 931
+            }
+          },
+          "\\riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": {
+            "num_wires": 1484,
+            "num_wire_bits": 8657,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2683,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 100,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 288,
+              "LUT3": 370,
+              "LUT4": 205,
+              "LUT5": 777,
+              "LUT6": 931
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.jump0": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": {
+            "num_wires": 837,
+            "num_wire_bits": 7342,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": {
+            "num_wires": 848,
+            "num_wire_bits": 7360,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_pipeline_core": {
+            "num_wires": 13610,
+            "num_wire_bits": 103196,
+            "num_pub_wires": 208,
+            "num_pub_wire_bits": 41387,
+            "num_ports": 58,
+            "num_port_bits": 1354,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 38320,
+            "num_submodules": 6,
+            "num_cells_by_type": {
+              "$scopeinfo": 2,
+              "CARRY4": 160,
+              "FDRE": 13170,
+              "FDSE": 192,
+              "INV": 89,
+              "LUT1": 148,
+              "LUT2": 208,
+              "LUT3": 5495,
+              "LUT4": 6141,
+              "LUT5": 5074,
+              "LUT6": 7641,
+              "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+              "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+            }
+          }
+        },
+        "design": {
+          "num_wires": 18279,
+          "num_wire_bits": 135719,
+          "num_pub_wires": 294,
+          "num_pub_wire_bits": 47319,
+          "num_ports": 108,
+          "num_port_bits": 3472,
+          "num_memories": 0,
+          "num_memory_bits": 0,
+          "num_processes": 0,
+          "num_cells": 49495,
+          "num_submodules": 6,
+          "num_cells_by_type": {
+            "$scopeinfo": 2,
+            "CARRY4": 494,
+            "DSP48E1": 8,
+            "FDRE": 15012,
+            "FDSE": 192,
+            "INV": 293,
+            "LUT1": 158,
+            "LUT2": 1080,
+            "LUT3": 6859,
+            "LUT4": 7632,
+            "LUT5": 7310,
+            "LUT6": 10455,
+            "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+            "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+          }
+        }
+      },
+      "netlist_path": "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-TMR-rf0/netlist.json",
+      "seconds": 68.64
+    },
+    {
+      "variant": "pipeline-parity",
+      "exit_code": 0,
+      "status": "pass",
+      "configuration": {
+        "core_arch": "PIPELINED",
+        "pipeline_protection": "PARITY_REPLAY",
+        "mode_id": 1,
+        "experimental": true,
+        "explicit_opt_in": true,
+        "fi_abi": 3,
+        "iverilog_flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PIPELINE_PROTECTION=1",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "RF_TMR": 0,
+      "frontend": "slang",
+      "top": "riscue_pipeline_core",
+      "family": "xc7",
+      "reference_board": "KC705 / Kintex-7 XC7K325T",
+      "mapping_flow": "Series-7 primitive mapping followed by ABC strash/if uniform 6-input LUT mapping (quick estimate); not ABC9 timing optimization",
+      "scope": "Out-of-context mapped cell counts, not device-constrained fitting, placement/routing, timing, protection qualification or Tiny Tapeout area",
+      "FI_ENABLE": 0,
+      "DEBUG_ENABLE": 0,
+      "source_sha256": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+      "conversion_command": [
+        "read_slang",
+        "--best-effort-hierarchy",
+        "--unroll-limit",
+        "16384",
+        "--top",
+        "riscue_pipeline_core",
+        "-G",
+        "RF_TMR=0",
+        "-G",
+        "FI_ENABLE=0",
+        "-G",
+        "DEBUG_ENABLE=0",
+        "-DRISCUE_MULTICYCLE=0",
+        "-DRISCUE_PIPELINE_PROTECTION=1",
+        "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=1",
+        "/mnt/c/dev/RISCue/rtl/ft_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_rvc.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_jump_target.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_execute.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_muldiv.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_core.sv"
+      ],
+      "synthesis_command": [
+        "/mnt/c/dev/RISCue/.tools/oss-cad-suite/bin/yosys",
+        "-m",
+        "slang",
+        "-Q",
+        "-q",
+        "-l",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PARITY_REPLAY-rf0/yosys-full.log",
+        "-s",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PARITY_REPLAY-rf0/synth.ys"
+      ],
+      "cells_by_type": {
+        "$scopeinfo": 2,
+        "CARRY4": 508,
+        "DSP48E1": 8,
+        "FDRE": 9841,
+        "FDSE": 192,
+        "INV": 293,
+        "LUT1": 158,
+        "LUT2": 1943,
+        "LUT3": 4608,
+        "LUT4": 6136,
+        "LUT5": 6201,
+        "LUT6": 12673,
+        "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+        "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+      },
+      "resources": {
+        "LUT_cells": 31719,
+        "flip_flop_cells": 10033,
+        "DSP48_cells": 8,
+        "RAMB18_cells": 0,
+        "RAMB36_cells": 0,
+        "CARRY4_cells": 508
+      },
+      "replica_audit": {
+        "passed": true,
+        "records": [
+          {
+            "module": "riscue_pipeline_core",
+            "prefix": "impl.",
+            "core_replica_ff_bits": {
+              "0": 4038,
+              "1": 1393,
+              "2": 1393
+            },
+            "pairwise_disjoint": true,
+            "storage": "c",
+            "recovery_replica_ff_bits": {
+              "0": 38,
+              "1": 38,
+              "2": 38
+            },
+            "compared_instances": {
+              "lane0": [
+                "impl.lane0"
+              ],
+              "lane1": [
+                "impl.protected_lane1.lane1"
+              ],
+              "jump0": [
+                "impl.jump0"
+              ],
+              "jump1": [
+                "impl.protected_jump.jump1"
+              ]
+            }
+          }
+        ],
+        "scope": "Core/recovery flip-flop disjointness and compared-instance presence only; not a full protection, parity-path, encoding, RF/arithmetic, placement or timing audit"
+      },
+      "statistics": {
+        "creator": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+        "invocation": "stat -json -top riscue_pipeline_core ",
+        "modules": {
+          "\\riscue_execute$riscue_pipeline_core.impl.lane0": {
+            "num_wires": 1483,
+            "num_wire_bits": 8706,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2679,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 102,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 287,
+              "LUT3": 365,
+              "LUT4": 209,
+              "LUT5": 775,
+              "LUT6": 929
+            }
+          },
+          "\\riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": {
+            "num_wires": 1487,
+            "num_wire_bits": 8700,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2680,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 102,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 287,
+              "LUT3": 365,
+              "LUT4": 208,
+              "LUT5": 777,
+              "LUT6": 929
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.jump0": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": {
+            "num_wires": 837,
+            "num_wire_bits": 7342,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": {
+            "num_wires": 848,
+            "num_wire_bits": 7360,
+            "num_pub_wires": 24,
+            "num_pub_wire_bits": 2289,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2866,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 59,
+              "DSP48E1": 4,
+              "FDRE": 921,
+              "INV": 95,
+              "LUT2": 118,
+              "LUT3": 312,
+              "LUT4": 540,
+              "LUT5": 341,
+              "LUT6": 476
+            }
+          },
+          "\\riscue_pipeline_core": {
+            "num_wires": 12792,
+            "num_wire_bits": 100252,
+            "num_pub_wires": 209,
+            "num_pub_wire_bits": 41466,
+            "num_ports": 58,
+            "num_port_bits": 1354,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 31394,
+            "num_submodules": 6,
+            "num_cells_by_type": {
+              "$scopeinfo": 2,
+              "CARRY4": 170,
+              "FDRE": 7999,
+              "FDSE": 192,
+              "INV": 89,
+              "LUT1": 148,
+              "LUT2": 1071,
+              "LUT3": 3254,
+              "LUT4": 4639,
+              "LUT5": 3967,
+              "LUT6": 9863,
+              "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+              "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+            }
+          }
+        },
+        "design": {
+          "num_wires": 17463,
+          "num_wire_bits": 132868,
+          "num_pub_wires": 295,
+          "num_pub_wire_bits": 47398,
+          "num_ports": 108,
+          "num_port_bits": 3472,
+          "num_memories": 0,
+          "num_memory_bits": 0,
+          "num_processes": 0,
+          "num_cells": 42563,
+          "num_submodules": 6,
+          "num_cells_by_type": {
+            "$scopeinfo": 2,
+            "CARRY4": 508,
+            "DSP48E1": 8,
+            "FDRE": 9841,
+            "FDSE": 192,
+            "INV": 293,
+            "LUT1": 158,
+            "LUT2": 1943,
+            "LUT3": 4608,
+            "LUT4": 6136,
+            "LUT5": 6201,
+            "LUT6": 12673,
+            "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+            "riscue_execute$riscue_pipeline_core.impl.protected_lane1.lane1": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.protected_jump.jump1": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.protected_arithmetic1.arithmetic1": 1
+          }
+        }
+      },
+      "netlist_path": "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PARITY_REPLAY-rf0/netlist.json",
+      "seconds": 68.1
+    },
+    {
+      "variant": "pipeline-plain",
+      "exit_code": 0,
+      "status": "pass",
+      "configuration": {
+        "core_arch": "PIPELINED",
+        "pipeline_protection": "PLAIN",
+        "mode_id": 2,
+        "experimental": false,
+        "explicit_opt_in": false,
+        "fi_abi": null,
+        "iverilog_flags": [
+          "-DRISCUE_MULTICYCLE=0",
+          "-DRISCUE_PLAIN_MEMORY",
+          "-DRISCUE_PIPELINE_PROTECTION=2",
+          "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "RF_TMR": 0,
+      "frontend": "slang",
+      "top": "riscue_pipeline_core",
+      "family": "xc7",
+      "reference_board": "KC705 / Kintex-7 XC7K325T",
+      "mapping_flow": "Series-7 primitive mapping followed by ABC strash/if uniform 6-input LUT mapping (quick estimate); not ABC9 timing optimization",
+      "scope": "Out-of-context mapped cell counts, not device-constrained fitting, placement/routing, timing, protection qualification or Tiny Tapeout area",
+      "FI_ENABLE": 0,
+      "DEBUG_ENABLE": 0,
+      "source_sha256": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d"
+      },
+      "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+      "conversion_command": [
+        "read_slang",
+        "--best-effort-hierarchy",
+        "--unroll-limit",
+        "16384",
+        "--top",
+        "riscue_pipeline_core",
+        "-G",
+        "RF_TMR=0",
+        "-G",
+        "FI_ENABLE=0",
+        "-G",
+        "DEBUG_ENABLE=0",
+        "-DRISCUE_MULTICYCLE=0",
+        "-DRISCUE_PLAIN_MEMORY",
+        "-DRISCUE_PIPELINE_PROTECTION=2",
+        "-DRISCUE_ALLOW_EXPERIMENTAL_PARITY=0",
+        "/mnt/c/dev/RISCue/rtl/ft_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_pkg.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_rvc.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_jump_target.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_execute.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_muldiv.sv",
+        "/mnt/c/dev/RISCue/rtl/riscue_pipeline_core.sv"
+      ],
+      "synthesis_command": [
+        "/mnt/c/dev/RISCue/.tools/oss-cad-suite/bin/yosys",
+        "-m",
+        "slang",
+        "-Q",
+        "-q",
+        "-l",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PLAIN-rf0/yosys-full.log",
+        "-s",
+        "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PLAIN-rf0/synth.ys"
+      ],
+      "cells_by_type": {
+        "$scopeinfo": 2,
+        "CARRY4": 305,
+        "DSP48E1": 4,
+        "FDRE": 3813,
+        "FDSE": 64,
+        "INV": 203,
+        "LUT1": 136,
+        "LUT2": 1037,
+        "LUT3": 1203,
+        "LUT4": 1486,
+        "LUT5": 2078,
+        "LUT6": 4066,
+        "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+        "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+        "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+      },
+      "resources": {
+        "LUT_cells": 10006,
+        "flip_flop_cells": 3877,
+        "DSP48_cells": 4,
+        "RAMB18_cells": 0,
+        "RAMB36_cells": 0,
+        "CARRY4_cells": 305
+      },
+      "replica_audit": {
+        "applicable": false,
+        "scope": "Plain has no retained redundant state"
+      },
+      "statistics": {
+        "creator": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+        "invocation": "stat -json -top riscue_pipeline_core ",
+        "modules": {
+          "\\riscue_execute$riscue_pipeline_core.impl.lane0": {
+            "num_wires": 1473,
+            "num_wire_bits": 8617,
+            "num_pub_wires": 15,
+            "num_pub_wire_bits": 549,
+            "num_ports": 6,
+            "num_port_bits": 340,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 2674,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 98,
+              "INV": 7,
+              "LUT1": 5,
+              "LUT2": 286,
+              "LUT3": 366,
+              "LUT4": 206,
+              "LUT5": 774,
+              "LUT6": 932
+            }
+          },
+          "\\riscue_jump_target$riscue_pipeline_core.impl.jump0": {
+            "num_wires": 8,
+            "num_wire_bits": 254,
+            "num_pub_wires": 4,
+            "num_pub_wire_bits": 128,
+            "num_ports": 3,
+            "num_port_bits": 96,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 39,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 8,
+              "LUT2": 31
+            }
+          },
+          "\\riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": {
+            "num_wires": 144,
+            "num_wire_bits": 3070,
+            "num_pub_wires": 22,
+            "num_pub_wire_bits": 1675,
+            "num_ports": 16,
+            "num_port_bits": 623,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 825,
+            "num_submodules": 0,
+            "num_cells_by_type": {
+              "CARRY4": 57,
+              "DSP48E1": 4,
+              "FDRE": 238,
+              "INV": 126,
+              "LUT2": 117,
+              "LUT3": 43,
+              "LUT4": 88,
+              "LUT5": 100,
+              "LUT6": 52
+            }
+          },
+          "\\riscue_pipeline_core": {
+            "num_wires": 3312,
+            "num_wire_bits": 46323,
+            "num_pub_wires": 210,
+            "num_pub_wire_bits": 29383,
+            "num_ports": 58,
+            "num_port_bits": 1354,
+            "num_memories": 0,
+            "num_memory_bits": 0,
+            "num_processes": 0,
+            "num_cells": 10859,
+            "num_submodules": 3,
+            "num_cells_by_type": {
+              "$scopeinfo": 2,
+              "CARRY4": 142,
+              "FDRE": 3575,
+              "FDSE": 64,
+              "INV": 70,
+              "LUT1": 131,
+              "LUT2": 603,
+              "LUT3": 794,
+              "LUT4": 1192,
+              "LUT5": 1204,
+              "LUT6": 3082,
+              "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+              "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+              "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+            }
+          }
+        },
+        "design": {
+          "num_wires": 4937,
+          "num_wire_bits": 58264,
+          "num_pub_wires": 251,
+          "num_pub_wire_bits": 31735,
+          "num_ports": 83,
+          "num_port_bits": 2413,
+          "num_memories": 0,
+          "num_memory_bits": 0,
+          "num_processes": 0,
+          "num_cells": 14397,
+          "num_submodules": 3,
+          "num_cells_by_type": {
+            "$scopeinfo": 2,
+            "CARRY4": 305,
+            "DSP48E1": 4,
+            "FDRE": 3813,
+            "FDSE": 64,
+            "INV": 203,
+            "LUT1": 136,
+            "LUT2": 1037,
+            "LUT3": 1203,
+            "LUT4": 1486,
+            "LUT5": 2078,
+            "LUT6": 4066,
+            "riscue_execute$riscue_pipeline_core.impl.lane0": 1,
+            "riscue_jump_target$riscue_pipeline_core.impl.jump0": 1,
+            "riscue_muldiv$riscue_pipeline_core.impl.arithmetic0": 1
+          }
+        }
+      },
+      "netlist_path": "/home/jeffd/.cache/riscue-synthesis/slang/PIPELINED-PLAIN-rf0/netlist.json",
+      "seconds": 55.61
+    }
+  ],
+  "regression": {
+    "core_sha256": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+    "results": [
+      {
+        "command": [
+          "make",
+          "pipeline-selection-test"
+        ],
+        "exit_code": 0,
+        "seconds": 11.75,
+        "log": "build/variant-matrix/0.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-smoke",
+          "pipeline-jump",
+          "PIPELINE_PROTECTION=TMR",
+          "ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "exit_code": 0,
+        "seconds": 19.65,
+        "log": "build/variant-matrix/1.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-smoke",
+          "pipeline-jump",
+          "PIPELINE_PROTECTION=PARITY_REPLAY",
+          "ALLOW_EXPERIMENTAL_PARITY=1"
+        ],
+        "exit_code": 0,
+        "seconds": 30.01,
+        "log": "build/variant-matrix/2.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-smoke",
+          "pipeline-jump",
+          "PIPELINE_PROTECTION=PLAIN",
+          "ALLOW_EXPERIMENTAL_PARITY=0"
+        ],
+        "exit_code": 0,
+        "seconds": 13.95,
+        "log": "build/variant-matrix/3.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-smoke",
+          "pipeline-jump",
+          "CORE_ARCH=MULTICYCLE",
+          "PIPELINE_PROTECTION=TMR"
+        ],
+        "exit_code": 0,
+        "seconds": 21.4,
+        "log": "build/variant-matrix/4.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-smoke",
+          "pipeline-jump",
+          "CORE_ARCH=MULTICYCLE",
+          "PIPELINE_PROTECTION=PLAIN"
+        ],
+        "exit_code": 0,
+        "seconds": 14.48,
+        "log": "build/variant-matrix/5.log"
+      },
+      {
+        "command": [
+          "make",
+          "multicycle-test"
+        ],
+        "exit_code": 0,
+        "seconds": 13.05,
+        "log": "build/variant-matrix/6.log"
+      },
+      {
+        "command": [
+          "make",
+          "pipeline-replay-test"
+        ],
+        "exit_code": 0,
+        "seconds": 77.62,
+        "log": "build/variant-matrix/7.log"
+      },
+      {
+        "command": [
+          "make",
+          "docs",
+          "docs-check"
+        ],
+        "exit_code": 0,
+        "seconds": 1.38,
+        "log": "build/variant-matrix/8.log"
+      }
+    ]
+  },
+  "compact_fault_campaign": {
+    "passed": true,
+    "logical_record_bits": 1930,
+    "single_bit_replica_injections": 5790,
+    "unused_phase_codes": 250,
+    "minimum_phase_distance": 4,
+    "simulation_build": {
+      "sources": {
+        "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+        "rtl/riscue_pipeline_pkg.sv": "528ff8319602ee05dcceeb2ba9b9165df977a306bd3dcba8caaef923dbe89d75",
+        "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+        "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+        "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+        "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+        "rtl/riscue_pipeline_core.sv": "2d8db4453f0b320a016c9c074578f12c039b29a0cae5e087937b6cb703d6250d",
+        "tests/tb_multicycle_faults.sv": "9327349897d2cdf291d8266846aca3a70c85ee050909aac459a24f16c38a7fcd"
+      },
+      "flags": [],
+      "verilator_version": "Verilator 5.048 2026-04-26 rev vUNKNOWN-built20261017"
+    },
+    "scope": "Directed logical-state injection, scoped mapped FF separation; not exhaustive timing/persistence/physical fault qualification"
+  },
+  "parity_replay_directed_cases": 24,
+  "cross_simulator_checks": [
+    {
+      "kernel": "crc32",
+      "variant": "pipeline-tmr",
+      "wait_states": 0,
+      "cycles": 11465,
+      "retirement_hash": "853a0954268a412b",
+      "matched": true
+    },
+    {
+      "kernel": "crc32",
+      "variant": "pipeline-plain",
+      "wait_states": 0,
+      "cycles": 11465,
+      "retirement_hash": "853a0954268a412b",
+      "matched": true
+    }
+  ],
+  "rerun": [
+    "source /mnt/c/dev/Enter-RISCue.sh",
+    "make pipeline-variants-check",
+    "make design-benchmarks DESIGN_BENCH_ARGS=--synthesis"
+  ],
+  "limits": [
+    "Clock counts include startup; no achieved FPGA frequency, place-and-route, power or flight qualification result.",
+    "C kernels are 32-byte CRC32, 16-element insertion sort, and 32-iteration integer multiply/divide; not a standard CoreMark/Dhrystone score.",
+    "Core-only Series-7 quick mapping; RF_TMR=0, FI_ENABLE=0, DEBUG_ENABLE=0 for resource/benchmark comparison; protected builds retain ECC and compared execution.",
+    "Compact fault sweep covers every logical record bit per replica at directed times, and every unused phase; broader interrupts/debug, fault timing/persistence and formal architectural proofs remain open.",
+    "Existing board release/integration work has not been qualified for the new architecture."
+  ],
+  "tool_sha256": {
+    "tools/simulation_build.py": "8770cf29fb33ab30da07ae203b3dee900cb463bbb297955175e6910746934bf6",
+    "tools/check_multicycle.py": "02f2c16727d00ea6f8030a903a011e2f7d8e3798a5c1eb3247b00e20230dd551",
+    "tools/pipeline_config.py": "b846ea9eaacb1414eecefd345fe5eb9b2e8a1204ab5c3046f6dce12be22fbd67",
+    "tools/run_variant_matrix.py": "77b17b68b8496f836cec8008d3a0dc969922476fdfcf419892a3fcba0382d1d9",
+    "tools/synth_pipeline.py": "a0c7662eddf0df15996ea977c7427363c5b93647de8460ed76e9234c5a182ee6",
+    "tools/audit_pipeline_yosys.py": "ba278df1e85e3bbd42f2274dc90c7765d52845c0b2d37621708386a708735e90"
+  },
+  "base_commit": "68cbd6e56a727d62c31175116e60933074542c33",
+  "firmware_input_sha256": {
+    "firmware/benchmarks/kernels.c": "1fdbd45c44cfc180692ef925b1a790178bedf2da0983281e565c26d7adfba46a",
+    "firmware/smoke/start.S": "7aeb57d94309910444d0d67fe3ef362ba3161b425aeeb2e50e18ea85452eb150",
+    "firmware/smoke/link.ld": "0f41622a6df1f974759d6f8a6db6b960f5e41e01330eb4206fef108961429797",
+    "docs/software-profile.json": "f78ba9b171478d8add611cdcb58dd4468d71ae8422f588ef269e14e49e77846d",
+    "tools/check_elf.py": "965ad6f3d2e1a8f1f6453cbcb4135ac588042fbe599581eb2c9eeb23c0b42966",
+    "tools/software_profile.py": "6a662dc6d241ea8c5b591ac8bad0f53e6f25fad86fb4ac8d6ccc4c046ea7a8b4"
+  }
+}

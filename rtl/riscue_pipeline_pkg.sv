@@ -26,6 +26,25 @@ package riscue_pipeline_pkg;
   logic retire,retire_trap,retire_intr,interrupt_next;
   slot_t retired;
  } state_t;
+ // Non-pipelined storage: one active instruction plus shared architectural state.
+ typedef struct packed {
+  // Architectural debug state participates in the pipeline TMR record.
+  logic debug_halted,debug_step,debug_step_issued,debug_ebreakm;
+  logic [2:0] debug_cause;
+  slot_t active;logic [7:0] phase;
+  logic [31:0] fetch_pc,arch_pc,half_word;
+  logic half_valid,bus_active,bus_data,bus_half,bus_kill,bus_cooldown;
+  logic [31:0] bus_pc,bus_addr,bus_wdata,bus_ctrl,bus_wait;
+  logic x_started,x_done;logic [31:0] x_result;
+  logic fatal,trap_pulse,irq_drain;logic [31:0] irq_cause;
+  logic irq_meta,irq_sync;
+  logic [31:0] mtvec,mepc,mcause,mtval,mscratch,mie;
+  logic mie_global,mpie,msip;
+  logic [63:0] mcycle,minstret,mtime,mtimecmp,order;
+  logic [4:0] scrub;
+  logic retire,retire_trap,retire_intr,interrupt_next;
+  slot_t retired;
+ } compact_state_t;
  typedef struct packed {
   logic busy,done,fatal;logic [2:0] op;logic [5:0] count;
   logic [31:0] quotient,divisor,result,original;

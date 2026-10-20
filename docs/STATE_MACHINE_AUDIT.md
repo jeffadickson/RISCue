@@ -53,3 +53,6 @@ See [hardware debug](HARDWARE_DEBUG.md).
 
 ## PLAIN baseline
 Mode PLAIN uses unprotected single state records and ordinary RF/RAM words; no SEU detection/correction claim applies. Normal traps, bus errors and timeouts retain functional semantics. See UNPROTECTED.md.
+
+## Compact MULTICYCLE controller
+The single active instruction progresses through explicit eight-bit IDLE/FETCH/DECODE/EXECUTE/MEMORY/WRITEBACK codes 00/0f/33/3c/55/5a. Minimum code distance is four. Protected compact records are triplicated; majority is formed before decoding. Unused voted phases set fatal before issue. Timers, committed retirement snapshot and accepted bus ownership remain in the shared compact record. See PIPELINE_PROTECTION.md for ABI 4 and directed-test scope.

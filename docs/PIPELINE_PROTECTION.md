@@ -176,3 +176,13 @@ Canonical requirements: [requirements.json](requirements.json); generated
 ## Unprotected baseline and required development gate
 
 PLAIN is a third, deliberately unprotected local simulation option. See [the unprotected variant](UNPROTECTED.md). Functional changes must pass `make pipeline-variants-check` across all three variants. Existing radiation-protection obligations describe protected variants; PLAIN makes no SEU mitigation claim.
+
+## Compact non-pipelined variants
+
+CORE_ARCH=MULTICYCLE uses one active instruction record and an explicit controller instead of five stored stage records. It supports PIPELINE_PROTECTION=TMR or PLAIN; the parity/replay option remains specific to PIPELINED. The historical wrapper name riscue_pipeline_core is retained for interface compatibility. These are current-software-profile designs, not the feature-limited legacy RV32IM CPU.
+
+The compact packed record is 1930 logical bits; protected builds retain three voted/repaired copies. Legal protected controller codes are 00, 0f, 33, 3c, 55 and 5a (hex, minimum distance four). Every unused code suppresses new requests and enters sticky fatal state. FI ABI 4 targets 5/6/7 address compact record windows of 512, 512, 512 and 394 bits; RF and arithmetic targets retain their existing meaning. Do not reuse pipeline stored-state offsets. Plain disables injection and correction.
+
+The pipeline-variants-check target now checks all five architecture/protection combinations, protected compact-state upsets and phase containment, and the existing parity/replay tests. The compact sweep covers each logical stored bit in each replica at directed injection times; this is not exhaustive mapped/physical fault qualification.
+
+The design-benchmarks target compiles one binary per C kernel, reuses it for every design, checks independently calculated CRC/sort/integer answers and retirement/memory-effect hashes, and measures core clocks with zero/three added memory wait states. Use DESIGN_BENCH_ARGS=--synthesis for paired core-only Series-7 estimates. Simulation throughput, FPGA clock frequency and physical device fit are distinct measurements.

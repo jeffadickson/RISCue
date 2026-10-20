@@ -1,3 +1,15 @@
+CORE_ARCH ?= PIPELINED
+export CORE_ARCH
+ifeq ($(CORE_ARCH),PIPELINED)
+CORE_ARCH_ID = 0
+else ifeq ($(CORE_ARCH),MULTICYCLE)
+CORE_ARCH_ID = 1
+ifeq ($(PIPELINE_PROTECTION),PARITY_REPLAY)
+$(error MULTICYCLE supports TMR or PLAIN)
+endif
+else
+$(error Invalid CORE_ARCH; use PIPELINED or MULTICYCLE)
+endif
 # Pipeline architecture is independent of RF_MODE/RF_TMR. TMR remains default.
 PIPELINE_PROTECTION ?= TMR
 ALLOW_EXPERIMENTAL_PARITY ?= 0
@@ -14,7 +26,7 @@ PIPELINE_MODE_ID = 2
 else
 $(error Invalid PIPELINE_PROTECTION; use TMR, PARITY_REPLAY or PLAIN)
 endif
-PIPELINE_FLAGS = $(if $(filter PLAIN,$(PIPELINE_PROTECTION)),-DRISCUE_PLAIN_MEMORY) -DRISCUE_PIPELINE_PROTECTION=$(PIPELINE_MODE_ID) -DRISCUE_ALLOW_EXPERIMENTAL_PARITY=$(ALLOW_EXPERIMENTAL_PARITY)
+PIPELINE_FLAGS = -DRISCUE_MULTICYCLE=$(CORE_ARCH_ID) $(if $(filter PLAIN,$(PIPELINE_PROTECTION)),-DRISCUE_PLAIN_MEMORY) -DRISCUE_PIPELINE_PROTECTION=$(PIPELINE_MODE_ID) -DRISCUE_ALLOW_EXPERIMENTAL_PARITY=$(ALLOW_EXPERIMENTAL_PARITY)
 
 IVERILOG ?= iverilog
 VVP ?= vvp
@@ -382,7 +394,7 @@ test-debug: check-debug-board
 
 .PHONY: pipeline-config
 pipeline-config: | build
-	$(PYTHON) tools/pipeline_config.py --mode "$(PIPELINE_PROTECTION)" --experimental "$(ALLOW_EXPERIMENTAL_PARITY)" --output build/pipeline-config-$(PIPELINE_PROTECTION).json
+	$(PYTHON) tools/pipeline_config.py --mode "$(PIPELINE_PROTECTION)" --experimental "$(ALLOW_EXPERIMENTAL_PARITY)" --output build/pipeline-config-$(CORE_ARCH)-$(PIPELINE_PROTECTION).json
 pipeline-smoke pipeline-jump pipeline-compile: pipeline-config
 
 .PHONY: pipeline-replay-test pipeline-selection-test
@@ -407,3 +419,15 @@ packet-demo:
 .PHONY: pipeline-variants-check
 pipeline-variants-check:
 	$(PYTHON) tools/run_variant_matrix.py
+
+.PHONY: architecture-compare
+ARCH_COMPARE_ARGS ?=
+architecture-compare:
+	$(PYTHON) tools/compare_architectures.py $(ARCH_COMPARE_ARGS)
+
+.PHONY: multicycle-test design-benchmarks
+multicycle-test: | build
+	$(PYTHON) tools/check_multicycle.py
+DESIGN_BENCH_ARGS ?=
+design-benchmarks:
+	$(PYTHON) tools/run_design_benchmarks.py $(DESIGN_BENCH_ARGS)

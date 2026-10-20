@@ -866,9 +866,33 @@
   {
     "id": "BUILD-005",
     "category": "Build",
-    "requirement": "Maintain TMR, experimental PARITY_REPLAY and unprotected PLAIN together; every functional current-core change shall pass the local pipeline-variants-check gate. PLAIN shall use single state/lane/register/RAM storage without SEU correction and reject RF_TMR or FI_ENABLE.",
-    "verification": "make pipeline-variants-check; verification/plane-rename-local-2026-10-17.json",
-    "status": "implemented; three-variant directed local regression passed 2026-10-17",
+    "requirement": "Maintain PIPELINED TMR/PARITY_REPLAY/PLAIN and MULTICYCLE TMR/PLAIN together; every functional current-core change shall pass pipeline-variants-check. PLAIN shall reject RF_TMR or FI_ENABLE.",
+    "verification": "make pipeline-variants-check; verification/five-design-campaign-2026-10-17.json",
+    "status": "implemented; all five variants passed local regression 2026-10-17",
+    "priority": "must"
+  },
+  {
+    "id": "ARCH-001",
+    "category": "Architecture",
+    "requirement": "MULTICYCLE shall admit only one uncommitted instruction and physically store one active instruction record, while preserving the current software profile, CSR/trap/interrupt, bus and retirement semantics. PIPELINED remains available and default.",
+    "verification": "tb_pipeline_smoke; tb_pipeline_jump; tb_design_benchmarks; mapped state counts",
+    "status": "implemented; smoke/jump, 30 compiled C runs and single-instruction invariant passed; broader formal/physical verification open",
+    "priority": "must"
+  },
+  {
+    "id": "ARCH-002",
+    "category": "Architecture",
+    "requirement": "Protected MULTICYCLE shall vote and repair three compact state records, retain RF/ECC and compared arithmetic protection, fail closed on every unused controller phase, and use distinct compact stored-state FI ABI 4. PLAIN shall have one compact state copy and no SEU correction.",
+    "verification": "make multicycle-test; scoped mapped-replica audit; Plain raw-upset checks",
+    "status": "directed 5790 logical-state upsets and 250 unused phases passed; scoped mapped replica audit passed; full qualification open",
+    "priority": "must"
+  },
+  {
+    "id": "VERIFY-ARCH-001",
+    "category": "Verification",
+    "requirement": "Run identical linked C CRC, sorting and integer-arithmetic programs across all five designs with independent expected results, retirement and memory-effect hash agreement, at zero and three added memory wait states. Record source/compiler/binary identity and report clock counts separately from unmeasured FPGA clock frequency.",
+    "verification": "make design-benchmarks DESIGN_BENCH_ARGS=--synthesis; verification/five-design-campaign-2026-10-17.json",
+    "status": "implemented; all 30 compiled C runs and five mapped estimates passed 2026-10-17",
     "priority": "must"
   }
 ]

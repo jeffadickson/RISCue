@@ -10,7 +10,7 @@ RTL='ft_pkg riscue_pipeline_pkg riscue_rvc riscue_jump_target riscue_execute ris
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--frontend',choices=('slang',),default='slang');p.add_argument('--rf-tmr',type=int,choices=(0,1),default=0);p.add_argument('--timeout',type=int,default=900);a=p.parse_args()
- config=configuration();label=f"{config['pipeline_protection']}-rf{a.rf_tmr}";out=ROOT/'build/yosys-kintex7'/a.frontend/label;out.mkdir(parents=True,exist_ok=True)
+ config=configuration();label=f"{config['core_arch']}-{config['pipeline_protection']}-rf{a.rf_tmr}";out=ROOT/'build/yosys-kintex7'/a.frontend/label;out.mkdir(parents=True,exist_ok=True)
  cache=Path(os.environ.get('RISCUE_SYNTH_BUILD_ROOT',str(Path.home()/'.cache/riscue-synthesis')))/a.frontend/label;cache.mkdir(parents=True,exist_ok=True)
  env=os.environ.copy();env['PATH']=str(ROOT/'.tools/oss-cad-suite/bin')+os.pathsep+env['PATH']
  yosys=shutil.which('yosys',path=env['PATH'])
@@ -25,7 +25,9 @@ def main():
   abc_script=cache/'abc-map.script';abc_script.write_text('strash\nif -K 6\n')
   convert=['read_slang','--best-effort-hierarchy','--unroll-limit','16384','--top','riscue_pipeline_core','-G',f'RF_TMR={a.rf_tmr}','-G','FI_ENABLE=0','-G','DEBUG_ENABLE=0',*config['iverilog_flags'],*[str(ROOT/'rtl'/(name+'.sv')) for name in RTL]]
   reader=' '.join(convert)
-  script.write_text(reader+f'\nhierarchy -check -top riscue_pipeline_core\nproc\nmemory_map\nopt_expr\nopt_clean\nopt_dff\nsetattr -set keep 1 t:$dff t:$adff t:$dffe t:$sdff t:$sdffe\nsetattr -set keep 1 c:*lane0 c:*lane1 c:*jump0 c:*jump1 c:*arithmetic0 c:*arithmetic1\nopt\nsynth_xilinx -family xc7 -top riscue_pipeline_core -flatten -noiopad -noclkbuf -run begin:map_luts\nwrite_rtlil \"{cache/"pre-lut.il"}\"\nabc -lut 6 -script \"{abc_script}\"\ntechmap -map +/xilinx/lut_map.v -map +/xilinx/cells_map.v -D LUT_WIDTH=6\nopt_lut_ins -tech xilinx\nsynth_xilinx -family xc7 -top riscue_pipeline_core -noiopad -noclkbuf -run finalize:edif\ncheck -assert\ntee -o "{cache/"statistics.json"}" stat -json -top riscue_pipeline_core\nwrite_json "{cache/"netlist.json"}"\n')
+  preserve=('setattr -unset keep\nsetattr -unset DONT_TOUCH\nsetattr -mod -unset keep_hierarchy\n' if config['pipeline_protection']=='PLAIN' else 'setattr -set keep 1 t:$dff t:$adff t:$dffe t:$sdff t:$sdffe\nsetattr -set keep 1 c:*lane0 c:*lane1 c:*jump0 c:*jump1 c:*arithmetic0 c:*arithmetic1\n')
+
+  script.write_text(reader+f'\nhierarchy -check -top riscue_pipeline_core\nproc\nmemory_map\nopt_expr\nopt_clean\nopt_dff\n{preserve}opt\nsynth_xilinx -family xc7 -top riscue_pipeline_core -flatten -noiopad -noclkbuf -run begin:map_luts\nwrite_rtlil \"{cache/"pre-lut.il"}\"\nabc -lut 6 -script \"{abc_script}\"\ntechmap -map +/xilinx/lut_map.v -map +/xilinx/cells_map.v -D LUT_WIDTH=6\nopt_lut_ins -tech xilinx\nsynth_xilinx -family xc7 -top riscue_pipeline_core -noiopad -noclkbuf -run finalize:edif\ncheck -assert\ntee -o "{cache/"statistics.json"}" stat -json -top riscue_pipeline_core\nwrite_json "{cache/"netlist.json"}"\n')
   result['conversion_command']=convert;result['synthesis_command']=[yosys]+(['-m','slang'] if a.frontend=='slang' else [])+['-Q','-q','-l',str(cache/'yosys-full.log'),'-s',str(script)]
   with (out/'console.log').open('w') as log:
    process=subprocess.Popen(result['synthesis_command'],stdout=log,stderr=subprocess.STDOUT,env=env,start_new_session=True)
@@ -37,7 +39,7 @@ def main():
   statistics=json.loads((cache/'statistics.json').read_text());design=statistics.get('design') or statistics['modules']['\\riscue_pipeline_core'];cells=design['num_cells_by_type']
   cells={key.rsplit(chr(92),1)[-1]:sum(value for kind,value in design['num_cells_by_type'].items() if kind.rsplit(chr(92),1)[-1]==key.rsplit(chr(92),1)[-1]) for key in design['num_cells_by_type']}
   result['cells_by_type']=cells;result['resources']={'LUT_cells':sum(v for k,v in cells.items() if k.startswith('LUT')),'flip_flop_cells':sum(v for k,v in cells.items() if k.startswith('FD')),'DSP48_cells':sum(v for k,v in cells.items() if k.startswith('DSP48')),'RAMB18_cells':sum(v for k,v in cells.items() if k.startswith('RAMB18')),'RAMB36_cells':sum(v for k,v in cells.items() if k.startswith('RAMB36')),'CARRY4_cells':cells.get('CARRY4',0)}
-  result['replica_audit']=audit(cache/'netlist.json',config['pipeline_protection']=='PARITY_REPLAY')
+  result['replica_audit']=(audit(cache/'netlist.json',config['pipeline_protection']=='PARITY_REPLAY') if config['pipeline_protection']!='PLAIN' else {'applicable':False,'scope':'Plain has no retained redundant state'})
   result['status']='pass';result['statistics']=statistics;shutil.copyfile(cache/'statistics.json',out/'statistics.json');shutil.copyfile(script,out/'synth.ys');shutil.copyfile(abc_script,out/'abc-map.script')
   result['netlist_path']=str(cache/'netlist.json')
  except subprocess.TimeoutExpired as e:result['status']='timeout';result['error']=str(e)

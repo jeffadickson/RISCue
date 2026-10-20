@@ -1,0 +1,160 @@
+{
+  "scope": "Existing legacy RV32IM versus full-feature pipeline; not ISA/protection/timing equivalent. Core-only quick Series-7 resource estimates; no placement/timing.",
+  "output": "/mnt/c/dev/RISCue/build/architecture-comparison/2026-10-17",
+  "source_sha256": {
+    "rtl/fi_campaign_controller.sv": "25cbdcb478680c8b12288aeaa14ccc0ef484e5c8807bdfad20fb1fe4faa47124",
+    "rtl/ft_ecc_ram.sv": "c4fd6fb344992e9c58fa31e261aee86278abf4208f005e53364b60cce7b498ae",
+    "rtl/ft_event_monitor.sv": "8185db879b0025bba95c6e0c50f4094b0d0e6580354279669369735c23f51449",
+    "rtl/ft_pkg.sv": "abb263d7d7088f20caa31f2e2964eec41720a98d724bbf3f3610566e7c6091a0",
+    "rtl/riscue_axi_core.sv": "ff687b92431dba83a4d2d5809dea9213811d81b85e9807c8dfcadc30e815b938",
+    "rtl/riscue_axi_ecc_ram.sv": "7cf95b908500514b09efa5b09a77c4412bfd0a59bbedf1eb89dae852e2268873",
+    "rtl/riscue_axi_master_bridge.sv": "2e40a1ecd8325229c6bb1641da5336e7f36e8c4f9ed5d74d471bc172a842cc45",
+    "rtl/riscue_axi_soc.sv": "0e8abc01c8c2dd2832d2f2ecc01b867f87737204f7f6463f33fd7a3128b671dd",
+    "rtl/riscue_debug_module.sv": "049109a1367138bbf397554cc1fdc4ed01c2eae5e51c475db522259215dcc545",
+    "rtl/riscue_debug_soc.sv": "b2ce46a09b8bc520a68aaf5d4ea93078accb136e5321dd2f483864962cc55da2",
+    "rtl/riscue_execute.sv": "9e623facae2108272975d936c711596721dae21af0e8e36a3f3b5147404600e3",
+    "rtl/riscue_jtag_dtm.sv": "2c0b993cd4899f31d72a344407f0d18606516651d582eade63d56cf42b80740c",
+    "rtl/riscue_jump_target.sv": "8111523cf25adf041ce4d3eab6d4e963812b9b4038b96ba1214c37cb801f701f",
+    "rtl/riscue_kv260_axi.sv": "f0034365fb5bd5b01a08e25a07cc4d1e3a9e67c4c0e1df7cddc11cee26501d05",
+    "rtl/riscue_monitor_soc.sv": "f86117207f93527b4879b859bf843fbc86f9778b6c2dce99f5d823e4d22301aa",
+    "rtl/riscue_muldiv.sv": "c6047876f3af142d901bfc41ded436ffde327880408bbad7164a75223c4e4851",
+    "rtl/riscue_packet_soc.sv": "a1e3a55606d31891397ae9da2856768300d6dd7d31f2a31ecdb1d5bcc78897e0",
+    "rtl/riscue_packet_uart.sv": "0230dbd310c31f3b7bd7195e3f916099d90cc0a65da39c178c67a79b36c18333",
+    "rtl/riscue_pipeline_core.sv": "4f4615123a07e8ad1fc05f539924cc9601a8a917b0375485b8acf288cc67eb40",
+    "rtl/riscue_pipeline_pkg.sv": "2204cbee184caa17ef963cd0c988b5901503bef99e3efd097db15ee6987de34d",
+    "rtl/riscue_pipeline_soc.sv": "48fc04b9607a7456af6e4bbbd387358b73fe0d8c2c717a1c699fc39be466e9e7",
+    "rtl/riscue_rvc.sv": "c76b03742f72cf132a79386bc8121d0379830c22ae9a5b9bfaa6abb3ae0526eb",
+    "rtl/riscue_serial_monitor.sv": "1d4cb62157ecf7891f33f06bb8c432ee1c6623d793a654cd3852cf524634eca2",
+    "rtl/rv32im_ft_core.sv": "cc170d0bd1e2634c522b8a9011d1d8e48d9da28987d5035db2e98ca4c30f6fc2",
+    "rtl/rv32im_ft_soc.sv": "5591e61ccdd7a2228c1a4ee4aa3bb498ce88f8b5c235e1b83ee6cb763182dde6",
+    "rtl/rv32_execute.sv": "b152794e86388f48b5509f83f77d2e303c5fdc64b243e2d944b2d6ab222c7780",
+    "tests/tb_architecture_compare.sv": "4b3a51a3cc28165e1d31e3eb50e6e396332b8ef0d33a0ca94ede3dd7380034b1",
+    "tools/compare_architectures.py": "734ce72a48798088d8d694b36f898900a2db4b5d2d689c6cebd937262ac00ed0",
+    "tools/gen_program.py": "358e2a9f7cf2672db2a809f4b03cacdfa6f1160543cd853b93a0430687546be8",
+    "tools/gen_vectors.py": "80469a70ac46d1b5458e199c1704334761fcee01bc84ca0df01b116c9f4d4b8d"
+  },
+  "benchmarks": [
+    {
+      "mode": "LEGACY_RV32IM",
+      "workload": "mixed_rv32im",
+      "retired": 202,
+      "cycles": 726,
+      "cycles_per_instruction": 3.594059405940594
+    },
+    {
+      "mode": "TMR",
+      "workload": "mixed_rv32im",
+      "retired": 202,
+      "cycles": 1467,
+      "cycles_per_instruction": 7.262376237623762
+    },
+    {
+      "mode": "PARITY_REPLAY",
+      "workload": "mixed_rv32im",
+      "retired": 202,
+      "cycles": 1467,
+      "cycles_per_instruction": 7.262376237623762
+    },
+    {
+      "mode": "PLAIN",
+      "workload": "mixed_rv32im",
+      "retired": 202,
+      "cycles": 1467,
+      "cycles_per_instruction": 7.262376237623762
+    },
+    {
+      "mode": "LEGACY_RV32IM",
+      "workload": "dependent_addi",
+      "retired": 200,
+      "cycles": 600,
+      "cycles_per_instruction": 3.0
+    },
+    {
+      "mode": "TMR",
+      "workload": "dependent_addi",
+      "retired": 200,
+      "cycles": 805,
+      "cycles_per_instruction": 4.025
+    },
+    {
+      "mode": "PARITY_REPLAY",
+      "workload": "dependent_addi",
+      "retired": 200,
+      "cycles": 805,
+      "cycles_per_instruction": 4.025
+    },
+    {
+      "mode": "PLAIN",
+      "workload": "dependent_addi",
+      "retired": 200,
+      "cycles": 805,
+      "cycles_per_instruction": 4.025
+    }
+  ],
+  "synthesis": [
+    {
+      "mode": "LEGACY_RV32IM",
+      "status": "pass",
+      "protection_audit": "not performed; resource comparison only",
+      "LUTs": 30992,
+      "flip_flops": 2361,
+      "DSPs": 24,
+      "BRAMs": 0,
+      "seconds": 21.02
+    },
+    {
+      "mode": "TMR",
+      "status": "pass",
+      "protection_audit": "not performed; resource comparison only",
+      "LUTs": 33486,
+      "flip_flops": 15204,
+      "DSPs": 8,
+      "BRAMs": 0,
+      "seconds": 61.57
+    },
+    {
+      "mode": "PARITY_REPLAY",
+      "status": "pass",
+      "protection_audit": "not performed; resource comparison only",
+      "LUTs": 31717,
+      "flip_flops": 10033,
+      "DSPs": 8,
+      "BRAMs": 0,
+      "seconds": 108.08
+    },
+    {
+      "mode": "PLAIN",
+      "status": "pass",
+      "protection_audit": "not performed; resource comparison only",
+      "LUTs": 10007,
+      "flip_flops": 3877,
+      "DSPs": 4,
+      "BRAMs": 0,
+      "seconds": 55.48
+    }
+  ],
+  "recorded_at": "2026-10-17T17:03:05.094864+00:00",
+  "yosys_version": "Yosys 0.69+276 (git sha1 e83399dcf, Release, Clang /usr/bin/clang++ 21.1.8)",
+  "clock_assumption": "Same clock-count units; Fmax unmeasured. Legacy combinational divider may have a much longer critical path.",
+  "memory_model": "Identical 512-word single-port synchronous response model; PLAIN bypasses ECC codec. Neither memory nor peripherals are included in synthesis.",
+  "preservation_policy": "Protected configurations retain RTL preservation attributes and blanket sequential keep, matching conservative historical flow. PLAIN removes keep/DONT_TOUCH and module keep_hierarchy to permit pruning. No new protection qualification audit performed.",
+  "feature_comparison": {
+    "LEGACY_RV32IM": "RV32IM, protected serialized controller/RF and two combinational execute lanes; no C/CSR/M-mode interrupt platform/bitmanip",
+    "TMR": "Current full pipeline ISA and protected datapath",
+    "PARITY_REPLAY": "Current full pipeline ISA; experimental checked stage storage; other protections retained",
+    "PLAIN": "Current full pipeline ISA; no SEU mitigation"
+  },
+  "notes": [
+    "All eight simulations matched every architectural retirement on their common RV32IM workload, ignoring unspecified x0 write-result bus values.",
+    "End at the last expected normal retirement; terminal EBREAK behavior differs and is outside this benchmark.",
+    "Legacy is not an equal-feature replacement; cycle and area differences cannot be attributed to pipeline depth alone.",
+    "Single dependent ADDI stream plus one deterministic mixed program are not a comprehensive performance suite.",
+    "No clock frequency, placement, power, radiation qualification or complete ISA proof claimed."
+  ],
+  "workload_sha256": {
+    "dependent_addi.hex": "baa8b7ca3a3502b6146911383d67f9d65046ab2b9489590cbebf138bbb9a37a1",
+    "mixed_rv32im.hex": "e009f70b1834efdccaa89114dbad6ef1361b510198b0ab818e435c86d9802d68",
+    "dependent_addi.trace": "2db0bac71a927f45ae5f14758ef0ec645d18b4b63dc273b036baf4de4b5c7aa8",
+    "mixed_rv32im.trace": "ba594e46300e4e1410994cef9ec52e5cf1a305b8d45c807aec6a830e2a42ca82"
+  }
+}
